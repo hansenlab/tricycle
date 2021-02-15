@@ -1,11 +1,15 @@
 Package: TriCycle
 Type: Package
-Title: What the Package Does (Title Case)
+Title: TriCycle: Transferable Representation and Inference of cell cycle
 Version: 0.1.0
-Author: Who wrote it
+Authors@R: c(
+        person("Shijie", "Zheng", role=c("aut", "cre"), email="shijieczheng@gmail.com"))
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Depends: SingleCellExperiment
+License: GPL-3
+VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.1.1

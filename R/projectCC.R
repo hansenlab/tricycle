@@ -1,6 +1,6 @@
 #' Project new data into the cell cycle pattern space
 #'
-#' Perform xxxx
+#' Project mouse and human single cell RNAseq data into a cell cycle embedding.
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
@@ -8,7 +8,7 @@
 #' @param ref.m A custom reference projection matrix to project the new data, where rows are features and columns are dimensions.
 #' Users need to use the same type of \code{gname}(or rownames of \code{x}) as for the \code{ref.m}.
 #' If no custom ref.m is given, the internal reference \code{neuroRef} will be used.
-#' @param gname An alternative rownames of \code{x}. If provided, this will be used to map genes within \code{x} with genes in \code{ref.m}.
+#' @param gname Alternative rownames of \code{x}. If provided, this will be used to map genes within \code{x} with genes in \code{ref.m}.
 #' If not provided, the rownames of \code{x} will be used instead.
 #' @param gname.type The type of gene names as in \code{gname} or rownames of \code{x}. It can be either "ensembl" or "symbol". If the user uses
 #' custom \code{ref.m}, this value will have no effect. Default: "ensembl"
@@ -18,9 +18,31 @@
 #'  and provide rownames in the format of Ensembl IDs, this object will be used to map Ensembl IDs to gene symbols.
 #'  If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}.
 #' @param altexp String or integer scalar specifying an alternative experiment containing the input data.
-#' @param name String specifying the name to be used to store the result in the \code{\link{reducedDims}} of the output. Default: "ccProjection"
+#' @param name String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: "ccProjection"
 #'
-
+#' @details
+#' The function will use pre-learned cell cycle pattern to project new data to show the cell cycle progression. If the user uses internal Neuropshere reference,
+#' the expression values must be **log-transformed**. Besides, we would assume the input data has been already preprocessed, library size normalized at least.
+#' The projection process is to take sum of weighted mean-centered expression of chosen genes, so the mean expression of a given gene could be affected without library size normalization.
+#'
+#' @return
+#' If the input is a numeric matrix or a \linkS4class{SummarizedExperiment}, a projection matrix with rows cells and column dimensions will be returned.
+#' The actual rotation matrix used to project the data is included in the attributes with name "rotation".
+#'
+#' For \linkS4class{SingleCellExperiment}, an updated \linkS4class{SingleCellExperiment} is returned containing projection matrix in \code{\link[SingleCellExperiment]{reducedDims}(..., name)}.
+#'
+#' @name projectCC
+#' @seealso
+#' \code{\link{inferCcTime}}, for inferring cell cycle time.
+#' @author Shijie C. Zheng
+#'
+#' @examples
+#' example_sce <- projectCC(example_sce)
+#' reducedDimNames(example_sce)
+#' head(reducedDim(example_sce, "ccProjection"))
+#' plot(reducedDim(example_sce, "ccProjection"))
+#' names(attributes(reducedDim(example_sce, "ccProjection")))
+NULL
 
 
 
@@ -29,7 +51,7 @@
 	species <- match.arg(species)
 	gname.type <- match.arg(gname.type)
 
-	if (!is.null) {
+	if (!is.null(gname)) {
 		rownames(data.m) <- gname
 	}
 	if (is.null(ref.m)) {
@@ -41,9 +63,8 @@
 			rownames(data.m) <- .humanSymbol(f.id = rownames(data.m), AnnotationDb = AnnotationDb)
 		}
 	}
-	.calProjection(data.m, rotation.m)
+	.calProjection(data.m, ref.m)
 }
-
 
 
 .calProjection <- function(data.m, rotation.m) {
@@ -54,7 +75,7 @@
 
 	rotation.m <- rotation.m[genes, ]
 	data.m <- data.m[genes, ]
-	projection.m <- scale(t(data.m), center = T, scale = F) %*% rotation.m
+	projection.m <- scale(t(as.matrix(data.m)), center = T, scale = F) %*% rotation.m
 	rownames(projection.m) <- colnames(data.m)
 	colnames(projection.m) <- colnames(rotation.m)
 	attr(projection.m, "rotation") <- rotation.m
@@ -85,11 +106,11 @@
 }
 
 
-
-
 #' @export
 #' @rdname projectCC
-setMethod("projectCC", "ANY", .projectCC)
+setMethod("projectCC", "ANY", function(x, ...) {
+	.projectCC(x, ...)
+})
 
 #' @export
 #' @rdname projectCC

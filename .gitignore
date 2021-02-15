@@ -4,6 +4,7 @@ doc
 .Rhistory
 .RData
 .Rproject
+.Rproj
 .DS_Store
 .Rbuildignore
 .Ruserdata

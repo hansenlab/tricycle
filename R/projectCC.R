@@ -1,6 +1,6 @@
-#' Project new data into the cell cycle pattern space
+#' Project data into the cell cycle pattern space
 #'
-#' Project mouse and human single cell RNAseq data into a cell cycle embedding.
+#' Project mouse and human single cell RNAseq data into a cell cycle embedding by a pre-learned reference projection matrix.
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
@@ -33,7 +33,8 @@
 #'
 #' @name projectCC
 #' @seealso
-#' \code{\link{inferCcTime}}, for inferring cell cycle time.
+#' \code{\link{inferCCTime}}, for inferring cell cycle time.
+#'
 #' @author Shijie C. Zheng
 #'
 #' @examples

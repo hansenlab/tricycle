@@ -1,13 +1,13 @@
-Package: TriCycle
+Package: tricycle
 Type: Package
-Title: TriCycle: Transferable Representation and Inference of cell cycle
+Title: tricycle: Transferable Representation and Inference of cell cycle
 Version: 0.1.0
 Authors@R: c(
         person("Shijie", "Zheng", role=c("aut", "cre"), email="shijieczheng@gmail.com"))
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-Depends: SingleCellExperiment
+Depends: R (>= 3.5.0), SingleCellExperiment
 License: GPL-3
 VignetteBuilder: knitr
 Encoding: UTF-8

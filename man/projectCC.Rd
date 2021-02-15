@@ -5,7 +5,7 @@
 \alias{projectCC,ANY-method}
 \alias{projectCC,SummarizedExperiment-method}
 \alias{projectCC,SingleCellExperiment-method}
-\title{Project new data into the cell cycle pattern space}
+\title{Project data into the cell cycle pattern space}
 \usage{
 projectCC(x, ...)
 
@@ -55,7 +55,7 @@ The actual rotation matrix used to project the data is included in the attribute
 For \linkS4class{SingleCellExperiment}, an updated \linkS4class{SingleCellExperiment} is returned containing projection matrix in \code{\link[SingleCellExperiment]{reducedDims}(..., name)}.
 }
 \description{
-Project mouse and human single cell RNAseq data into a cell cycle embedding.
+Project mouse and human single cell RNAseq data into a cell cycle embedding by a pre-learned reference projection matrix.
 }
 \details{
 The function will use pre-learned cell cycle pattern to project new data to show the cell cycle progression. If the user uses internal Neuropshere reference,
@@ -70,7 +70,7 @@ plot(reducedDim(example_sce, "ccProjection"))
 names(attributes(reducedDim(example_sce, "ccProjection")))
 }
 \seealso{
-\code{\link{inferCcTime}}, for inferring cell cycle time.
+\code{\link{inferCCTime}}, for inferring cell cycle time.
 }
 \author{
 Shijie C. Zheng

@@ -5,7 +5,7 @@
 #'
 #' @param sce.o A \linkS4class{SingleCellExperiment} contains library size normalized **log-expression** matrix.
 #' @param gname Alternative rownames of \code{sce.o}. If provided, this will be used to map genes within Gene Ontology cell cycle gene list.
-#' If not provided, the rownames of \code{sce.o} will be used instead.
+#' If not provided, the rownames of \code{sce.o} will be used instead. Default: NULL
 #' @param exprs_values Integer scalar or string indicating which assay of \code{sce.o} contains the **log-expression** values, which will be used to run PCA. 
 #' Default: "logcounts"
 #' @param gname.type The type of gene names as in \code{gname} or rownames of \code{sce.o}. It can be either "ENSEMBL" or "SYMBOL". Default: "ENSEMBL"
@@ -57,9 +57,9 @@ NULL
 	species <- match.arg(species)
 	gname.type <- match.arg(gname.type)
 	if (species == "mouse") {
-		db.o <- org.Mm.eg.db::org.Mm.eg.db
+		AnnotationDb <- org.Mm.eg.db::org.Mm.eg.db
 	} else {
-		db.o <- org.Hs.eg.db::org.Hs.eg.db
+		AnnotationDb <- org.Hs.eg.db::org.Hs.eg.db
 	}
 	if (is.null(gname)) {
 		message("No gname input. Rownames of sce.o will be used.")
@@ -68,7 +68,7 @@ NULL
 		if (nrow(sce.o) != length(gname)) stop("gname does not match nrow sce.o!")
 	}
 	
-	cycle.anno <- AnnotationDbi::select(db.o, keytype="GOALL", keys="GO:0007049", 
+	cycle.anno <- AnnotationDbi::select(AnnotationDb, keytype = "GOALL", keys = "GO:0007049", 
 																			columns=gname.type)[, gname.type]
 	gene.idx <- which(gname %in% cycle.anno)
 	if (length(gene.idx) <100) stop("Less than 100 Gene Ontology cell cycle genes found in your data. Check you data or gname input.")

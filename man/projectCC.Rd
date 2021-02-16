@@ -36,7 +36,7 @@ Users need to use the same type of \code{gname}(or rownames of \code{x}) as for 
 If no custom ref.m is given, the internal reference \code{neuroRef} will be used.}
 
 \item{gname}{Alternative rownames of \code{x}. If provided, this will be used to map genes within \code{x} with genes in \code{ref.m}.
-If not provided, the rownames of \code{x} will be used instead.}
+If not provided, the rownames of \code{x} will be used instead. Default: NULL}
 
 \item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{x}. It can be either "ENSEMBL" or "SYMBOL". If the user uses
 custom \code{ref.m}, this value will have no effect. Default: "ENSEMBL"}

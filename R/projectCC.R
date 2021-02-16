@@ -9,7 +9,7 @@
 #' Users need to use the same type of \code{gname}(or rownames of \code{x}) as for the \code{ref.m}.
 #' If no custom ref.m is given, the internal reference \code{neuroRef} will be used.
 #' @param gname Alternative rownames of \code{x}. If provided, this will be used to map genes within \code{x} with genes in \code{ref.m}.
-#' If not provided, the rownames of \code{x} will be used instead.
+#' If not provided, the rownames of \code{x} will be used instead. Default: NULL
 #' @param gname.type The type of gene names as in \code{gname} or rownames of \code{x}. It can be either "ENSEMBL" or "SYMBOL". If the user uses
 #' custom \code{ref.m}, this value will have no effect. Default: "ENSEMBL"
 #' @param species The type of species in \code{x}. It can be either "mouse" or "human". If the user uses
@@ -61,7 +61,7 @@ NULL
 
 		if (species == "human" & gname.type == "ENSEMBL") {
 			message("As the reference data was learned from mouse, we will map the human ENSEMBL id to gene SYMBOL.")
-			rownames(data.m) <- .humanSymbol(f.id = rownames(data.m), AnnotationDb = AnnotationDb)
+			rownames(data.m) <- .humanSymbol(gname = rownames(data.m), AnnotationDb = AnnotationDb)
 		}
 	}
 	.calProjection(data.m, ref.m)
@@ -96,13 +96,13 @@ NULL
 }
 
 #' @importFrom  org.Hs.eg.db org.Hs.eg.db
-#' @importFrom AnnotationDbi select
-.humanSymbol <- function(f.id, AnnotationDb = NULL) {
+#' @importFrom AnnotationDbi mapIds
+.humanSymbol <- function(gname, AnnotationDb = NULL) {
 	if (is.null(AnnotationDb)) {
 		AnnotationDb <- org.Hs.eg.db::org.Hs.eg.db
 		message("No AnnotationDb desginated. org.Hs.eg.db will be used to map Human ENSEMBL id to gene SYMBOL.")
 	}
-	SYMBOL <- AnnotationDbi::select(AnnotationDb, keys = f.id, columns ="SYMBOL", keytype = "ENSEMBL")[["SYMBOL"]]
+	SYMBOL <- AnnotationDbi::mapIds(AnnotationDb, keys = gname, columns ="SYMBOL", keytype = "ENSEMBL", multiVals = "first")
 	return(SYMBOL)
 }
 

@@ -3,63 +3,70 @@
 \name{pcaGoCC}
 \alias{pcaGoCC}
 \alias{pcaGoCC,SingleCellExperiment-method}
-\title{Assign cell cycle time}
+\title{Run PCA on Gene Ontology cell cycle genes}
 \usage{
 \S4method{pcaGoCC}{SingleCellExperiment}(
   sce.o,
   ...,
-  exprs_values = "counts",
+  exprs_values = "logcounts",
   gname.type = c("ENSEMBL", "SYMBOL"),
   species = c("mouse", "human")
 )
 }
 \arguments{
-\item{...}{Arguments to be used by \code{\link{projectCC}}. If \code{x} is a \linkS4class{SingleCellExperiment}, and the projection is
-already in the reducedDim with name \code{dimred}. The \code{dimred} will be directly used to assign cell cycle time withou new projection.}
+\item{sce.o}{A \linkS4class{SingleCellExperiment} contains library size normalized **log-expression** matrix.}
 
-\item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
-If the projection already exists, you can ignore this value. Default: "logcounts"}
+\item{exprs_values}{Integer scalar or string indicating which assay of \code{sce.o} contains the **log-expression** values, which will be used to run PCA. 
+Default: "logcounts"}
 
-\item{x}{A numeric matrix of **log-expression** values where rows are features and columns are cells.
-Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
+\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{sce.o}. It can be either "ENSEMBL" or "SYMBOL". Default: "ENSEMBL"}
 
-\item{dimred}{The name of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). If the \code{dimred} already exists,
-it will be used to assign cell cycle time. If \code{dimred} does not exist, the projection will be calculated first by \code{\link{projectCC}}
-and stored with name \code{dimred} in {x}. Default: "ccProjection"}
+\item{species}{The type of species in \code{sce.o}. It can be either "mouse" or "human". The corresponding AnnotationDb object will be
+\code{\link[org.Mm.eg.db]{org.Hs.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}. Default: "mouse"}
 
-\item{center.pc1}{The center of PC1 when defining the angle. Default: 0}
+\item{gname}{Alternative rownames of \code{sce.o}. If provided, this will be used to map genes within Gene Ontology cell cycle gene list.
+If not provided, the rownames of \code{sce.o} will be used instead.}
 
-\item{center.pc2}{The center of PC2 when defining the angle. Default: 0}
+\item{ntop}{The number of genes with highest variance to use when calculating PCA, as in \code{\link[scater]{calculatePCA}}. Default: 500}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment containing the **log-expression** data, which will be used for projection.
-If the projection is already calculated and stored in the \linkS4class{SingleCellExperiment} as a dimred, leave this value to default NULL.}
+\item{ncomponents}{The number of component components to obtain, as in \code{\link[scater]{calculatePCA}}. Default: 20}
+
+\item{seed}{A random number for getting the same PCA when reruning the function. Default: 1000}
+
+\item{runSeuratBy}{If the value is not NULL, the subsetted data (only GO cell cycle genes) will be integrated by Seurat. See \code{\link[Seurat]{IntegrateData}}.
+This value should be set as a column name in \code{colData(sce.o)}. Such as "sample" or "batch". Default: NULL}
+
+\item{nfeatures}{The number of highly variable features within each sample/batch, which will only be used when integrating with Seurat.
+See \code{\link[Seurat]{FindVariableFeatures}}. Default: 500}
+
+\item{anchor.features}{The number of genes used in anchor finding during Seurat integration. See \code{\link[Seurat]{FindIntegrationAnchors}}. Default: 2000}
+
+\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: "PCA"}
 }
 \value{
-If the input is a numeric matrix, the cell cycle time - a numeric vector bound between \eqn{0 \sim 2 \pi} with the same length as the number of input coumlum will be returned.
-
-If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{SummarizedExperiment} with cell cycle time stored in colData with name "CCTime" will be returned.
-
-If the input is\linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with cell cycle time stored in colData with name "CCTime" will be returned
-and the projection will be stored in \code{\link[SingleCellExperiment]{reducedDims}(..., dimred)} if it does not exist before.
+A subset \linkS4class{SingleCellExperiment} object with only GO cell cycle genes will be return.
+The PCA resulting will be save in reducedDims with chosen name \code{\link[SingleCellExperiment]{reducedDims}(..., name)}. 
+If Seurat integration is performed, another reducedDims with name "matched."+\code{name} will also be included in the \linkS4class{SingleCellExperiment}.
 }
 \description{
-Assign cell cycle time by the angle formed by PC1 and PC2 in the cell cycle space.
-If the cell cycle projection does not exist, the function will project the data.
+Run PCA on Gene Ontology cell cycle genes abd get a new \linkS4class{SingleCellExperiment}. 
+User could use this function to learn new reference projection matrix.
 }
 \details{
-The function will use assign the cell cycle time by the angle formed by the PC1 and PC2 of cell cycle projections.
-If the input is a numeric matrix or a \linkS4class{SummarizedExperiment}, the projection will be calculated with the input **log-expression** values.
-For \linkS4class{SingleCellExperiment}, the projection will also be calculated if the designated \code{dimred} does not exist.
-Ohterwise, the \code{dimred} will directly be used to assign cell cycle time.
-Therefore, this function is a wrapper function if the input is a \linkS4class{SingleCellExperiment}.
-Refer to \code{\link{projectCC}} to all arguments during the projection.
+The function require an output of a \linkS4class{SingleCellExperiment} object which contains the library size normalized **log-expression** matrix. The full dataset will 
+be subsetted to genes in the Gene Ontology cell cycle gene list (GO:0007049). The corresponding AnnotationDb object will be
+ \code{\link[org.Mm.eg.db]{org.Hs.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} for mouse and human respectively. If \code{runSeuratBy} is set, the data will be 
+ integrated to remove batch effect between samples/batches by Seurat.
+ 
+User can use this function to make new reference projection matrix by getting the "rotation" attribute in PCA results. Such as 
+\code{attr(reducedDim(sce.o, "PCA"), "rotation")[, 1:2]}. See examples for more details.
 }
 \examples{
-example_sce <- inferCCTime(example_sce)
-reducedDimNames(example_sce)
-plot(reducedDim(example_sce, "ccProjection"))
-plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 1])
-plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 2])
+gocc_sce.o <- pcaGoCC(example_sce)
+new.ref <- attr(reducedDim(gocc_sce.o, "PCA"), "rotation")[, 1:2]
+example_sce <- inferCCTime(example_sce)  ### Use internal NeuroRef to project and infer CC time
+new_sce <- inferCCTime(example_sce, ref.m  = new.ref, dimred = "ccProjection2")  ### Use new reference to project and infer CC time
+plot(example_sce$CCTime, new_sce$CCTime)
 }
 \author{
 Shijie C. Zheng

@@ -38,14 +38,14 @@ If no custom ref.m is given, the internal reference \code{neuroRef} will be used
 \item{gname}{Alternative rownames of \code{x}. If provided, this will be used to map genes within \code{x} with genes in \code{ref.m}.
 If not provided, the rownames of \code{x} will be used instead.}
 
-\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{x}. It can be either "ensembl" or "symbol". If the user uses
-custom \code{ref.m}, this value will have no effect. Default: "ensembl"}
+\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{x}. It can be either "ENSEMBL" or "SYMBOL". If the user uses
+custom \code{ref.m}, this value will have no effect. Default: "ENSEMBL"}
 
 \item{species}{The type of species in \code{x}. It can be either "mouse" or "human". If the user uses
 custom \code{ref.m}, this value will have no effect. Default: "mouse"}
 
 \item{AnnotationDb}{An AnnotationDb objects. If the user uses the internal reference to project human data,
-and provide rownames in the format of Ensembl IDs, this object will be used to map Ensembl IDs to gene symbols.
+and provide rownames in the format of Ensembl IDs, this object will be used to map Ensembl IDs to gene SYMBOLs.
 If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}.}
 }
 \value{

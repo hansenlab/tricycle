@@ -30,7 +30,7 @@
 #'
 #' If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{SummarizedExperiment} with cell cycle time stored in colData with name "CCTime" will be returned.
 #'
-#' If the input is\linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with cell cycle time stored in colData with name "CCTime" will be returned
+#' If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with cell cycle time stored in colData with name "CCTime" will be returned
 #' and the projection will be stored in \code{\link[SingleCellExperiment]{reducedDims}(..., dimred)} if it does not exist before.
 #'
 #' @name inferCCTime

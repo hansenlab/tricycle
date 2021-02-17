@@ -52,8 +52,7 @@ NULL
 #' @importFrom  org.Mm.eg.db org.Mm.eg.db
 #' @importFrom AnnotationDbi select
 #' @importFrom scater runPCA calculatePCA
-.pcaGoCC <- function(sce.o, gname = NULL, exprs_values = "logcounts", gname.type = c("ENSEMBL", 
-    "SYMBOL"), species = c("mouse", "human"), ntop = 500, ncomponents = 20, seed = 1000, 
+.pcaGoCC <- function(sce.o, gname = NULL, exprs_values = "logcounts", gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), ntop = 500, ncomponents = 20, seed = 1000, 
     runSeuratBy = NULL, nfeatures = 500, anchor.features = 2000, name = "PCA") {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
@@ -70,8 +69,7 @@ NULL
             stop("gname does not match nrow sce.o!")
     }
     
-    cycle.anno <- AnnotationDbi::select(AnnotationDb, keytype = "GOALL", keys = "GO:0007049", 
-        columns = gname.type)[, gname.type]
+    cycle.anno <- AnnotationDbi::select(AnnotationDb, keytype = "GOALL", keys = "GO:0007049", columns = gname.type)[, gname.type]
     gene.idx <- which(gname %in% cycle.anno)
     if (length(gene.idx) < 100) 
         stop("Less than 100 Gene Ontology cell cycle genes found in your data. Check you data or gname input.")
@@ -86,10 +84,8 @@ NULL
         set.seed(seed + 100)
         if (!(runSeuratBy %in% names(colData(GO.o)))) 
             stop(paste0(runSeuratBy, " does not exist in colData(sce.o)."))
-        corrected.m <- .seuratIntegrate(count.m = 2^(assay(GO.o, exprs_values)) - 
-            1, batch = colData(GO.o)[, runSeuratBy], nfeatures = nfeatures, anchor.features = anchor.features)
-        reducedDim(GO.o, paste0("matched.", name)) <- calculatePCA(corrected.m, ntop = ntop, 
-            ncomponents = ncomponents)
+        corrected.m <- .seuratIntegrate(count.m = 2^(assay(GO.o, exprs_values)) - 1, batch = colData(GO.o)[, runSeuratBy], nfeatures = nfeatures, anchor.features = anchor.features)
+        reducedDim(GO.o, paste0("matched.", name)) <- calculatePCA(corrected.m, ntop = ntop, ncomponents = ncomponents)
         metadata(GO.o)$seurat.corrected.m <- corrected.m
     }
     return(GO.o)
@@ -100,8 +96,7 @@ NULL
     seurat.o <- CreateSeuratObject(counts = count.m)
     seurat.o[["batch"]] <- batch
     seurat.list <- lapply(SplitObject(seurat.o, split.by = "batch"), function(x) {
-        x <- FindVariableFeatures(NormalizeData(x, verbose = FALSE), nfeatures = nfeatures, 
-            verbose = FALSE)
+        x <- FindVariableFeatures(NormalizeData(x, verbose = FALSE), nfeatures = nfeatures, verbose = FALSE)
         return(x)
     })
     seurat.anchors <- FindIntegrationAnchors(object.list = seurat.list, anchor.features = anchor.features)
@@ -112,10 +107,8 @@ NULL
 
 #' @export
 #' @rdname pcaGoCC
-setMethod("pcaGoCC", "SingleCellExperiment", function(sce.o, ..., exprs_values = "logcounts", 
-    gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human")) {
-    .pcaGoCC(sce.o, exprs_values = exprs_values, gname.type = gname.type, species = species, 
-        ...)
+setMethod("pcaGoCC", "SingleCellExperiment", function(sce.o, ..., exprs_values = "logcounts", gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human")) {
+    .pcaGoCC(sce.o, exprs_values = exprs_values, gname.type = gname.type, species = species, ...)
 })
 
 

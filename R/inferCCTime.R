@@ -67,8 +67,7 @@ setMethod("inferCCTime", "ANY", function(x, ..., center.pc1 = 0, center.pc2 = 0)
 #' @export
 #' @rdname inferCCTime
 #' @importFrom SummarizedExperiment assay
-setMethod("inferCCTime", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", 
-    center.pc1 = 0, center.pc2 = 0) {
+setMethod("inferCCTime", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", center.pc1 = 0, center.pc2 = 0) {
     projection.m <- .projectCC(assay(x, exprs_values), ...)
     x$CCTime <- .getTheta(projection.m, center.pc1 = center.pc1, center.pc2 = center.pc2)
     x
@@ -78,13 +77,11 @@ setMethod("inferCCTime", "SummarizedExperiment", function(x, ..., exprs_values =
 #' @export
 #' @rdname inferCCTime
 #' @importFrom SingleCellExperiment reducedDim<- altExp reducedDimNames
-setMethod("inferCCTime", "SingleCellExperiment", function(x, ..., dimred = "ccProjection", 
-    center.pc1 = 0, center.pc2 = 0, altexp = NULL) {
+setMethod("inferCCTime", "SingleCellExperiment", function(x, ..., dimred = "ccProjection", center.pc1 = 0, center.pc2 = 0, altexp = NULL) {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
         if ((dimred %in% reducedDimNames(x)) & (!(dimred %in% reducedDimNames(y)))) {
-            warning(paste0(dimred, "exists in x, but not in ", altexp, ". \nThe projecion will be recalculated using ", 
-                altexp, ".\n If you intend to use pre-calculated projection, please don't set ", 
+            warning(paste0(dimred, "exists in x, but not in ", altexp, ". \nThe projecion will be recalculated using ", altexp, ".\n If you intend to use pre-calculated projection, please don't set ", 
                 altexp))
         }
         
@@ -92,8 +89,7 @@ setMethod("inferCCTime", "SingleCellExperiment", function(x, ..., dimred = "ccPr
         y <- x
     }
     if (!(dimred %in% reducedDimNames(y))) {
-        message(paste0("The designated dimred do not exist in the SingleCellExperiment or in altexp. projectCC will be run to calculate embedding ", 
-            dimred))
+        message(paste0("The designated dimred do not exist in the SingleCellExperiment or in altexp. projectCC will be run to calculate embedding ", dimred))
         y <- projectCC(y, name = dimred, ...)
         reducedDim(x, dimred) <- reducedDim(y, dimred)
     }

@@ -48,8 +48,7 @@ NULL
 
 
 
-.projectCC <- function(data.m, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", 
-    "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
+.projectCC <- function(data.m, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
     
@@ -74,8 +73,7 @@ NULL
     
     if (length(genes) == 0) 
         stop("None genes found in new data. This could be caused by wrong input of rownames type.")
-    message(paste0("The number of projection genes found in the new data is ", length(genes), 
-        "."))
+    message(paste0("The number of projection genes found in the new data is ", length(genes), "."))
     
     rotation.m <- rotation.m[genes, ]
     data.m <- data.m[genes, ]
@@ -105,8 +103,7 @@ NULL
         AnnotationDb <- org.Hs.eg.db::org.Hs.eg.db
         message("No AnnotationDb desginated. org.Hs.eg.db will be used to map Human ENSEMBL id to gene SYMBOL.")
     }
-    SYMBOL <- AnnotationDbi::mapIds(AnnotationDb, keys = gname, columns = "SYMBOL", 
-        keytype = "ENSEMBL", multiVals = "first")
+    SYMBOL <- AnnotationDbi::mapIds(AnnotationDb, keys = gname, columns = "SYMBOL", keytype = "ENSEMBL", multiVals = "first")
     return(SYMBOL)
 }
 
@@ -129,8 +126,7 @@ setMethod("projectCC", "SummarizedExperiment", function(x, ..., exprs_values = "
 #' @rdname projectCC
 #' @importFrom SingleCellExperiment reducedDim<- altExp
 #' @importFrom SummarizedExperiment assay
-setMethod("projectCC", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", 
-    altexp = NULL, name = "ccProjection") {
+setMethod("projectCC", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", altexp = NULL, name = "ccProjection") {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {

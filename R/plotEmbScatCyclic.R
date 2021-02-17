@@ -34,8 +34,8 @@ NULL
 
 #' @importFrom scattermore geom_scattermore
 #' @importFrom dplyr filter `%>%`
-.plotEmbScatCyclic <- function(emb.m, color.value, color_by, facet_var = NULL, fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL, hue.colors = c("#2E22EA", "#9E3DFB", 
-    "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, plot.legend = FALSE) {
+.plotEmbScatCyclic <- function(emb.m, color.value, color_by, facet_var = NULL, fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL, hue.colors = c("#2E22EA", 
+    "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, plot.legend = FALSE) {
     if (is.null(fig.title)) 
         fig.title <- paste0("(n=", nrow(emb.m), ")")
     
@@ -49,17 +49,18 @@ NULL
     
     tmp.df <- data.frame(x = emb.m[, 1], y = emb.m[, 2], color = color.value)
     
-    scat.p <- ggplot(tmp.df, aes(x = x, y = y, color = color)) + geom_scattermore(pointsize = point.size, alpha = point.alpha) + scale_color_gradientn(name = color_by, limits = range(0, 2 * 
-        pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = FALSE) + labs(y = y_lab, x = x_lab, title = fig.title) + xlim(x_lim) + ylim(y_lim) + .gg_theme
+    scat.p <- ggplot(tmp.df, aes(x = x, y = y, color = color)) + geom_scattermore(pointsize = point.size, alpha = point.alpha) + scale_color_gradientn(name = color_by, limits = range(0, 
+        2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = FALSE) + labs(y = y_lab, x = x_lab, title = fig.title) + xlim(x_lim) + ylim(y_lim) + 
+        .gg_theme
     
     if (!is.null(facet_var)) {
         tmp.df$facet <- facet_var
         facet_labels <- levels(factor(tmp.df$facet))
         lp <- lapply(seq_len(nlevels(factor(tmp.df$facet))), function(idx) {
-            p <- ggplot(tmp.df, aes(x = x, y = y, color = color)) + geom_scattermore(data = tmp.df %>% dplyr::filter(facet != levels(factor(tmp.df$facet))[idx]), pointsize = point.size, alpha = 0.4, 
-                color = "gray90", show.legend = FALSE) + geom_scattermore(data = tmp.df %>% dplyr::filter(facet == levels(factor(tmp.df$facet))[idx]), pointsize = point.size, alpha = point.alpha) + 
-                scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = FALSE) + labs(y = y_lab, 
-                x = x_lab, title = facet_labels[idx]) + xlim(x_lim) + ylim(y_lim) + .gg_theme
+            p <- ggplot(tmp.df, aes(x = x, y = y, color = color)) + geom_scattermore(data = tmp.df %>% dplyr::filter(facet != levels(factor(tmp.df$facet))[idx]), pointsize = point.size, 
+                alpha = 0.4, color = "gray90", show.legend = FALSE) + geom_scattermore(data = tmp.df %>% dplyr::filter(facet == levels(factor(tmp.df$facet))[idx]), pointsize = point.size, 
+                alpha = point.alpha) + scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, 
+                guide = FALSE) + labs(y = y_lab, x = x_lab, title = facet_labels[idx]) + xlim(x_lim) + ylim(y_lim) + .gg_theme
             return(p)
         })
         return(c(list(scat.p), lp))
@@ -119,14 +120,14 @@ NULL
 #' 
 #' @import ggplot2
 #' @export
-cyclic_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, y.text = 3.8, 
-    ymax = 4.5, text.size = 3) {
+cyclic_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, 
+    y.text = 3.8, ymax = 4.5, text.size = 3) {
     hues.df = data.frame(theta = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = colorRampPalette(hue.colors)(hue.n))
     hue_text.df <- data.frame(theta = c(0, 0.5 * pi, pi, 1.5 * pi), label = c("0/2π", "0.5π", "π", "1.5π"), hjust = c(0.1, 0.5, 0.5, 0.5))
-    legend.p <- ggplot(hues.df) + geom_rect(aes(ymin = y.inner, ymax = y.outer, xmin = theta - 0.001, xmax = theta + 0.001, color = colors, fill = colors), alpha = alpha, ) + coord_polar(theta = "x", 
-        start = -pi/2, direction = -1, clip = "on") +  coord_polar(direction=-1, start=0) +
-    scale_color_identity() + scale_fill_identity() + guides(fill = FALSE, color = FALSE) + theme_void() + ylim(c(0, ymax)) + geom_text(data = hue_text.df, aes(x = theta, y = y.text, label = label, 
-        hjust = hjust), size = text.size) + theme(plot.margin = unit(c(0, 0, 0, 0), "pt"))
+    legend.p <- ggplot(hues.df) + geom_rect(aes(ymin = y.inner, ymax = y.outer, xmin = theta - 0.001, xmax = theta + 0.001, color = colors, fill = colors), alpha = alpha, ) + 
+        coord_polar(theta = "x", start = -pi/2, direction = -1, clip = "on") + scale_color_identity() + scale_fill_identity() + guides(fill = FALSE, 
+        color = FALSE) + theme_void() + ylim(c(0, ymax)) + geom_text(data = hue_text.df, aes(x = theta, y = y.text, label = label, hjust = hjust), size = text.size) + theme(plot.margin = unit(c(0, 
+        0, 0, 0), "pt"))
     return(legend.p)
 }
 

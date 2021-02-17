@@ -49,8 +49,7 @@ fitLoessTheta <- function(theta.v, y, span = 0.3, length.out = 200) {
     residual.v <- loess.o$residuals[(length(theta.v) + 1):(length(theta.v) * 2)]
     pred.x <- seq(0, 2 * pi, length.out = length.out)
     pred.y <- predict(loess.o, newdata = data.frame(x = pred.x))
-    return(list(fitted = fitted.v, residual = residual.v, pred.df = data.frame(x = pred.x, 
-        y = pred.y), loess.o = loess.o))
+    return(list(fitted = fitted.v, residual = residual.v, pred.df = data.frame(x = pred.x, y = pred.y), loess.o = loess.o))
 }
 
 

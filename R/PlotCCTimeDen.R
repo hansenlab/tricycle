@@ -46,8 +46,7 @@ NULL
 #' @import ggplot2
 #' 
 #' @export
-PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fig.title = NULL, 
-    type = c("linear", "circular"), bw = 30, weighted = FALSE, line.size = 0.5, line.alpha = 0.5, 
+PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fig.title = NULL, type = c("linear", "circular"), bw = 30, weighted = FALSE, line.size = 0.5, line.alpha = 0.5, 
     ...) {
     if ((min(theta.v) < 0) | (max(theta.v) > 2 * pi)) 
         stop("theta.v need to be between 0 - 2pi.")
@@ -85,42 +84,29 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fi
         fig.title <- paste0("(n=", length(theta.v), ")")
     
     strati.df <- do.call(rbind, lapply(seq_len(nlevels(color_var.v)), function(idx) {
-        d <- density(circular(theta.v[which(color_var.v == levels(color_var.v)[idx])]), 
-            bw = bw)
+        d <- density(circular(theta.v[which(color_var.v == levels(color_var.v)[idx])]), bw = bw)
         return(data.frame(x = as.numeric(d$x), y = d$y * weights[idx], color = levels(color_var.v)[idx]))
     }))
     strati.df$color <- factor(strati.df$color, levels = levels(color_var.v))
     
     max.v <- max(all.df$y, strati.df$y)
     if (any(is.na(strati.df$color))) {
-        strati.df$color <- fct_relevel(fct_explicit_na(strati.df$color, na_level = "NA"), 
-            "NA", after = Inf)
-        scale_color <- scale_color_manual(values = c(palette.v, "grey"), name = color_name, 
-            labels = paste0(levels(strati.df$color), "\nn=", table(strati.df$color)), 
-            limits = c(levels(strati.df$color), "NA"))
+        strati.df$color <- fct_relevel(fct_explicit_na(strati.df$color, na_level = "NA"), "NA", after = Inf)
+        scale_color <- scale_color_manual(values = c(palette.v, "grey"), name = color_name, labels = paste0(levels(strati.df$color), "\nn=", table(strati.df$color)), limits = c(levels(strati.df$color), 
+            "NA"))
     } else {
-        scale_color <- scale_color_manual(values = palette.v, name = color_name, 
-            labels = paste0(levels(strati.df$color), "\nn=", table(strati.df$color)), 
-            limits = levels(strati.df$color))
+        scale_color <- scale_color_manual(values = palette.v, name = color_name, labels = paste0(levels(strati.df$color), "\nn=", table(strati.df$color)), limits = levels(strati.df$color))
     }
     
     if (type == "linear") {
-        p <- ggplot(strati.df, aes(x = x, y = y)) + geom_path(aes(color = color), 
-            size = line.size, alpha = line.alpha, ...) + geom_path(data = all.df, 
-            size = line.size, alpha = line.alpha, color = "black", linetype = "dashed", 
-            ...) + scale_color + scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, 
-            pi/2, pi, 3 * pi/2, 2 * pi), labels = paste0(c(0, 0.5, 1, 1.5, 2), "π"), 
-            name = "θ") + labs(title = fig.title, y = "Density") + .gg_theme
+        p <- ggplot(strati.df, aes(x = x, y = y)) + geom_path(aes(color = color), size = line.size, alpha = line.alpha, ...) + geom_path(data = all.df, size = line.size, alpha = line.alpha, 
+            color = "black", linetype = "dashed", ...) + scale_color + scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2, 2 * pi), labels = paste0(c(0, 
+            0.5, 1, 1.5, 2), "π"), name = "θ") + labs(title = fig.title, y = "Density") + .gg_theme
     } else {
-        p <- ggplot(strati.df, aes(x = x, y = y + max.v)) + geom_path(aes(color = color), 
-            size = line.size, alpha = line.alpha, ...) + geom_path(data = all.df, 
-            size = line.size, alpha = line.alpha, color = "black", linetype = "dashed", 
-            ...) + scale_color + coord_polar(theta = "x", start = -pi/2, direction = -1, 
-            clip = "on") + scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, 
-            pi/2, pi, 3 * pi/2), labels = paste0(c(0, 0.5, 1, 1.5), "π"), name = "") + 
-            scale_y_continuous(limits = c(0, max.v * 2), breaks = c(max.v, max.v * 
-                1.5, max.v * 2), labels = c("0", format(max.v * c(0.5, 1), digits = 3)), 
-                name = "Density") + labs(title = fig.title)
+        p <- ggplot(strati.df, aes(x = x, y = y + max.v)) + geom_path(aes(color = color), size = line.size, alpha = line.alpha, ...) + geom_path(data = all.df, size = line.size, 
+            alpha = line.alpha, color = "black", linetype = "dashed", ...) + scale_color + coord_polar(theta = "x", start = -pi/2, direction = -1, clip = "on") + scale_x_continuous(limits = c(0, 
+            2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2), labels = paste0(c(0, 0.5, 1, 1.5), "π"), name = "") + scale_y_continuous(limits = c(0, max.v * 2), breaks = c(max.v, max.v * 
+            1.5, max.v * 2), labels = c("0", format(max.v * c(0.5, 1), digits = 3)), name = "Density") + labs(title = fig.title)
     }
     return(p)
     

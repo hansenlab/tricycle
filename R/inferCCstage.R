@@ -56,8 +56,7 @@ NULL
 
 
 #' @importFrom purrr reduce
-.CCStage <- function(data.m, batch.v = NULL, cycleGene.l = NULL, corThres = 0.2, 
-    tolerance = 0.3) {
+.CCStage <- function(data.m, batch.v = NULL, cycleGene.l = NULL, corThres = 0.2, tolerance = 0.3) {
     if (is.null(batch.v)) 
         batch.v <- rep(1, ncol(data.m))
     if ((ncol(data.m) != length(batch.v)) | any(is.na(batch.v))) 
@@ -74,30 +73,26 @@ NULL
     for (b in unique(batch.v)) {
         idx <- which(batch.v == b)
         dat <- data.m[, idx]
-        score.m <- t(scale(t(scale(do.call(cbind, lapply(seq_along(cycleGene.l), 
-            function(i) {
-                gene <- cycleGene.l[[i]]
-                gene.sum <- rowSums(dat[gene, ])
-                if (sum(gene.sum > 0) > 3) {
-                  gene <- gene[which(gene.sum > 0)]
-                } else {
-                  stop(paste0("Less than 3 ", names(cycleGene.l)[i], " stage genes expressed in bacth ", 
-                    b, ". \n Consider changing batch setting."))
-                }
-                mean.v <- colMeans(dat[gene, ])
-                cor.v <- cor(as.matrix(t(dat[gene, ])), as.vector(mean.v))
-                if (sum(cor.v > corThres) < 3) 
-                  warning(paste0("Batch ", b, " phase ", names(cycleGene.l)[i], " too few genes (<3)."))
-                message(paste0("Batch ", b, " phase ", names(cycleGene.l)[i], " gene:", 
-                  sum(cor.v > corThres), "\n"))
-                return(colMeans(dat[gene[cor.v > corThres], ]))
-            }))))))
+        score.m <- t(scale(t(scale(do.call(cbind, lapply(seq_along(cycleGene.l), function(i) {
+            gene <- cycleGene.l[[i]]
+            gene.sum <- rowSums(dat[gene, ])
+            if (sum(gene.sum > 0) > 3) {
+                gene <- gene[which(gene.sum > 0)]
+            } else {
+                stop(paste0("Less than 3 ", names(cycleGene.l)[i], " stage genes expressed in bacth ", b, ". \n Consider changing batch setting."))
+            }
+            mean.v <- colMeans(dat[gene, ])
+            cor.v <- cor(as.matrix(t(dat[gene, ])), as.vector(mean.v))
+            if (sum(cor.v > corThres) < 3) 
+                warning(paste0("Batch ", b, " phase ", names(cycleGene.l)[i], " too few genes (<3)."))
+            message(paste0("Batch ", b, " phase ", names(cycleGene.l)[i], " gene:", sum(cor.v > corThres), "\n"))
+            return(colMeans(dat[gene[cor.v > corThres], ]))
+        }))))))
         cc.v[idx] <- apply(score.m, MARGIN = 1, function(s) {
             o.v <- order(s, decreasing = TRUE)
             eta <- o.v[1]
             eta_ <- o.v[2]
-            if (((abs(eta - eta_) > 1) & (abs(eta - eta_) < (length(cycleGene.l) - 
-                1))) | ((s[eta] - s[eta_]) < tolerance)) 
+            if (((abs(eta - eta_) > 1) & (abs(eta - eta_) < (length(cycleGene.l) - 1))) | ((s[eta] - s[eta_]) < tolerance)) 
                 return(NA_character_)
             return(names(cycleGene.l)[eta])
         })
@@ -121,13 +116,11 @@ NULL
             message("No AnnotationDb desginated. org.Hs.eg.db will be used to map Human ENSEMBL id to gene SYMBOL.")
         }
     }
-    SYMBOL <- suppressMessages(toupper(AnnotationDbi::mapIds(AnnotationDb, keys = gname, 
-        column = "SYMBOL", keytype = "ENSEMBL", multiVals = "first")))
+    SYMBOL <- suppressMessages(toupper(AnnotationDbi::mapIds(AnnotationDb, keys = gname, column = "SYMBOL", keytype = "ENSEMBL", multiVals = "first")))
     return(SYMBOL)
 }
 
-.inferCCStage <- function(data.m, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", 
-    "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, ...) {
+.inferCCStage <- function(data.m, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, ...) {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
     if (is.null(gname)) {
@@ -163,8 +156,7 @@ setMethod("inferCCStage", "ANY", function(x, ...) {
 #' @export
 #' @rdname inferCCStage
 #' @importFrom SummarizedExperiment assay
-setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", 
-    batch.v = NULL) {
+setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL) {
     if (!is.null(batch.v)) {
         if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) 
             batch.v <- colData(x)[, batch.v]
@@ -178,8 +170,7 @@ setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values 
 #' @export
 #' @rdname inferCCStage
 #' @importFrom SingleCellExperiment reducedDim<- altExp reducedDimNames
-setMethod("inferCCStage", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", 
-    batch.v = NULL, altexp = NULL) {
+setMethod("inferCCStage", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL, altexp = NULL) {
     if (!is.null(batch.v)) {
         if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) 
             batch.v <- colData(x)[, batch.v]

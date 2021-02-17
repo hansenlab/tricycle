@@ -36,7 +36,7 @@
 NULL
 
 
-
+#' @export
 fitLoessTheta <- function(theta.v, y, span = 0.3, length.out = 200) {
 	if ((min(theta.v) < 0) | (max(theta.v) > 2 * pi)) stop("theta.v need to be between 0 - 2pi.")
 	if (length(theta.v) != length(y)) stop("The length of theta.v and y should be the same.")

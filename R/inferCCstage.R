@@ -1,6 +1,6 @@
 #' Assign cell cycle stages
 #'
-#' Balabala 
+#' Assign cell cycle stages using \code{\link{RevelioGeneList}}(Whitfield 2002 list) or user given gene list.
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
@@ -29,7 +29,9 @@
 #' If the projection is already calculated and stored in the \linkS4class{SingleCellExperiment} as a dimred, leave this value to default NULL.
 #'
 #' @details
-#' The function will .. BALABALA
+#' The function will assign the cell to a discretized cell cycle stage by comparing the \emph{z}-scores calculated for each stage markers.
+#' This is modified stage assignment method modified from the method in Schwabe et al.(2020).
+#' Without cycleGene.l input, \code{\link{RevelioGeneList}} will be used.
 #'
 #' @return
 #' If the input is a numeric matrix, the discretized cell cycle stages - a factor vector corresponding to each cell will be returned.
@@ -44,7 +46,14 @@
 #'
 #' @author Shijie C. Zheng
 #'
-#' @references Revelio here.
+#' @references 
+#' Schwabe D, et al.
+#' \emph{The transcriptome dynamics of single cells during the cell cycle.} 
+#' Molecular Systems Biology (2020) 16: e9946
+#' doi:\href{https://doi.org/10.15252/msb.20209946}{10.15252/msb.20209946}.
+#' 
+#' Zheng SC, et al.
+#' \emph{Our preprint.} 
 #' 
 #' @examples
 #' example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')

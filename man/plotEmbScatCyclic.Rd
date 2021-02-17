@@ -19,38 +19,42 @@ plotEmbScatCyclic(sce.o, ...)
 \arguments{
 \item{sce.o}{A \linkS4class{SingleCellExperiment} contains the embbing to be plotted against.}
 
-\item{color_by}{AAA}
+\item{color_by}{The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "CCTime"}
 
-\item{facet_by}{AAA}
+\item{facet_by}{he name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If NULL, no faceted panles will be returned. Default: NULL}
 
 \item{dimred}{The name or index of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). Default: 1}
 
-\item{dim}{DBBBBB. Default: 1:2}
+\item{dim}{The indices of \code{dimred} to be plotted. At the moment, it has to be two integers.   Default: 1:2}
 
 \item{fig.title}{The title of the figure. Default: NULL}
 
-\item{point.size}{\code{\link[scattermore]{geom_scattermore}}}
+\item{point.size}{The size of the point in scatter plot used by \code{\link[scattermore]{geom_scattermore}}. Default: 2.1}
 
-\item{point.alpha}{\code{\link[scattermore]{geom_scattermore}}}
+\item{point.alpha}{The alpha value (transparency) of the point in scatter plot used by \code{\link[scattermore]{geom_scattermore}}. Default: 0.6}
 
-\item{x_lab}{sss}
+\item{x_lab}{Title of x-axis. If not given, the colname of \code{dimred} will be used. Default: NULL}
 
-\item{y_lab}{sss}
+\item{y_lab}{Title of y-axis. If not given, the colname of \code{dimred} will be used. Default: NULL}
 
-\item{hue.colors}{sss}
+\item{hue.colors}{The string vector gives the cyclic colors. The first color should look very similar to the last one.
+Default: c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")}
 
-\item{hue.n}{sss}
+\item{hue.n}{The number of breaks of color scheme. Default: 500}
 
-\item{plot.legend}{sss}
+\item{plot.legend}{Whether the legend should be plotted with the scatter plot. We recommend not to use this legend but use the cyclic legend produced by \code{\link{cyclic_legend}} instead. Default: FALSE}
 }
 \value{
 A ggplot object or a list of ggplot objects.
+If \code{facet_by} is not assigned, a single ggplot plot of the scatter plot will be return,
+Otherwise, apart from the first scatter plot showing all cells together, other faceted scatter plots will also be given in the list.
 }
 \description{
 Generate scat plot of embedding with cyclic cell cycle time or other cyclic variables
 }
 \details{
-BALABALA
+This function help users plot embedding scater plot colored by cyclic variables, such as cell cycle time, which is bound between 0 - 2pi.
+It will take a \linkS4class{SingleCellExperiment} object as input, and plot out its \code{dimred} such as PCA, UMAP, and etc with a cyclic color scheme.
 }
 \examples{
 example_sce <- inferCCTime(example_sce)

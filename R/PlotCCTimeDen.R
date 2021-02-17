@@ -1,6 +1,6 @@
 #' Plot cell cycle time kernel density stratified by a factor
 #' 
-#' @description  The function will BALABALA
+#' @description  The function will compute and plot cell cycle time kernel density.
 #'  
 #' @param theta.v The cell cycle time - a numeric vector with range between 0 to 2pi. 
 #' @param color_var.v A factor variable to stratify \code{theta.v}, such as samples or 'CCStage'. The length of it should equal to the length of \code{theta.v}.
@@ -19,7 +19,10 @@
 #' 
 #' @return A ggplot object
 #'
-#' @details This function BALABALA
+#' @details The function first estimates kernel density using the von Mises distribution. Then,
+#' it plots out the density in the polar coordinate system or Cartesian coordinate system. Different colors
+#' represents different levels of \code{color_var.v} and the dashed black line is the marginal distribution of all cells.
+#' 
 #' 
 #' 
 #' @name PlotCCTimeDen
@@ -99,14 +102,23 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fi
     }
     
     if (type == "linear") {
-        p <- ggplot(strati.df, aes(x = x, y = y)) + geom_path(aes(color = color), size = line.size, alpha = line.alpha, ...) + geom_path(data = all.df, size = line.size, alpha = line.alpha, 
-            color = "black", linetype = "dashed", ...) + scale_color + scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2, 2 * pi), labels = paste0(c(0, 
-            0.5, 1, 1.5, 2), "π"), name = "θ") + labs(title = fig.title, y = "Density") + .gg_theme
+        p <- ggplot(strati.df, aes(x = x, y = y)) + 
+            geom_path(aes(color = color), size = line.size, alpha = line.alpha, ...) + 
+            geom_path(data = all.df, size = line.size, alpha = line.alpha, color = "black", linetype = "dashed", ...) + 
+            scale_color + 
+            scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2, 2 * pi), labels = paste0(c(0, 0.5, 1, 1.5, 2), "π"), name = "θ") + 
+            labs(title = fig.title, y = "Density") + 
+            .gg_theme
     } else {
-        p <- ggplot(strati.df, aes(x = x, y = y + max.v)) + geom_path(aes(color = color), size = line.size, alpha = line.alpha, ...) + geom_path(data = all.df, size = line.size, 
-            alpha = line.alpha, color = "black", linetype = "dashed", ...) + scale_color + coord_polar(theta = "x", start = -pi/2, direction = -1, clip = "on") + scale_x_continuous(limits = c(0, 
-            2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2), labels = paste0(c(0, 0.5, 1, 1.5), "π"), name = "") + scale_y_continuous(limits = c(0, max.v * 2), breaks = c(max.v, max.v * 
-            1.5, max.v * 2), labels = c("0", format(max.v * c(0.5, 1), digits = 3)), name = "Density") + labs(title = fig.title)
+        p <- ggplot(strati.df, aes(x = x, y = y + max.v)) + 
+            geom_path(aes(color = color), size = line.size, alpha = line.alpha, ...) + 
+            geom_path(data = all.df, size = line.size, alpha = line.alpha, color = "black", linetype = "dashed", ...) + 
+            scale_color + 
+            coord_polar(theta = "x", start = -pi/2, direction = -1, clip = "on") + 
+            scale_x_continuous(limits = c(0,  2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2), labels = paste0(c(0, 0.5, 1, 1.5), "π"), name = "") + 
+            scale_y_continuous(limits = c(0, max.v * 2), breaks = c(max.v, max.v * 1.5, max.v * 2), labels = c("0", format(max.v * c(0.5, 1), digits = 3)), name = "Density") + 
+            labs(title = fig.title) +
+            .gg_theme
     }
     return(p)
     

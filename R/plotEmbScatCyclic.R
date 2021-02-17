@@ -3,24 +3,28 @@
 #' Generate scat plot of embedding with cyclic cell cycle time or other cyclic variables
 #'
 #' @param sce.o A \linkS4class{SingleCellExperiment} contains the embbing to be plotted against.
-#' @param color_by AAA
-#' @param facet_by AAA
+#' @param color_by The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "CCTime"
+#' @param facet_by he name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If NULL, no faceted panles will be returned. Default: NULL
 #' @param dimred The name or index of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). Default: 1
-#' @param dim DBBBBB. Default: 1:2
+#' @param dim The indices of \code{dimred} to be plotted. At the moment, it has to be two integers.   Default: 1:2
 #' @param fig.title The title of the figure. Default: NULL
-#' @param point.size  \code{\link[scattermore]{geom_scattermore}}
-#' @param point.alpha  \code{\link[scattermore]{geom_scattermore}}
-#' @param x_lab sss
-#' @param y_lab sss
-#' @param hue.colors sss
-#' @param hue.n sss
-#' @param plot.legend sss
+#' @param point.size  The size of the point in scatter plot used by \code{\link[scattermore]{geom_scattermore}}. Default: 2.1
+#' @param point.alpha  The alpha value (transparency) of the point in scatter plot used by \code{\link[scattermore]{geom_scattermore}}. Default: 0.6
+#' @param x_lab Title of x-axis. If not given, the colname of \code{dimred} will be used. Default: NULL
+#' @param y_lab Title of y-axis. If not given, the colname of \code{dimred} will be used. Default: NULL
+#' @param hue.colors The string vector gives the cyclic colors. The first color should look very similar to the last one.
+#' Default: c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")
+#' @param hue.n The number of breaks of color scheme. Default: 500
+#' @param plot.legend Whether the legend should be plotted with the scatter plot. We recommend not to use this legend but use the cyclic legend produced by \code{\link{cyclic_legend}} instead. Default: FALSE
 #'
 #' @details
-#' BALABALA
+#' This function help users plot embedding scater plot colored by cyclic variables, such as cell cycle time, which is bound between 0 - 2pi.
+#' It will take a \linkS4class{SingleCellExperiment} object as input, and plot out its \code{dimred} such as PCA, UMAP, and etc with a cyclic color scheme.
 #' 
 #' @return
 #' A ggplot object or a list of ggplot objects.
+#' If \code{facet_by} is not assigned, a single ggplot plot of the scatter plot will be return,
+#' Otherwise, apart from the first scatter plot showing all cells together, other faceted scatter plots will also be given in the list.
 #'
 #' @name plotEmbScatCyclic
 #' 
@@ -49,18 +53,24 @@ NULL
     
     tmp.df <- data.frame(x = emb.m[, 1], y = emb.m[, 2], color = color.value)
     
-    scat.p <- ggplot(tmp.df, aes(x = x, y = y, color = color)) + geom_scattermore(pointsize = point.size, alpha = point.alpha) + scale_color_gradientn(name = color_by, limits = range(0, 
-        2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = FALSE) + labs(y = y_lab, x = x_lab, title = fig.title) + xlim(x_lim) + ylim(y_lim) + 
+    scat.p <- ggplot(tmp.df, aes(x = x, y = y, color = color)) + 
+        geom_scattermore(pointsize = point.size, alpha = point.alpha) + 
+        scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = FALSE) + 
+        labs(y = y_lab, x = x_lab, title = fig.title) + 
+        xlim(x_lim) + ylim(y_lim) + 
         .gg_theme
     
     if (!is.null(facet_var)) {
         tmp.df$facet <- facet_var
         facet_labels <- levels(factor(tmp.df$facet))
         lp <- lapply(seq_len(nlevels(factor(tmp.df$facet))), function(idx) {
-            p <- ggplot(tmp.df, aes(x = x, y = y, color = color)) + geom_scattermore(data = tmp.df %>% dplyr::filter(facet != levels(factor(tmp.df$facet))[idx]), pointsize = point.size, 
-                alpha = 0.4, color = "gray90", show.legend = FALSE) + geom_scattermore(data = tmp.df %>% dplyr::filter(facet == levels(factor(tmp.df$facet))[idx]), pointsize = point.size, 
-                alpha = point.alpha) + scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, 
-                guide = FALSE) + labs(y = y_lab, x = x_lab, title = facet_labels[idx]) + xlim(x_lim) + ylim(y_lim) + .gg_theme
+            p <- ggplot(tmp.df, aes(x = x, y = y, color = color)) + 
+                geom_scattermore(data = tmp.df %>% dplyr::filter(facet != levels(factor(tmp.df$facet))[idx]), pointsize = point.size, alpha = 0.4, color = "gray90", show.legend = FALSE) + 
+                geom_scattermore(data = tmp.df %>% dplyr::filter(facet == levels(factor(tmp.df$facet))[idx]), pointsize = point.size, alpha = point.alpha) + 
+                scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = FALSE) + 
+                labs(y = y_lab, x = x_lab, title = facet_labels[idx]) +
+                xlim(x_lim) + ylim(y_lim) + 
+                .gg_theme
             return(p)
         })
         return(c(list(scat.p), lp))
@@ -92,20 +102,21 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, ..., colo
 #' 
 #' @title Get the cyclic legend
 #' 
-#' @description BALABALA
+#' @description This function is a helper function to create the cyclic ggplot color legend.
 #' 
-#' @param hue.colors BAAA
-#' @param hue.n BAAA
-#' @param alpha AAAA
-#' @param y.inner BAAA
-#' @param y.outer BAAA
-#' @param y.text BAAA
-#' @param ymax BAAA
-#' @param text.size BAAA
+#' @param hue.colors The string vector gives the cyclic colors. The first color should look very similar to the last one.
+#' Default: c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")
+#' @param hue.n The number of breaks of color scheme. Default: 500
+#' @param alpha The alpha value (transparency). Default: 0.6
+#' @param y.inner The radius of inner circle of the donut. Default: 1.5
+#' @param y.outer The radius of outer circle of the donut. Default: 3
+#' @param y.text The radius of text position. Default: 3.8
+#' @param ymax The value control the border of the legend. Default: 4.5
+#' @param text.size The size of the text Default: 3
 #' 
 #' @return A ggplot object
 #' 
-#' @details BALA
+#' @details The function will make a donut shape to serve as the cyclic color legend. The arguments should match the argument used in \code{\link{plotEmbScatCyclic}}.
 #' 
 #' @author Shijie C. Zheng
 #' 

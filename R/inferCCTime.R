@@ -37,6 +37,10 @@
 #' @seealso
 #' \code{\link{projectCC}}, for projecting new data with a pre-learned reference
 #'
+#' @references 
+#' Zheng SC, et al.
+#' \emph{Our preprint.}
+#' 
 #' @author Shijie C. Zheng
 #'
 #' @examples

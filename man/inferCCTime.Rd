@@ -70,6 +70,10 @@ plot(reducedDim(example_sce, 'ccProjection'))
 plot(example_sce$CCTime, reducedDim(example_sce, 'ccProjection')[, 1])
 plot(example_sce$CCTime, reducedDim(example_sce, 'ccProjection')[, 2])
 }
+\references{
+Zheng SC, et al.
+\emph{Our preprint.}
+}
 \seealso{
 \code{\link{projectCC}}, for projecting new data with a pre-learned reference
 }

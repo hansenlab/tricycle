@@ -4,30 +4,31 @@
 \alias{cyclic_legend}
 \title{Get the cyclic legend}
 \arguments{
-\item{hue.colors}{BAAA}
+\item{hue.colors}{The string vector gives the cyclic colors. The first color should look very similar to the last one.
+Default: c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")}
 
-\item{hue.n}{BAAA}
+\item{hue.n}{The number of breaks of color scheme. Default: 500}
 
-\item{alpha}{AAAA}
+\item{alpha}{The alpha value (transparency). Default: 0.6}
 
-\item{y.inner}{BAAA}
+\item{y.inner}{The radius of inner circle of the donut. Default: 1.5}
 
-\item{y.outer}{BAAA}
+\item{y.outer}{The radius of outer circle of the donut. Default: 3}
 
-\item{y.text}{BAAA}
+\item{y.text}{The radius of text position. Default: 3.8}
 
-\item{ymax}{BAAA}
+\item{ymax}{The value control the border of the legend. Default: 4.5}
 
-\item{text.size}{BAAA}
+\item{text.size}{The size of the text Default: 3}
 }
 \value{
 A ggplot object
 }
 \description{
-BALABALA
+This function is a helper function to create the cyclic ggplot color legend.
 }
 \details{
-BALA
+The function will make a donut shape to serve as the cyclic color legend. The arguments should match the argument used in \code{\link{plotEmbScatCyclic}}.
 }
 \examples{
 cyclic_legend()

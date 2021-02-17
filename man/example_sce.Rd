@@ -5,13 +5,15 @@
 \alias{example_sce}
 \title{Example SingleCellExperiment dataset}
 \format{
-An \linkS4class{SingleCellExperiment} object
+An \linkS4class{SingleCellExperiment} object of 1500 genes and 400 cells.
 }
 \usage{
 data(example_sce)
 }
 \description{
-Data from BALABALA
+This a subset of mouse Neurosphere data. 200 cells from sample AX1 and AX2 were randonly 
+sampled from the full data. All genes in the GO cell cycle gene list and \code{\link{RevelioGeneList}}
+ as well as other random 573 genes were included.
 }
 \examples{
 data(example_sce)

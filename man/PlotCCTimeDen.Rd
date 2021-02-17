@@ -33,10 +33,12 @@ of \code{color_var.v} is greater than 8, only the top 8 levels of most cell
 A ggplot object
 }
 \description{
-The function will BALABALA
+The function will compute and plot cell cycle time kernel density.
 }
 \details{
-This function BALABALA
+The function first estimates kernel density using the von Mises distribution. Then,
+it plots out the density in the polar coordinate system or Cartesian coordinate system. Different colors
+represents different levels of \code{color_var.v} and the dashed black line is the marginal distribution of all cells.
 }
 \examples{
 example_sce <- inferCCTime(example_sce)

@@ -60,10 +60,12 @@ If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{Su
 If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with the discretized cell cycle stages stored in colData with name 'CCStage' will be returned.
 }
 \description{
-Balabala
+Assign cell cycle stages using \code{\link{RevelioGeneList}}(Whitfield 2002 list) or user given gene list.
 }
 \details{
-The function will .. BALABALA
+The function will assign the cell to a discretized cell cycle stage by comparing the \emph{z}-scores calculated for each stage markers.
+This is modified stage assignment method modified from the method in Schwabe et al.(2020).
+Without cycleGene.l input, \code{\link{RevelioGeneList}} will be used.
 }
 \examples{
 example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
@@ -73,7 +75,13 @@ example_sce <- projectCC(example_sce)
 plot(reducedDim(example_sce, 'ccProjection'), col = example_sce$CCStage)
 }
 \references{
-Revelio here.
+Schwabe D, et al.
+\emph{The transcriptome dynamics of single cells during the cell cycle.} 
+Molecular Systems Biology (2020) 16: e9946
+doi:\href{https://doi.org/10.15252/msb.20209946}{10.15252/msb.20209946}.
+
+Zheng SC, et al.
+\emph{Our preprint.}
 }
 \seealso{
 \code{\link{projectCC}}, for projecting new data with a pre-learned reference

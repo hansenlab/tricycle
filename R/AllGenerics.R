@@ -14,3 +14,10 @@ setGeneric("pcaGoCC", function(sce.o, ...) standardGeneric("pcaGoCC"))
 #' @export
 #' @rdname inferCCStage
 setGeneric("inferCCStage", function(x, ...) standardGeneric("inferCCStage"))
+
+#' @export
+#' @rdname plotEmbScatCyclic
+setGeneric("plotEmbScatCyclic", function(sce.o, ...) standardGeneric("plotEmbScatCyclic"))
+
+
+

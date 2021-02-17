@@ -9,7 +9,7 @@
 #'  (See \code{\link[RColorBrewer]{display.brewer.all}}) If the number of levels 
 #'  of \code{color_var.v} is greater than 8, only the top 8 levels of most cell
 #'   will be shown. You can show them all by feeding enough colors in \code{palette.v}. Default: NULL
-#' @param title The title of the figure. Default: NULL
+#' @param fig.title The title of the figure. Default: NULL
 #' @param type It can be either of "linear" or "circular". "linear" corresponds to Cartesian coordinate system and "circular" for polar coordinate system. Default: "linear"
 #' @param bw 	The smoothing bandwidth to be used. It is equal to the concentration parameter of the von Mises distribution. See \code{\link[circular]{density.circular}}. Default: 30
 #' @param weighted Whether the density should be weighted on the percentage of each level of \code{color_var.v}. Default: FALSE
@@ -46,7 +46,7 @@ NULL
 #' @import ggplot2
 #' 
 #' @export
-PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, title = NULL, type = c("linear", "circular"), bw = 30,  weighted = FALSE, line.size = 0.5, line.alpha = 0.5, ...) {
+PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fig.title = NULL, type = c("linear", "circular"), bw = 30,  weighted = FALSE, line.size = 0.5, line.alpha = 0.5, ...) {
 	if ((min(theta.v) < 0) | (max(theta.v) > 2 * pi)) stop("theta.v need to be between 0 - 2pi.")
 	if (length(theta.v) != length(color_var.v)) stop("The length of theta.v and color_var.v should be the same.")
 	type <- match.arg(type)
@@ -76,7 +76,7 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, ti
 		weights <- rep(1, length(color_var.v))
 	}
 	
-	if (is.null(title)) title <- paste0("(n=", length(theta.v), ")")
+	if (is.null(fig.title)) fig.title <- paste0("(n=", length(theta.v), ")")
 		
 	strati.df <- do.call(rbind, lapply(seq_len(nlevels(color_var.v)), function(idx) {
 		d <- density(circular(theta.v[which(color_var.v == levels(color_var.v)[idx])]), bw = bw)
@@ -101,7 +101,7 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, ti
 												 breaks =  c(0, pi / 2, pi, 3 * pi / 2, 2 * pi),
 												 labels = paste0(c(0, 0.5, 1, 1.5, 2), "\u03C0"),
 												 name = "\u03B8") +
-			labs(title = title, y = "Density") +
+			labs(title = fig.title, y = "Density") +
 			.gg_theme
 	} else {
 		p <- ggplot(strati.df, aes(x = x  , y = y + max.v )) +
@@ -117,7 +117,7 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, ti
 												 breaks =  c(max.v, max.v * 1.5, max.v * 2),
 												 labels = c("0", format(max.v * c(0.5, 1), digits = 3)),
 												 name = "Density") +
-			labs(title = title)
+			labs(title = fig.title)
 	}
 	return(p)
 	

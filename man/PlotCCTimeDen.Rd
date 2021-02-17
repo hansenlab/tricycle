@@ -15,7 +15,7 @@
 of \code{color_var.v} is greater than 8, only the top 8 levels of most cell
  will be shown. You can show them all by feeding enough colors in \code{palette.v}. Default: NULL}
 
-\item{title}{The title of the figure. Default: NULL}
+\item{fig.title}{The title of the figure. Default: NULL}
 
 \item{type}{It can be either of "linear" or "circular". "linear" corresponds to Cartesian coordinate system and "circular" for polar coordinate system. Default: "linear"}
 

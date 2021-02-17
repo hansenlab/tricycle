@@ -6,18 +6,18 @@
 \arguments{
 \item{theta.v}{The cell cycle time - a numeric vector with range between 0 to 2pi.}
 
-\item{color_var.v}{A factor variable to stratify \code{theta.v}, such as samples or "CCStage". The length of it should equal to the length of \code{theta.v}.}
+\item{color_var.v}{A factor variable to stratify \code{theta.v}, such as samples or 'CCStage'. The length of it should equal to the length of \code{theta.v}.}
 
 \item{color_name}{The name of the color_var.v to be used in the legend.}
 
-\item{palette.v}{A string vector to give the color names. It should has the length of the number of levels of \code{color_var.v}. If not given, the "Set1" palette will be used.
+\item{palette.v}{A string vector to give the color names. It should has the length of the number of levels of \code{color_var.v}. If not given, the 'Set1' palette will be used.
 (See \code{\link[RColorBrewer]{display.brewer.all}}) If the number of levels 
 of \code{color_var.v} is greater than 8, only the top 8 levels of most cell
  will be shown. You can show them all by feeding enough colors in \code{palette.v}. Default: NULL}
 
 \item{fig.title}{The title of the figure. Default: NULL}
 
-\item{type}{It can be either of "linear" or "circular". "linear" corresponds to Cartesian coordinate system and "circular" for polar coordinate system. Default: "linear"}
+\item{type}{It can be either of 'linear' or 'circular'. 'linear' corresponds to Cartesian coordinate system and 'circular' for polar coordinate system. Default: 'linear'}
 
 \item{bw}{The smoothing bandwidth to be used. It is equal to the concentration parameter of the von Mises distribution. See \code{\link[circular]{density.circular}}. Default: 30}
 
@@ -40,10 +40,10 @@ This function BALABALA
 }
 \examples{
 example_sce <- inferCCTime(example_sce)
-PlotCCTimeDen(example_sce$CCTime, example_sce$sample, "sample")
+PlotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample')
 
-example_sce <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse")
-PlotCCTimeDen(example_sce$CCTime, example_sce$CCStage, "sample")
+example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
+PlotCCTimeDen(example_sce$CCTime, example_sce$CCStage, 'CCStage')
 }
 \seealso{
 \code{\link{inferCCStage}}, for inferring 5 stages of cell cycle

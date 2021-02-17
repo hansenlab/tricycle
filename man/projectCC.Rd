@@ -25,11 +25,11 @@ projectCC(x, ...)
 \item{x}{A numeric matrix of **log-expression** values where rows are features and columns are cells.
 Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
 
-\item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values. Default: "logcounts"}
+\item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values. Default: 'logcounts'}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment containing the input data.}
 
-\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: "ccProjection"}
+\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'ccProjection'}
 
 \item{ref.m}{A custom reference projection matrix to project the new data, where rows are features and columns are dimensions.
 Users need to use the same type of \code{gname}(or rownames of \code{x}) as for the \code{ref.m}.
@@ -38,11 +38,11 @@ If no custom ref.m is given, the internal reference \code{neuroRef} will be used
 \item{gname}{Alternative rownames of \code{x}. If provided, this will be used to map genes within \code{x} with genes in \code{ref.m}.
 If not provided, the rownames of \code{x} will be used instead. Default: NULL}
 
-\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{x}. It can be either "ENSEMBL" or "SYMBOL". If the user uses
-custom \code{ref.m}, this value will have no effect. Default: "ENSEMBL"}
+\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{x}. It can be either 'ENSEMBL' or 'SYMBOL'. If the user uses
+custom \code{ref.m}, this value will have no effect. Default: 'ENSEMBL'}
 
-\item{species}{The type of species in \code{x}. It can be either "mouse" or "human". If the user uses
-custom \code{ref.m}, this value will have no effect. Default: "mouse"}
+\item{species}{The type of species in \code{x}. It can be either 'mouse' or 'human'. If the user uses
+custom \code{ref.m}, this value will have no effect. Default: 'mouse'}
 
 \item{AnnotationDb}{An AnnotationDb objects. If the user uses the internal reference to project human data,
 and provide rownames in the format of Ensembl IDs, this object will be used to map Ensembl IDs to gene SYMBOLs.
@@ -50,7 +50,7 @@ If no AnnotationDb object being given, the function will use \code{\link[org.Hs.
 }
 \value{
 If the input is a numeric matrix or a \linkS4class{SummarizedExperiment}, a projection matrix with rows cells and column dimensions will be returned.
-The actual rotation matrix used to project the data is included in the attributes with name "rotation".
+The actual rotation matrix used to project the data is included in the attributes with name 'rotation'.
 
 For \linkS4class{SingleCellExperiment}, an updated \linkS4class{SingleCellExperiment} is returned containing projection matrix in \code{\link[SingleCellExperiment]{reducedDims}(..., name)}.
 }
@@ -65,9 +65,9 @@ The projection process is to take sum of weighted mean-centered expression of ch
 \examples{
 example_sce <- projectCC(example_sce)
 reducedDimNames(example_sce)
-head(reducedDim(example_sce, "ccProjection"))
-plot(reducedDim(example_sce, "ccProjection"))
-names(attributes(reducedDim(example_sce, "ccProjection")))
+head(reducedDim(example_sce, 'ccProjection'))
+plot(reducedDim(example_sce, 'ccProjection'))
+names(attributes(reducedDim(example_sce, 'ccProjection')))
 }
 \seealso{
 \code{\link{inferCCTime}}, for inferring cell cycle time.

@@ -20,7 +20,7 @@ inferCCStage(x, ...)
 Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
 
 \item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
-If the projection already exists, you can ignore this value. Default: "logcounts"}
+If the projection already exists, you can ignore this value. Default: 'logcounts'}
 
 \item{batch.v}{A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable. 
 Or it can be a vector, of which the number of elements equals to the number of columns of \code{x}. The 5 stage cell cycle assignments are preformed for each batch separately. 
@@ -36,11 +36,11 @@ Default: NULL}
 \item{gname}{Alternative rownames of \code{x}. If provided, this will be used to map genes within \code{x} with genes in \code{ref.m}.
 If not provided, the rownames of \code{x} will be used instead. Default: NULL}
 
-\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{x}. It can be either "ENSEMBL" or "SYMBOL". If the user uses
-custom \code{ref.m}, this value will have no effect. Default: "ENSEMBL"}
+\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{x}. It can be either 'ENSEMBL' or 'SYMBOL'. If the user uses
+custom \code{ref.m}, this value will have no effect. Default: 'ENSEMBL'}
 
-\item{species}{The type of species in \code{x}. It can be either "mouse" or "human". If the user uses
-custom \code{ref.m}, this value will have no effect. Default: "mouse"}
+\item{species}{The type of species in \code{x}. It can be either 'mouse' or 'human'. If the user uses
+custom \code{ref.m}, this value will have no effect. Default: 'mouse'}
 
 \item{corThres}{For each batch and each stage, correlations between expression of each gene and the mean of all genes belonging to that stage 
 will be calculated to filter the final gene list used for inference. The genes with a correlation between \code{corThres} will not be used for calculating \emph{z}-scores.
@@ -55,9 +55,9 @@ If no AnnotationDb object being given, the function will use \code{\link[org.Hs.
 \value{
 If the input is a numeric matrix, the discretized cell cycle stages - a factor vector corresponding to each cell will be returned.
 
-If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{SummarizedExperiment} with the discretized cell cycle stages stored in colData with name "CCStage" will be returned.
+If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{SummarizedExperiment} with the discretized cell cycle stages stored in colData with name 'CCStage' will be returned.
 
-If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with the discretized cell cycle stages stored in colData with name "CCStage" will be returned.
+If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with the discretized cell cycle stages stored in colData with name 'CCStage' will be returned.
 }
 \description{
 Balabala
@@ -66,11 +66,11 @@ Balabala
 The function will .. BALABALA
 }
 \examples{
-example_sce <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse")
-example_sce2 <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse", batch = "sample")
-example_sce3 <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse", batch = example_sce$sample)
+example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
+example_sce2 <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse', batch.v = 'sample')
+example_sce3 <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse', batch.v = example_sce$sample)
 example_sce <- projectCC(example_sce)
-plot(reducedDim(example_sce, "ccProjection"), col = example_sce$CCStage)
+plot(reducedDim(example_sce, 'ccProjection'), col = example_sce$CCStage)
 }
 \references{
 Revelio here.

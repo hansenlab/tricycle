@@ -32,9 +32,9 @@ will be returned. User can use \code{pred.df} to visualize the loess line.
 }
 \examples{
 example_sce <- inferCCTime(example_sce)
-top2a.idx <- which(rowData(example_sce)$Gene == "Top2a")
-fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, "logcounts")[top2a.idx, ])
-plot(example_sce$CCTime, assay(example_sce, "logcounts")[top2a.idx, ])
+top2a.idx <- which(rowData(example_sce)$Gene == 'Top2a')
+fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
+plot(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
 lines(fit.l$pred.df)
 }
 \seealso{

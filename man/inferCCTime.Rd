@@ -34,11 +34,11 @@ already in the reducedDim with name \code{dimred}. The \code{dimred} will be dir
 \item{center.pc2}{The center of PC2 when defining the angle. Default: 0}
 
 \item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
-If the projection already exists, you can ignore this value. Default: "logcounts"}
+If the projection already exists, you can ignore this value. Default: 'logcounts'}
 
 \item{dimred}{The name of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). If the \code{dimred} already exists,
 it will be used to assign cell cycle time. If \code{dimred} does not exist, the projection will be calculated first by \code{\link{projectCC}}
-and stored with name \code{dimred} in {x}. Default: "ccProjection"}
+and stored with name \code{dimred} in {x}. Default: 'ccProjection'}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment containing the **log-expression** data, which will be used for projection.
 If the projection is already calculated and stored in the \linkS4class{SingleCellExperiment} as a dimred, leave this value to default NULL.}
@@ -46,9 +46,9 @@ If the projection is already calculated and stored in the \linkS4class{SingleCel
 \value{
 If the input is a numeric matrix, the cell cycle time - a numeric vector bound between \eqn{0 \sim 2 \pi} with the same length as the number of input coumlum will be returned.
 
-If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{SummarizedExperiment} with cell cycle time stored in colData with name "CCTime" will be returned.
+If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{SummarizedExperiment} with cell cycle time stored in colData with name 'CCTime' will be returned.
 
-If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with cell cycle time stored in colData with name "CCTime" will be returned
+If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with cell cycle time stored in colData with name 'CCTime' will be returned
 and the projection will be stored in \code{\link[SingleCellExperiment]{reducedDims}(..., dimred)} if it does not exist before.
 }
 \description{
@@ -66,9 +66,9 @@ Refer to \code{\link{projectCC}} to all arguments during the projection.
 \examples{
 example_sce <- inferCCTime(example_sce)
 reducedDimNames(example_sce)
-plot(reducedDim(example_sce, "ccProjection"))
-plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 1])
-plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 2])
+plot(reducedDim(example_sce, 'ccProjection'))
+plot(example_sce$CCTime, reducedDim(example_sce, 'ccProjection')[, 1])
+plot(example_sce$CCTime, reducedDim(example_sce, 'ccProjection')[, 2])
 }
 \seealso{
 \code{\link{projectCC}}, for projecting new data with a pre-learned reference

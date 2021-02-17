@@ -29,25 +29,28 @@
 #'
 #' @examples
 #' example_sce <- inferCCTime(example_sce)
-#' top2a.idx <- which(rowData(example_sce)$Gene == "Top2a")
-#' fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, "logcounts")[top2a.idx, ])
-#' plot(example_sce$CCTime, assay(example_sce, "logcounts")[top2a.idx, ])
+#' top2a.idx <- which(rowData(example_sce)$Gene == 'Top2a')
+#' fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
+#' plot(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
 #' lines(fit.l$pred.df)
 NULL
 
 
 #' @export
 fitLoessTheta <- function(theta.v, y, span = 0.3, length.out = 200) {
-	if ((min(theta.v) < 0) | (max(theta.v) > 2 * pi)) stop("theta.v need to be between 0 - 2pi.")
-	if (length(theta.v) != length(y)) stop("The length of theta.v and y should be the same.")
-	x <- c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi)
-	y <- rep(y, 3)
-	loess.o <- loess(y ~ x, span = span)
-	fitted.v <- loess.o$fitted[(length(theta.v) + 1):(length(theta.v) * 2)]
-	residual.v <- loess.o$residuals[(length(theta.v) + 1):(length(theta.v) * 2)]
-	pred.x <- seq(0, 2 * pi, length.out = length.out)
-	pred.y <- predict(loess.o, newdata = data.frame(x = pred.x ))
-	return(list(fitted = fitted.v, residual = residual.v, pred.df = data.frame(x = pred.x, y = pred.y), loess.o = loess.o))
+    if ((min(theta.v) < 0) | (max(theta.v) > 2 * pi)) 
+        stop("theta.v need to be between 0 - 2pi.")
+    if (length(theta.v) != length(y)) 
+        stop("The length of theta.v and y should be the same.")
+    x <- c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi)
+    y <- rep(y, 3)
+    loess.o <- loess(y ~ x, span = span)
+    fitted.v <- loess.o$fitted[(length(theta.v) + 1):(length(theta.v) * 2)]
+    residual.v <- loess.o$residuals[(length(theta.v) + 1):(length(theta.v) * 2)]
+    pred.x <- seq(0, 2 * pi, length.out = length.out)
+    pred.y <- predict(loess.o, newdata = data.frame(x = pred.x))
+    return(list(fitted = fitted.v, residual = residual.v, pred.df = data.frame(x = pred.x, 
+        y = pred.y), loess.o = loess.o))
 }
 
 

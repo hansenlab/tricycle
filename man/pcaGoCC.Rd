@@ -19,12 +19,12 @@ pcaGoCC(sce.o, ...)
 \item{sce.o}{A \linkS4class{SingleCellExperiment} contains library size normalized **log-expression** matrix.}
 
 \item{exprs_values}{Integer scalar or string indicating which assay of \code{sce.o} contains the **log-expression** values, which will be used to run PCA. 
-Default: "logcounts"}
+Default: 'logcounts'}
 
-\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{sce.o}. It can be either "ENSEMBL" or "SYMBOL". Default: "ENSEMBL"}
+\item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{sce.o}. It can be either 'ENSEMBL' or 'SYMBOL'. Default: 'ENSEMBL'}
 
-\item{species}{The type of species in \code{sce.o}. It can be either "mouse" or "human". The corresponding AnnotationDb object will be
-\code{\link[org.Mm.eg.db]{org.Hs.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}. Default: "mouse"}
+\item{species}{The type of species in \code{sce.o}. It can be either 'mouse' or 'human'. The corresponding AnnotationDb object will be
+\code{\link[org.Mm.eg.db]{org.Hs.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}. Default: 'mouse'}
 
 \item{gname}{Alternative rownames of \code{sce.o}. If provided, this will be used to map genes within Gene Ontology cell cycle gene list.
 If not provided, the rownames of \code{sce.o} will be used instead. Default: NULL}
@@ -36,19 +36,19 @@ If not provided, the rownames of \code{sce.o} will be used instead. Default: NUL
 \item{seed}{A random number for getting the same PCA when reruning the function. Default: 1000}
 
 \item{runSeuratBy}{If the value is not NULL, the subsetted data (only GO cell cycle genes) will be integrated by Seurat. See \code{\link[Seurat]{IntegrateData}}.
-This value should be set as a column name in \code{colData(sce.o)}. Such as "sample" or "batch". Default: NULL}
+This value should be set as a column name in \code{colData(sce.o)}. Such as 'sample' or 'batch'. Default: NULL}
 
 \item{nfeatures}{The number of highly variable features within each sample/batch, which will only be used when integrating with Seurat.
 See \code{\link[Seurat]{FindVariableFeatures}}. Default: 500}
 
 \item{anchor.features}{The number of genes used in anchor finding during Seurat integration. See \code{\link[Seurat]{FindIntegrationAnchors}}. Default: 2000}
 
-\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: "PCA"}
+\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'PCA'}
 }
 \value{
 A subset \linkS4class{SingleCellExperiment} object with only GO cell cycle genes will be return.
 The PCA resulting will be save in reducedDims with chosen name \code{\link[SingleCellExperiment]{reducedDims}(..., name)}. 
-If Seurat integration is performed, another reducedDims with name "matched."+\code{name} will also be included in the \linkS4class{SingleCellExperiment}.
+If Seurat integration is performed, another reducedDims with name 'matched.'+\code{name} will also be included in the \linkS4class{SingleCellExperiment}.
 }
 \description{
 Run PCA on Gene Ontology cell cycle genes abd get a new \linkS4class{SingleCellExperiment}. 
@@ -60,14 +60,14 @@ be subsetted to genes in the Gene Ontology cell cycle gene list (GO:0007049). Th
  \code{\link[org.Mm.eg.db]{org.Hs.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} for mouse and human respectively. If \code{runSeuratBy} is set, the data will be 
  integrated to remove batch effect between samples/batches by Seurat.
  
-User can use this function to make new reference projection matrix by getting the "rotation" attribute in PCA results. Such as 
-\code{attr(reducedDim(sce.o, "PCA"), "rotation")[, 1:2]}. See examples for more details.
+User can use this function to make new reference projection matrix by getting the 'rotation' attribute in PCA results. Such as 
+\code{attr(reducedDim(sce.o, 'PCA'), 'rotation')[, 1:2]}. See examples for more details.
 }
 \examples{
 gocc_sce.o <- pcaGoCC(example_sce)
-new.ref <- attr(reducedDim(gocc_sce.o, "PCA"), "rotation")[, 1:2]
+new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, 1:2]
 example_sce <- inferCCTime(example_sce)  ### Use internal NeuroRef to project and infer CC time
-new_sce <- inferCCTime(example_sce, ref.m  = new.ref, dimred = "ccProjection2")  ### Use new reference to project and infer CC time
+new_sce <- inferCCTime(example_sce, ref.m  = new.ref, dimred = 'ccProjection2')  ### Use new reference to project and infer CC time
 plot(example_sce$CCTime, new_sce$CCTime)
 }
 \author{

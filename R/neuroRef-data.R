@@ -6,7 +6,7 @@
 #'
 #' @usage data(neuroRef)
 #'
-#' @format An object of class `"data.frame"`
+#' @format An object of class `'data.frame'`
 #'
 #' @keywords datasets
 #'

@@ -5,7 +5,7 @@
 \alias{neuroRef}
 \title{Pre-learned reference projection matrix from Neurosphere dataset}
 \format{
-An object of class `"data.frame"`
+An object of class `'data.frame'`
 }
 \usage{
 data(neuroRef)

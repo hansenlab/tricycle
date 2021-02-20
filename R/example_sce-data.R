@@ -9,7 +9,7 @@
 #'
 #' @usage data(example_sce)
 #'
-#' @format An \linkS4class{SingleCellExperiment} object of 1500 genes and 400 cells.
+#' @format A \linkS4class{SingleCellExperiment} object of 1500 genes and 400 cells.
 #'
 #' @keywords datasets
 #'

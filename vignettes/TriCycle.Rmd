@@ -1,0 +1,136 @@
+---
+title: "TriCycle: Transferable Representation and Inference of Cell Cycle"
+author: 
+- name: Shijie C. Zheng
+  affiliation: Department of Biostatistics, Johns Hopkins Bloomberg School of Public Health
+  email: shijieczheng@gmail.com
+package: tricycle
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+bibliography: TriCycle.bib
+vignette: >
+  %\VignetteIndexEntry{TriCycle: Transferable Representation and Inference of Cell Cycle}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}  
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+Cell cycle is an important and universal biological process in eukaryotes. For single cell RNAseq, the expression levels of cell cycle marker genes could be modeled as a periodic function of cell cycle time. The principal components analysis (PCA) of cell cycle genes could help us recover the cell cycle time in such a single cell RNAseq of which the main variation is driven by cell cycle. However, in a more complicated dataset of which main variation is driven by other phenotypes, PCA could fail due to the unorthogonality of cell cycle effect and other effects. @Stein-OBrien.2019 has shown that the transfer learning works well in single cell data, where one could learn a biological pattern and project the same pattern in other data. **TriCycle** is package that projects new data into the pre-learned cell cycle space and estimate the cell cycle time. The package also provide functions for users to learn a new reference projection and visualize the cell cycle time. All functions are built on the Bioconductor *SingleCellExperiment* infrastructure. See @Zheng.2021 for more rationales.
+
+
+# Prerequisites
+<!-- Add installation command later. BiocManager::install("tricycle") -->
+
+```{r setup, message = FALSE}
+library(tricycle)
+```
+We recommend users to start with a *SingleCellExperiment* object. The output will usually be the *SingleCellExperiment* with new info added. Although some of the functions accept input of *matrix* or *SummarizedExperiment* object, the projected PCs will only be stored in the *reducedDims* slot in *SingleCellExperiment*, and thus those functions will return a vector or a list. 
+
+In the package, we include a example *SingleCellExperiment* dataset, which is a real subset of mouse Neurosphere RNAseq of 2 samples. 200 cells from sample AX1 and AX2 were randonly sampled from the full data. All genes in the Gene Ontology cell cycle gene list and *RevelioGeneList* as well as other random 573 genes were included.
+```{r example, message = FALSE}
+example_sce
+```
+
+Please note that the user should **normalize library size** before putting into the tricycle functions. The library size normalization could be done by *normalizeCounts* function in *scater* package or by calculating CPM values. 
+
+# Project a single cell data set to pre-learned cell cycle space
+In the package, we provide a reference, learned from the full dataset of the mouse Neurosphere RNAseq. The reference gives weights of 500 cell cycle genes and their IDs. Although learned from mouse, it is applicable to human data as well, with the gene mapped by gene symbols.
+```{r ref, message = FALSE}
+head(neuroRef)
+```
+
+*projectCC* will automatically project the assay with name *logcounts* into the cell cycle space without any other argument input. You could specify species (default as mouse), gene IDs, gene ID type, and *AnnotationDb* object if gene mapping is needed. Refer to "man(projectCC)" for details.
+```{r project, message = TRUE}
+example_sce <- projectCC(example_sce)
+example_sce
+```
+
+The projected cell cycle space will be stored in *reducedDims* with name "ccProjection" (you could set other embedding name.).
+```{r plot_projection, message = FALSE}
+library(ggplot2)
+qplot(x = reducedDim(example_sce)[, 1],y = reducedDim(example_sce)[, 2]) +
+  labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(example_sce), ")")) +
+  theme_bw(base_size = 14)
+
+```
+
+# Infer cell cycle time θ
+The cell cycle time θ inference is straight forward once you get the cell cycle space projection. The formula is $\theta = tan^{-1}(PC2/PC1)$. *inferCCTime* is kind of a wrapper function. You could run *inferCCTime* directly without running *projectCC*. *inferCCTime* will search wheterh there is a embedding called "ccProjection" (default), use it to calculate θ, and return a *SingleCellExperiment* with "CCTime" added to *colData*. If the designated embedding does not exist, it will project the data first.
+```{r cctime, message = TRUE}
+example_sce <- inferCCTime(example_sce)
+names(colData(example_sce))
+```
+
+We also provide a convenient function *fitLoessTheta* to fit *loess* line between the cyclic variable θ and other response variables. This fitting is done by making `theta.v` 3 periods `(c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi))` and repeating `y` 3 times. Only the fitted values corresponding to original `theta.v` will be returned. In this example, we show how well the expression of the cell cycle marker gene *Top2a* change along θ.
+```{r loess, message = TRUE}
+top2a.idx <- which(rowData(example_sce)$Gene == 'Top2a')
+fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
+names(fit.l)
+ggplot(data = data.frame(theta = example_sce$CCTime, top2a = assay(example_sce, 'logcounts')[top2a.idx, ])) +
+  geom_point(aes(x = theta, y = top2a), size = 1) +
+  geom_path(data = fit.l$pred.df, aes(x = x, y = y), size = 0.8, alpha = 0.8) +
+  labs(x = "Cell cycle time θ", y = "log2(Top2a)", title = paste0("Expression of Top2a along θ (n=", ncol(example_sce), ")")) +
+  theme_bw(base_size = 14)
+```
+
+# Infer cell cycle stages
+This method was proposed by @Schwabe.2020. We did small modifications to reduce `NA` assignments. But on average, the performance is quite similar to the original implementation in [Revelio](https://github.com/danielschw188/Revelio/) package. In brief, we calculate the *z*-scores of highly expressed stage specific cell cycle marker genes, and assgin the cell to the stage with the greatest *z*-score. 
+```{r stage, message = TRUE}
+example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
+ggplot(data = data.frame(x = reducedDim(example_sce)[, 1], y = reducedDim(example_sce)[, 2], color = example_sce$CCStage)) +
+  geom_point(aes(x = x, y = y, color = color), size = 3, alpha = 0.8) +
+  scale_color_manual(values = c('#ac4343', '#466caf', '#df8b3f', '#63b558', '#e8d760'), name = "CCStage") +
+  labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(example_sce), ")")) +
+  theme_bw(base_size = 14)
+```
+
+
+# Plot out the kernel density
+Another useful function is *PlotCCTimeDen*, which computes kernel density of θ conditioned on a phenotype using von Mises distribution. The ouput figures are provided in two flavors, polar coordinates and Cartesian coordinates. This could be useful when comparing different cell types, treatments, or just stages. (Because we use a very small dataset here as example, we set the bandwith, i.e. the concentration parameter of the von Mises distribution as 10 to get a smooth line.)
+```{r density, message = TRUE}
+PlotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', bw = 10, fig.title = "Kernel density of θ") + theme_bw(base_size = 14)
+PlotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', type = "circular", bw = 10,  fig.title = "Kernel density of θ") + theme_bw(base_size = 14)
+```
+
+
+# Plot out embedding scater plot colored by cell cycle time
+To visualize the cell cycle time θ on any embedding, we need to carefully choose a cyclic color palette. Thus, we include such functions to plot any embedding of *SingleCellExperiment* object with cyclic variables. A companion helper function to create the cyclic legend is also available.
+```{r cyclic, message = TRUE, fig.width = 10, fig.height = 7}
+library(cowplot)
+p <- plotEmbScatCyclic(example_sce, dimred = 1, point.size = 3.1, point.alpha = 0.9) +
+  theme_bw(base_size = 14)
+legend <- cyclic_legend(text.size = 5, alpha = 0.9)
+plot_grid(p, legend, ncol = 2, rel_widths = c(1, 0.4))
+```
+
+We plot our our projection embedding. In practice, user could use other embedding, such as UMAP or t-SNE and get informative representations too.
+
+# Make a new reference
+Users could make their own reference by doing PCA on the cell cycle genes, and use the learned rotation matrix as the reference matrix in other functions. Here is an example, we just use *pcaGoCC* function to extract Gene Ontology cell cycle genes (GO:0007049) and run PCA. By projecting the data itself with the learned reference, the projections are equivalent to direct PCA results. But you could use this newly learned reference to project other datasets.
+```{r newRef, message = TRUE}
+gocc_sce.o <- pcaGoCC(example_sce, exprs_values = "logcounts", species = "mouse")
+new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, 1:2]
+head(new.ref)
+new_sce <- inferCCTime(example_sce, ref.m  = new.ref)
+
+```
+
+Note: If user wants to calculate correlation between two cyclic variables, such as cell cycle time, traditional pearson's correlation coefficient won't consider the cyclic nature. Uers could use circular correlation values instead.
+```{r cor, message = TRUE}
+Directional::circ.cor1(example_sce$CCTime, new_sce$CCTime, rads = TRUE)
+```
+
+
+# Session info {.unnumbered}
+
+```{r sessionInfo, echo=FALSE}
+sessionInfo()
+```

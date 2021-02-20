@@ -1,5 +1,5 @@
 
-
+#' @export
 .gg_theme <- theme_bw(base_size = 8) + 
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank(),

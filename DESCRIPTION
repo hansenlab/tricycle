@@ -9,7 +9,7 @@ Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 Depends: R (>= 3.5.0), SingleCellExperiment
 Imports: circular, ggplot2, AnnotationDbi, org.Hs.eg.db, org.Mm.eg.db, scater, Seurat, forcats, scattermore, purrr, dplyr
-Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional
+Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional, cowplot
 License: GPL-3
 VignetteBuilder: knitr
 Encoding: UTF-8

@@ -46,7 +46,7 @@ NULL
     if (is.null(x_lab)) 
         x_lab <- colnames(emb.m)[1]
     if (is.null(y_lab)) 
-        x_lab <- colnames(emb.m)[2]
+        y_lab <- colnames(emb.m)[2]
     
     x_lim <- range(emb.m[, 1]) + c(diff(range(emb.m[, 1])) * c(-0.05, 0.05))
     y_lim <- range(emb.m[, 2]) + c(diff(range(emb.m[, 2])) * c(-0.05, 0.05))

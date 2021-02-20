@@ -5,7 +5,7 @@
 \alias{example_sce}
 \title{Example SingleCellExperiment dataset}
 \format{
-An \linkS4class{SingleCellExperiment} object of 1500 genes and 400 cells.
+A \linkS4class{SingleCellExperiment} object of 1500 genes and 400 cells.
 }
 \usage{
 data(example_sce)

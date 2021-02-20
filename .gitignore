@@ -9,3 +9,4 @@ doc
 .Rbuildignore
 .Ruserdata
 tricycle.Rproj
+inst/doc

@@ -4,8 +4,13 @@ Title: tricycle: Transferable Representation and Inference of cell cycle
 Version: 0.1.0
 Authors@R: c(
         person("Shijie", "Zheng", role=c("aut", "cre"), email="shijieczheng@gmail.com"))
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: The package contains functions to infer and visualize cell cycle 
+        process using Single Cell RNASeq data. It exploits the idea of transfer
+        learning, projecting new data to the previous learned biologically 
+        interpretable space. We provide a pre-learned cell cycle space, 
+        which could be used to infer cell cycle time of human and mouse single
+        cell samples. In addition, we also offer functions to visualize cell
+        cycle time on different embeddings and functions to build new reference.
 Depends: R (>= 4.0.0), SingleCellExperiment, methods
 Imports: circular, ggplot2, AnnotationDbi, org.Hs.eg.db, org.Mm.eg.db, scater, Seurat, forcats, scattermore, purrr, dplyr, RColorBrewer, grDevices, stats, SummarizedExperiment
 Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional, cowplot
@@ -14,3 +19,5 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
+biocViews: SingleCell, Software, Transcriptomics, RNASeq, Transcription, BiologicalQuestion, DimensionReduction
+URL: https://github.com/hansenlab/tricycle

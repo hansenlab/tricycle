@@ -106,7 +106,7 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fi
             geom_path(aes(color = color), size = line.size, alpha = line.alpha, ...) + 
             geom_path(data = all.df, size = line.size, alpha = line.alpha, color = "black", linetype = "dashed", ...) + 
             scale_color + 
-            scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2, 2 * pi), labels = paste0(c(0, 0.5, 1, 1.5, 2), "π"), name = "θ") + 
+            scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2, 2 * pi), labels = paste0(c(0, 0.5, 1, 1.5, 2), "\u03C0"), name = "\u03b8") + 
             labs(title = fig.title, y = "Density") + 
             .gg_theme
     } else {
@@ -115,7 +115,7 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fi
             geom_path(data = all.df, size = line.size, alpha = line.alpha, color = "black", linetype = "dashed", ...) + 
             scale_color + 
             coord_polar(theta = "x", start = -pi/2, direction = -1, clip = "on") + 
-            scale_x_continuous(limits = c(0,  2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2), labels = paste0(c(0, 0.5, 1, 1.5), "π"), name = "") + 
+            scale_x_continuous(limits = c(0,  2 * pi), breaks = c(0, pi/2, pi, 3 * pi/2), labels = paste0(c(0, 0.5, 1, 1.5), "\u03C0"), name = "") + 
             scale_y_continuous(limits = c(0, max.v * 2), breaks = c(max.v, max.v * 1.5, max.v * 2), labels = c("0", format(max.v * c(0.5, 1), digits = 3)), name = "Density") + 
             labs(title = fig.title) +
             .gg_theme

@@ -134,7 +134,7 @@ NULL
 cyclic_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, 
     y.text = 3.8, ymax = 4.5, text.size = 3) {
     hues.df = data.frame(theta = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = colorRampPalette(hue.colors)(hue.n))
-    hue_text.df <- data.frame(theta = c(0, 0.5 * pi, pi, 1.5 * pi), label = c("0/2π", "0.5π", "π", "1.5π"), hjust = c(0.1, 0.5, 0.5, 0.5))
+    hue_text.df <- data.frame(theta = c(0, 0.5 * pi, pi, 1.5 * pi), label = c("0/2\u03C0", "0.5\u03C0", "\u03C0", "1.5\u03C0"), hjust = c(0.1, 0.5, 0.5, 0.5))
     legend.p <- ggplot(hues.df) + geom_rect(aes(ymin = y.inner, ymax = y.outer, xmin = theta - 0.001, xmax = theta + 0.001, color = colors, fill = colors), alpha = alpha, ) + 
         coord_polar(theta = "x", start = -pi/2, direction = -1, clip = "on") + scale_color_identity() + scale_fill_identity() + guides(fill = FALSE, 
         color = FALSE) + theme_void() + ylim(c(0, ymax)) + geom_text(data = hue_text.df, aes(x = theta, y = y.text, label = label, hjust = hjust), size = text.size) + theme(plot.margin = unit(c(0, 

@@ -6,13 +6,12 @@ author:
   email: shijieczheng@gmail.com
 package: tricycle
 output: 
-  BiocStyle::html_document:
-    toc_float: true
+  BiocStyle::html_document
 bibliography: TriCycle.bib
 vignette: >
   %\VignetteIndexEntry{TriCycle: Transferable Representation and Inference of Cell Cycle}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}  
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

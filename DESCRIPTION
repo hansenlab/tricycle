@@ -13,7 +13,7 @@ Description: The package contains functions to infer and visualize cell cycle
         cycle time on different embeddings and functions to build new reference.
 Depends: R (>= 4.0), SingleCellExperiment, methods
 Imports: circular, ggplot2, AnnotationDbi, org.Hs.eg.db, org.Mm.eg.db, scater, Seurat, forcats, scattermore, purrr, dplyr, RColorBrewer, grDevices, stats, SummarizedExperiment
-Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional, cowplot
+Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional, cowplot, magick
 License: GPL-3
 VignetteBuilder: knitr
 Encoding: UTF-8

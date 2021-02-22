@@ -8,9 +8,11 @@
 
 \item{y}{The response variable - a numeric vector with the same length as \code{theta.v}.}
 
-\item{span}{The parameter α which controls the degree of smoothing. See \code{\link[stats]{loess}}. Default: 0.3}
+\item{span}{The parameter \eqn{\alpha} which controls the degree of smoothing. See \code{\link[stats]{loess}}. Default: 0.3}
 
 \item{length.out}{The number of data points on the fitted lines to be output in the prediction data.frame. Default: 200}
+
+\item{...}{Other arguments input to \code{\link[stats]{loess}}.}
 }
 \value{
 A list with the following elements:

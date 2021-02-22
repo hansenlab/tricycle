@@ -1,7 +1,8 @@
 #' Plot embedding with cyclic cell cycle time
 #'
 #' Generate scat plot of embedding with cyclic cell cycle time or other cyclic variables
-#'
+#' 
+#' 
 #' @param sce.o A \linkS4class{SingleCellExperiment} contains the embbing to be plotted against.
 #' @param color_by The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "CCTime"
 #' @param facet_by he name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If NULL, no faceted panles will be returned. Default: NULL
@@ -81,7 +82,12 @@ NULL
 
 #' @export
 #' @rdname plotEmbScatCyclic
-setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, ..., color_by = "CCTime", facet_by = NULL, dimred = 1, dim = 1:2) {
+#' @importFrom SingleCellExperiment reducedDim
+#' @importFrom SummarizedExperiment colData
+setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, color_by = "CCTime", facet_by = NULL, dimred = 1, dim = seq_len(2),
+                                                                fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL,
+                                                                hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
+                                                                hue.n = 500, plot.legend = FALSE) {
     if (length(dim) != 2) 
         stop("The function can only plot 2 dims at this time. Change dim argument.")
     emb.m <- reducedDim(sce.o, dimred)[, dim]
@@ -93,7 +99,11 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, ..., colo
     } else {
         facet_var <- NULL
     }
-    .plotEmbScatCyclic(emb.m = emb.m, color.value = color.value, color_by = "CCTime", facet_var = facet_var, ...)
+    .plotEmbScatCyclic(emb.m = emb.m, color.value = color.value, color_by = color_by,
+                       facet_var = facet_var, fig.title = fig.title, point.size = point.size,
+                       point.alpha = point.alpha, x_lab = x_lab, y_lab = y_lab,
+                       hue.colors = hue.colors,
+                       hue.n = hue.n, plot.legend = plot.legend)
     
 })
 
@@ -103,6 +113,9 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, ..., colo
 #' @title Get the cyclic legend
 #' 
 #' @description This function is a helper function to create the cyclic ggplot color legend.
+#' 
+#' @usage cyclic_legend(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
+#'  hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, y.text = 3.8, ymax = 4.5, text.size = 3)
 #' 
 #' @param hue.colors The string vector gives the cyclic colors. The first color should look very similar to the last one.
 #' Default: c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")
@@ -121,6 +134,7 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, ..., colo
 #' @author Shijie C. Zheng
 #' 
 #' @name cyclic_legend
+#' @aliases cyclic_legend
 #' @rdname cyclic_legend
 #' 
 #' @examples
@@ -128,17 +142,21 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, ..., colo
 NULL
 
 
-#' 
+#' @importFrom grDevices colors colorRampPalette
 #' @import ggplot2
 #' @export
 cyclic_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, 
     y.text = 3.8, ymax = 4.5, text.size = 3) {
     hues.df = data.frame(theta = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = colorRampPalette(hue.colors)(hue.n))
     hue_text.df <- data.frame(theta = c(0, 0.5 * pi, pi, 1.5 * pi), label = c("0/2\u03C0", "0.5\u03C0", "\u03C0", "1.5\u03C0"), hjust = c(0.1, 0.5, 0.5, 0.5))
-    legend.p <- ggplot(hues.df) + geom_rect(aes(ymin = y.inner, ymax = y.outer, xmin = theta - 0.001, xmax = theta + 0.001, color = colors, fill = colors), alpha = alpha, ) + 
-        coord_polar(theta = "x", start = -pi/2, direction = -1, clip = "on") + scale_color_identity() + scale_fill_identity() + guides(fill = FALSE, 
-        color = FALSE) + theme_void() + ylim(c(0, ymax)) + geom_text(data = hue_text.df, aes(x = theta, y = y.text, label = label, hjust = hjust), size = text.size) + theme(plot.margin = unit(c(0, 
-        0, 0, 0), "pt"))
+    legend.p <- ggplot(hues.df) + 
+        geom_rect(aes(ymin = y.inner, ymax = y.outer, xmin = theta - 0.001, xmax = theta + 0.001, color = colors, fill = colors), alpha = alpha ) + 
+        coord_polar(theta = "x", start = -pi/2, direction = -1, clip = "on") + 
+        scale_color_identity() + scale_fill_identity() + 
+        guides(fill = FALSE, color = FALSE) + theme_void() + 
+        ylim(c(0, ymax)) + 
+        geom_text(data = hue_text.df, aes(x = theta, y = y.text, label = label, hjust = hjust), size = text.size) + 
+        theme(plot.margin = unit(c(0, 0, 0, 0), "pt"))
     return(legend.p)
 }
 

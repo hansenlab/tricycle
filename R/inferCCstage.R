@@ -4,6 +4,8 @@
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
+#' @param ... For the \code{inferCCStage} generic, the following additional arguments to pass. 
+#' For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.
 #' @param exprs_values Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
 #' If the projection already exists, you can ignore this value. Default: 'logcounts'
 #' @param batch.v A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable. 
@@ -41,6 +43,8 @@
 #' If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with the discretized cell cycle stages stored in colData with name 'CCStage' will be returned.
 #'
 #' @name inferCCStage
+#' @aliases inferCCStage
+#' 
 #' @seealso
 #' \code{\link{projectCC}}, for projecting new data with a pre-learned reference
 #'
@@ -57,14 +61,15 @@
 #' 
 #' @examples
 #' example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
-#' example_sce2 <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse', batch.v = 'sample')
-#' example_sce3 <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse', batch.v = example_sce$sample)
+#' example_sce2 <- inferCCStage(example_sce, batch.v = 'sample')
+#' example_sce3 <- inferCCStage(example_sce, batch.v = example_sce$sample)
 #' example_sce <- projectCC(example_sce)
 #' plot(reducedDim(example_sce, 'ccProjection'), col = example_sce$CCStage)
 NULL
 
 
 #' @importFrom purrr reduce
+#' @importFrom stats cor
 .CCStage <- function(data.m, batch.v = NULL, cycleGene.l = NULL, corThres = 0.2, tolerance = 0.3) {
     if (is.null(batch.v)) 
         batch.v <- rep(1, ncol(data.m))
@@ -136,8 +141,8 @@ NULL
         message("No gname input. Rownames of x will be used.")
         gname <- rownames(data.m)
     } else {
-        if (nrow(sce.o) != length(gname)) 
-            stop("gname does not match nrow sce.o!")
+        if (nrow(data.m) != length(gname)) 
+            stop("gname does not match nrow x!")
     }
     if (is.null(cycleGene.l)) {
         if (species == "mouse") {
@@ -158,13 +163,15 @@ NULL
 
 #' @export
 #' @rdname inferCCStage
-setMethod("inferCCStage", "ANY", function(x, ...) {
-    .inferCCStage(x, ...)
+setMethod("inferCCStage", "ANY", function(x, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, 
+                                          batch.v = NULL, corThres = 0.2, tolerance = 0.3) {
+    .inferCCStage(x, cycleGene.l = cycleGene.l, gname = gname, gname.type = gname.type,
+                  species = species, AnnotationDb =  AnnotationDb, batch.v  = batch.v, corThres = corThres, tolerance = tolerance)
 })
 
 #' @export
 #' @rdname inferCCStage
-#' @importFrom SummarizedExperiment assay
+#' @importFrom SummarizedExperiment assay colData
 setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL) {
     if (!is.null(batch.v)) {
         if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) 
@@ -179,6 +186,7 @@ setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values 
 #' @export
 #' @rdname inferCCStage
 #' @importFrom SingleCellExperiment reducedDim<- altExp reducedDimNames
+#' @importFrom SummarizedExperiment assay colData
 setMethod("inferCCStage", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL, altexp = NULL) {
     if (!is.null(batch.v)) {
         if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) 

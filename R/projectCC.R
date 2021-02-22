@@ -4,6 +4,8 @@
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
+#' @param ... For the \code{inferCCStage} generic, additional arguments to pass to specific methods. 
+#' For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.
 #' @param exprs_values Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values. Default: 'logcounts'
 #' @param ref.m A custom reference projection matrix to project the new data, where rows are features and columns are dimensions.
 #' Users need to use the same type of \code{gname}(or rownames of \code{x}) as for the \code{ref.m}.
@@ -57,7 +59,7 @@ NULL
     }
     if (is.null(ref.m)) {
         message("No custom reference projection matrix provided. The ref learned from mouse Neuroshpere data will be used.")
-        ref.m <- .getRotation(neuroRef, gname.type = gname.type, species = species)
+        ref.m <- .getRotation(gname.type = gname.type, species = species)
         
         if (species == "human" & gname.type == "ENSEMBL") {
             message("As the reference data was learned from mouse, we will map the human ENSEMBL id to gene SYMBOL.")
@@ -66,7 +68,6 @@ NULL
     }
     .calProjection(data.m, ref.m)
 }
-
 
 .calProjection <- function(data.m, rotation.m) {
     genes <- intersect(rownames(data.m), rownames(rotation.m))
@@ -77,7 +78,7 @@ NULL
     
     rotation.m <- rotation.m[genes, ]
     data.m <- data.m[genes, ]
-    projection.m <- scale(t(as.matrix(data.m)), center = T, scale = F) %*% rotation.m
+    projection.m <- scale(t(as.matrix(data.m)), center = TRUE, scale = FALSE) %*% rotation.m
     rownames(projection.m) <- colnames(data.m)
     colnames(projection.m) <- colnames(rotation.m)
     attr(projection.m, "rotation") <- rotation.m
@@ -85,8 +86,8 @@ NULL
     return(projection.m)
 }
 
-.getRotation <- function(neuroRef, gname.type, species) {
-    rotation.m <- as.matrix(neuroRef[, 1:2])
+.getRotation <- function(gname.type, species) {
+    rotation.m <- as.matrix(neuroRef[, seq_len(2)])
     if (species == "human") {
         rownames(rotation.m) <- neuroRef$SYMBOL
     } else {
@@ -110,8 +111,8 @@ NULL
 
 #' @export
 #' @rdname projectCC
-setMethod("projectCC", "ANY", function(x, ...) {
-    .projectCC(x, ...)
+setMethod("projectCC", "ANY", function(x, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
+    .projectCC(x, ref.m = ref.m, gname = gname, gname.type = gname.type, species = species, AnnotationDb = AnnotationDb)
 })
 
 #' @export

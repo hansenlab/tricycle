@@ -10,10 +10,9 @@
 #' Default: 'logcounts'
 #' @param gname.type The type of gene names as in \code{gname} or rownames of \code{sce.o}. It can be either 'ENSEMBL' or 'SYMBOL'. Default: 'ENSEMBL'
 #' @param species The type of species in \code{sce.o}. It can be either 'mouse' or 'human'. The corresponding AnnotationDb object will be
-#'  \code{\link[org.Mm.eg.db]{org.Hs.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}. Default: 'mouse'
+#'  \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}. Default: 'mouse'
 #' @param ntop The number of genes with highest variance to use when calculating PCA, as in \code{\link[scater]{calculatePCA}}. Default: 500
 #' @param ncomponents The number of component components to obtain, as in \code{\link[scater]{calculatePCA}}. Default: 20
-#' @param seed A random number for getting the same PCA when reruning the function. Default: 1000
 #' @param runSeuratBy If the value is not NULL, the subsetted data (only GO cell cycle genes) will be integrated by Seurat. See \code{\link[Seurat]{IntegrateData}}.
 #' This value should be set as a column name in \code{colData(sce.o)}. Such as 'sample' or 'batch'. Default: NULL
 #' @param nfeatures The number of highly variable features within each sample/batch, which will only be used when integrating with Seurat.
@@ -24,7 +23,7 @@
 #' @details
 #' The function require an output of a \linkS4class{SingleCellExperiment} object which contains the library size normalized **log-expression** matrix. The full dataset will 
 #' be subsetted to genes in the Gene Ontology cell cycle gene list (GO:0007049). The corresponding AnnotationDb object will be
-#'  \code{\link[org.Mm.eg.db]{org.Hs.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} for mouse and human respectively. If \code{runSeuratBy} is set, the data will be 
+#'  \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} for mouse and human respectively. If \code{runSeuratBy} is set, the data will be 
 #'  integrated to remove batch effect between samples/batches by Seurat.
 #'  
 #' User can use this function to make new reference projection matrix by getting the 'rotation' attribute in PCA results. Such as 
@@ -41,9 +40,11 @@
 #'
 #' @examples
 #' gocc_sce.o <- pcaGoCC(example_sce)
-#' new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, 1:2]
+#' new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, seq_len(2)]
 #' example_sce <- inferCCTime(example_sce)  ### Use internal NeuroRef to project and infer CC time
-#' new_sce <- inferCCTime(example_sce, ref.m  = new.ref, dimred = 'ccProjection2')  ### Use new reference to project and infer CC time
+#' 
+#' ### Use new reference to project and infer CC time
+#' new_sce <- inferCCTime(example_sce, ref.m  = new.ref, dimred = 'ccProjection2') 
 #' plot(example_sce$CCTime, new_sce$CCTime)
 NULL
 
@@ -52,7 +53,8 @@ NULL
 #' @importFrom  org.Mm.eg.db org.Mm.eg.db
 #' @importFrom AnnotationDbi select
 #' @importFrom scater runPCA calculatePCA
-.pcaGoCC <- function(sce.o, gname = NULL, exprs_values = "logcounts", gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), ntop = 500, ncomponents = 20, seed = 1000, 
+#' @importFrom SummarizedExperiment colData
+.pcaGoCC <- function(sce.o, gname = NULL, exprs_values = "logcounts", gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), ntop = 500, ncomponents = 20,  
     runSeuratBy = NULL, nfeatures = 500, anchor.features = 2000, name = "PCA") {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
@@ -76,17 +78,15 @@ NULL
     message(paste0(length(gene.idx), " out of ", length(cycle.anno), " Gene Ontology cell cycle genes found in your data."))
     GO.o <- sce.o[gene.idx, ]
     
-    set.seed(seed)
     GO.o <- runPCA(GO.o, exprs_values = exprs_values, name = name, ntop = ntop, ncomponents = ncomponents)
     
     ### merge samples
     if (!is.null(runSeuratBy)) {
-        set.seed(seed + 100)
         if (!(runSeuratBy %in% names(colData(GO.o)))) 
             stop(paste0(runSeuratBy, " does not exist in colData(sce.o)."))
         corrected.m <- .seuratIntegrate(count.m = 2^(assay(GO.o, exprs_values)) - 1, batch = colData(GO.o)[, runSeuratBy], nfeatures = nfeatures, anchor.features = anchor.features)
         reducedDim(GO.o, paste0("matched.", name)) <- calculatePCA(corrected.m, ntop = ntop, ncomponents = ncomponents)
-        metadata(GO.o)$seurat.corrected.m <- corrected.m
+        GO.o@metadata <- c(GO.o@metadata, list(seurat.corrected.m = corrected.m))
     }
     return(GO.o)
 }
@@ -107,8 +107,13 @@ NULL
 
 #' @export
 #' @rdname pcaGoCC
-setMethod("pcaGoCC", "SingleCellExperiment", function(sce.o, ..., exprs_values = "logcounts", gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human")) {
-    .pcaGoCC(sce.o, exprs_values = exprs_values, gname.type = gname.type, species = species, ...)
+setMethod("pcaGoCC", "SingleCellExperiment", function(sce.o, exprs_values = "logcounts", 
+                                                      gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"),
+                                                      ntop = 500, ncomponents = 20, 
+                                                      runSeuratBy = NULL, nfeatures = 500, anchor.features = 2000, name = "PCA") {
+    .pcaGoCC(sce.o, exprs_values = exprs_values, gname.type = gname.type, species = species, 
+             ntop = ntop, ncomponents = ncomponents, 
+             runSeuratBy = runSeuratBy, nfeatures = nfeatures, anchor.features = anchor.features, name = name)
 })
 
 

@@ -3,6 +3,10 @@
 \name{cyclic_legend}
 \alias{cyclic_legend}
 \title{Get the cyclic legend}
+\usage{
+cyclic_legend(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
+ hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, y.text = 3.8, ymax = 4.5, text.size = 3)
+}
 \arguments{
 \item{hue.colors}{The string vector gives the cyclic colors. The first color should look very similar to the last one.
 Default: c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")}

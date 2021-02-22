@@ -9,7 +9,14 @@
 \usage{
 projectCC(x, ...)
 
-\S4method{projectCC}{ANY}(x, ...)
+\S4method{projectCC}{ANY}(
+  x,
+  ref.m = NULL,
+  gname = NULL,
+  gname.type = c("ENSEMBL", "SYMBOL"),
+  species = c("mouse", "human"),
+  AnnotationDb = NULL
+)
 
 \S4method{projectCC}{SummarizedExperiment}(x, ..., exprs_values = "logcounts")
 
@@ -25,11 +32,8 @@ projectCC(x, ...)
 \item{x}{A numeric matrix of **log-expression** values where rows are features and columns are cells.
 Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
 
-\item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values. Default: 'logcounts'}
-
-\item{altexp}{String or integer scalar specifying an alternative experiment containing the input data.}
-
-\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'ccProjection'}
+\item{...}{For the \code{inferCCStage} generic, additional arguments to pass to specific methods. 
+For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.}
 
 \item{ref.m}{A custom reference projection matrix to project the new data, where rows are features and columns are dimensions.
 Users need to use the same type of \code{gname}(or rownames of \code{x}) as for the \code{ref.m}.
@@ -47,6 +51,12 @@ custom \code{ref.m}, this value will have no effect. Default: 'mouse'}
 \item{AnnotationDb}{An AnnotationDb objects. If the user uses the internal reference to project human data,
 and provide rownames in the format of Ensembl IDs, this object will be used to map Ensembl IDs to gene SYMBOLs.
 If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}.}
+
+\item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values. Default: 'logcounts'}
+
+\item{altexp}{String or integer scalar specifying an alternative experiment containing the input data.}
+
+\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'ccProjection'}
 }
 \value{
 If the input is a numeric matrix or a \linkS4class{SummarizedExperiment}, a projection matrix with rows cells and column dimensions will be returned.

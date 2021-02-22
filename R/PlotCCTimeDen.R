@@ -2,6 +2,7 @@
 #' 
 #' @description  The function will compute and plot cell cycle time kernel density.
 #'  
+#'  
 #' @param theta.v The cell cycle time - a numeric vector with range between 0 to 2pi. 
 #' @param color_var.v A factor variable to stratify \code{theta.v}, such as samples or 'CCStage'. The length of it should equal to the length of \code{theta.v}.
 #' @param color_name The name of the color_var.v to be used in the legend.
@@ -25,7 +26,8 @@
 #' 
 #' 
 #' 
-#' @name PlotCCTimeDen
+#' @name plotCCTimeDen
+#' @aliases plotCCTimeDen
 #' @seealso
 #' \code{\link{inferCCStage}}, for inferring 5 stages of cell cycle
 #' 
@@ -33,23 +35,23 @@
 #'
 #' @examples
 #' example_sce <- inferCCTime(example_sce)
-#' PlotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample')
+#' plotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample')
 #' 
 #' example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
-#' PlotCCTimeDen(example_sce$CCTime, example_sce$CCStage, 'CCStage')
+#' plotCCTimeDen(example_sce$CCTime, example_sce$CCStage, 'CCStage')
 NULL
 
 
 
 
 
-#' @importFrom circular circular
+#' @importFrom circular circular density.circular
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom forcats fct_relevel fct_explicit_na
 #' @import ggplot2
 #' 
 #' @export
-PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fig.title = NULL, type = c("linear", "circular"), bw = 30, weighted = FALSE, line.size = 0.5, line.alpha = 0.5, 
+plotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fig.title = NULL, type = c("linear", "circular"), bw = 30, weighted = FALSE, line.size = 0.5, line.alpha = 0.5, 
     ...) {
     if ((min(theta.v) < 0) | (max(theta.v) > 2 * pi)) 
         stop("theta.v need to be between 0 - 2pi.")
@@ -57,17 +59,17 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fi
         stop("The length of theta.v and color_var.v should be the same.")
     type <- match.arg(type)
     
-    d <- density(circular(theta.v), bw = bw)
+    d <- density.circular(circular(theta.v), bw = bw)
     all.df <- data.frame(x = as.numeric(d$x), y = d$y)
     
     color_var.v <- factor(color_var.v)
     if (is.null(palette.v)) {
         if (nlevels(color_var.v) > 8) {
             warning("The number of levels of color_var.v is greater than 8.\n Only the top 8 levels of most cell will be shown.\nYou can show them all by feeding enough colors in palette.v.")
-            color_var.v[!(color_var.v %in% names(sort(table(color_var.v), decreasing = TRUE))[1:8])] <- NA
+            color_var.v[!(color_var.v %in% names(sort(table(color_var.v), decreasing = TRUE))[seq_len(8)])] <- NA
         }
         if (nlevels(color_var.v) == 2) {
-            palette.v <- brewer.pal(3, "Set1")[1:2]
+            palette.v <- brewer.pal(3, "Set1")[seq_len(2)]
         } else {
             palette.v <- brewer.pal(nlevels(color_var.v), "Set1")
         }
@@ -87,7 +89,7 @@ PlotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fi
         fig.title <- paste0("(n=", length(theta.v), ")")
     
     strati.df <- do.call(rbind, lapply(seq_len(nlevels(color_var.v)), function(idx) {
-        d <- density(circular(theta.v[which(color_var.v == levels(color_var.v)[idx])]), bw = bw)
+        d <- density.circular(circular(theta.v[which(color_var.v == levels(color_var.v)[idx])]), bw = bw)
         return(data.frame(x = as.numeric(d$x), y = d$y * weights[idx], color = levels(color_var.v)[idx]))
     }))
     strati.df$color <- factor(strati.df$color, levels = levels(color_var.v))

@@ -8,7 +8,6 @@ setGeneric("projectCC", function(x, ...) standardGeneric("projectCC"))
 setGeneric("inferCCTime", function(x, ...) standardGeneric("inferCCTime"))
 
 #' @export
-#' @rdname pcaGoCC
 setGeneric("pcaGoCC", function(sce.o, ...) standardGeneric("pcaGoCC"))
 
 #' @export
@@ -16,8 +15,8 @@ setGeneric("pcaGoCC", function(sce.o, ...) standardGeneric("pcaGoCC"))
 setGeneric("inferCCStage", function(x, ...) standardGeneric("inferCCStage"))
 
 #' @export
-#' @rdname plotEmbScatCyclic
-setGeneric("plotEmbScatCyclic", function(sce.o, ...) standardGeneric("plotEmbScatCyclic"))
+setGeneric("plotEmbScatCyclic", function(sce.o, ...) 
+	standardGeneric("plotEmbScatCyclic"))
 
 
 

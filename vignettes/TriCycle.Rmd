@@ -61,14 +61,14 @@ qplot(x = reducedDim(example_sce)[, 1],y = reducedDim(example_sce)[, 2]) +
 
 ```
 
-# Infer cell cycle time θ
-The cell cycle time θ inference is straight forward once you get the cell cycle space projection. The formula is $\theta = tan^{-1}(PC2/PC1)$. *inferCCTime* is kind of a wrapper function. You could run *inferCCTime* directly without running *projectCC*. *inferCCTime* will search wheterh there is a embedding called "ccProjection" (default), use it to calculate θ, and return a *SingleCellExperiment* with "CCTime" added to *colData*. If the designated embedding does not exist, it will project the data first.
+# Infer cell cycle time
+The cell cycle time $\theta$ inference is straight forward once you get the cell cycle space projection. The formula is $\theta = tan^{-1}(PC2/PC1)$. *inferCCTime* is kind of a wrapper function. You could run *inferCCTime* directly without running *projectCC*. *inferCCTime* will search wheterh there is a embedding called "ccProjection" (default), use it to calculate $\theta$, and return a *SingleCellExperiment* with "CCTime" added to *colData*. If the designated embedding does not exist, it will project the data first.
 ```{r cctime, message = TRUE}
 example_sce <- inferCCTime(example_sce)
 names(colData(example_sce))
 ```
 
-We also provide a convenient function *fitLoessTheta* to fit *loess* line between the cyclic variable θ and other response variables. This fitting is done by making `theta.v` 3 periods `(c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi))` and repeating `y` 3 times. Only the fitted values corresponding to original `theta.v` will be returned. In this example, we show how well the expression of the cell cycle marker gene *Top2a* change along θ.
+We also provide a convenient function *fitLoessTheta* to fit *loess* line between the cyclic variable $\theta$ and other response variables. This fitting is done by making `theta.v` 3 periods `(c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi))` and repeating `y` 3 times. Only the fitted values corresponding to original `theta.v` will be returned. In this example, we show how well the expression of the cell cycle marker gene *Top2a* change along $\theta$.
 ```{r loess, message = TRUE}
 top2a.idx <- which(rowData(example_sce)$Gene == 'Top2a')
 fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
@@ -76,7 +76,7 @@ names(fit.l)
 ggplot(data = data.frame(theta = example_sce$CCTime, top2a = assay(example_sce, 'logcounts')[top2a.idx, ])) +
   geom_point(aes(x = theta, y = top2a), size = 1) +
   geom_path(data = fit.l$pred.df, aes(x = x, y = y), size = 0.8, alpha = 0.8) +
-  labs(x = "Cell cycle time θ", y = "log2(Top2a)", title = paste0("Expression of Top2a along θ (n=", ncol(example_sce), ")")) +
+  labs(x = "Cell cycle time \u03b8", y = "log2(Top2a)", title = paste0("Expression of Top2a along \u03b8 (n=", ncol(example_sce), ")")) +
   theme_bw(base_size = 14)
 ```
 
@@ -93,15 +93,15 @@ ggplot(data = data.frame(x = reducedDim(example_sce)[, 1], y = reducedDim(exampl
 
 
 # Plot out the kernel density
-Another useful function is *PlotCCTimeDen*, which computes kernel density of θ conditioned on a phenotype using von Mises distribution. The ouput figures are provided in two flavors, polar coordinates and Cartesian coordinates. This could be useful when comparing different cell types, treatments, or just stages. (Because we use a very small dataset here as example, we set the bandwith, i.e. the concentration parameter of the von Mises distribution as 10 to get a smooth line.)
+Another useful function is *plotCCTimeDen*, which computes kernel density of $\theta$ conditioned on a phenotype using von Mises distribution. The ouput figures are provided in two flavors, polar coordinates and Cartesian coordinates. This could be useful when comparing different cell types, treatments, or just stages. (Because we use a very small dataset here as example, we set the bandwith, i.e. the concentration parameter of the von Mises distribution as 10 to get a smooth line.)
 ```{r density, message = TRUE}
-PlotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', bw = 10, fig.title = "Kernel density of θ") + theme_bw(base_size = 14)
-PlotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', type = "circular", bw = 10,  fig.title = "Kernel density of θ") + theme_bw(base_size = 14)
+plotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', bw = 10, fig.title = "Kernel density of \u03b8") + theme_bw(base_size = 14)
+plotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', type = "circular", bw = 10,  fig.title = "Kernel density of \u03b8") + theme_bw(base_size = 14)
 ```
 
 
 # Plot out embedding scater plot colored by cell cycle time
-To visualize the cell cycle time θ on any embedding, we need to carefully choose a cyclic color palette. Thus, we include such functions to plot any embedding of *SingleCellExperiment* object with cyclic variables. A companion helper function to create the cyclic legend is also available.
+To visualize the cell cycle time $\theta$ on any embedding, we need to carefully choose a cyclic color palette. Thus, we include such functions to plot any embedding of *SingleCellExperiment* object with cyclic variables. A companion helper function to create the cyclic legend is also available.
 ```{r cyclic, message = TRUE, fig.width = 10, fig.height = 7}
 library(cowplot)
 p <- plotEmbScatCyclic(example_sce, dimred = 1, point.size = 3.1, point.alpha = 0.9) +
@@ -115,16 +115,22 @@ We plot our our projection embedding. In practice, user could use other embeddin
 # Make a new reference
 Users could make their own reference by doing PCA on the cell cycle genes, and use the learned rotation matrix as the reference matrix in other functions. Here is an example, we just use *pcaGoCC* function to extract Gene Ontology cell cycle genes (GO:0007049) and run PCA. By projecting the data itself with the learned reference, the projections are equivalent to direct PCA results. But you could use this newly learned reference to project other datasets.
 ```{r newRef, message = TRUE}
+set.seed(100)
 gocc_sce.o <- pcaGoCC(example_sce, exprs_values = "logcounts", species = "mouse")
-new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, 1:2]
+new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, seq_len(2)]
 head(new.ref)
-new_sce <- inferCCTime(example_sce, ref.m  = new.ref)
+new_sce <- inferCCTime(example_sce, ref.m  = new.ref, dimred = 'ccProjection2')
 
 ```
 
-Note: If user wants to calculate correlation between two cyclic variables, such as cell cycle time, traditional pearson's correlation coefficient won't consider the cyclic nature. Uers could use circular correlation values instead.
+Note: If user wants to calculate correlation between two cyclic variables, such as cell cycle time, traditional pearson's correlation coefficient won't consider the cyclic nature. Users could use (absolute) circular correlation values instead. (The signs of PC1 and PC2 are not deterministic when re-learning the reference by performing PCA. If the PC1 is flipped, there will be a $\pi$ shift. So does PC2. If the user fixes the reference, there won't be any flipping. But considering the variations around $0$ or $2\pi$, circular correlation should still be used instead of pearson's correlation coefficient.)
 ```{r cor, message = TRUE}
+cor(example_sce$CCTime, new_sce$CCTime)
 Directional::circ.cor1(example_sce$CCTime, new_sce$CCTime, rads = TRUE)
+qplot(x = example_sce$CCTime,y = new_sce$CCTime) +
+  labs(x = "Oroginal \u03b8", y = "New \u03b8", title = paste0("Comparison of two \u03b8 (n=", ncol(example_sce), ")")) +
+  theme_bw(base_size = 14)
+
 ```
 
 

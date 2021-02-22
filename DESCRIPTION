@@ -4,11 +4,10 @@ Title: tricycle: Transferable Representation and Inference of cell cycle
 Version: 0.1.0
 Authors@R: c(
         person("Shijie", "Zheng", role=c("aut", "cre"), email="shijieczheng@gmail.com"))
-Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-Depends: R (>= 3.5.0), SingleCellExperiment
-Imports: circular, ggplot2, AnnotationDbi, org.Hs.eg.db, org.Mm.eg.db, scater, Seurat, forcats, scattermore, purrr, dplyr, RColorBrewer, SummarizedExperiment
+Depends: R (>= 4.0.0), SingleCellExperiment, methods
+Imports: circular, ggplot2, AnnotationDbi, org.Hs.eg.db, org.Mm.eg.db, scater, Seurat, forcats, scattermore, purrr, dplyr, RColorBrewer, grDevices, stats, SummarizedExperiment
 Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional, cowplot
 License: GPL-3
 VignetteBuilder: knitr

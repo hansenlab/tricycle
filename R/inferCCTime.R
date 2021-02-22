@@ -5,6 +5,8 @@
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
+#' @param ... For the \code{inferCCStage} generic, additional arguments to pass to specific methods. 
+#' For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.
 #' @param exprs_values Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
 #' If the projection already exists, you can ignore this value. Default: 'logcounts'
 #' @param ... Arguments to be used by \code{\link{projectCC}}. If \code{x} is a \linkS4class{SingleCellExperiment}, and the projection is
@@ -16,7 +18,7 @@
 #' @param center.pc2 The center of PC2 when defining the angle. Default: 0
 #' @param altexp String or integer scalar specifying an alternative experiment containing the **log-expression** data, which will be used for projection.
 #' If the projection is already calculated and stored in the \linkS4class{SingleCellExperiment} as a dimred, leave this value to default NULL.
-#'
+#' 
 #' @details
 #' The function will use assign the cell cycle time by the angle formed by the PC1 and PC2 of cell cycle projections.
 #' If the input is a numeric matrix or a \linkS4class{SummarizedExperiment}, the projection will be calculated with the input **log-expression** values.
@@ -58,7 +60,7 @@ NULL
 .getTheta <- function(pc1pc2.m, center.pc1 = 0, center.pc2 = 0) {
     pc1pc2.m[, 1] <- pc1pc2.m[, 1] - center.pc1
     pc1pc2.m[, 2] <- pc1pc2.m[, 2] - center.pc2
-    as.numeric(coord2rad(pc1pc2.m[, 1:2]))
+    as.numeric(coord2rad(pc1pc2.m[, seq_len(2)]))
 }
 
 #' @export
@@ -80,7 +82,7 @@ setMethod("inferCCTime", "SummarizedExperiment", function(x, ..., exprs_values =
 
 #' @export
 #' @rdname inferCCTime
-#' @importFrom SingleCellExperiment reducedDim<- altExp reducedDimNames
+#' @importFrom SingleCellExperiment reducedDim<- altExp reducedDimNames reducedDim
 setMethod("inferCCTime", "SingleCellExperiment", function(x, ..., dimred = "ccProjection", center.pc1 = 0, center.pc2 = 0, altexp = NULL) {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)

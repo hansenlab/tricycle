@@ -9,7 +9,17 @@
 \usage{
 inferCCStage(x, ...)
 
-\S4method{inferCCStage}{ANY}(x, ...)
+\S4method{inferCCStage}{ANY}(
+  x,
+  cycleGene.l = NULL,
+  gname = NULL,
+  gname.type = c("ENSEMBL", "SYMBOL"),
+  species = c("mouse", "human"),
+  AnnotationDb = NULL,
+  batch.v = NULL,
+  corThres = 0.2,
+  tolerance = 0.3
+)
 
 \S4method{inferCCStage}{SummarizedExperiment}(x, ..., exprs_values = "logcounts", batch.v = NULL)
 
@@ -19,15 +29,8 @@ inferCCStage(x, ...)
 \item{x}{A numeric matrix of **log-expression** values where rows are features and columns are cells.
 Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
 
-\item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
-If the projection already exists, you can ignore this value. Default: 'logcounts'}
-
-\item{batch.v}{A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable. 
-Or it can be a vector, of which the number of elements equals to the number of columns of \code{x}. The 5 stage cell cycle assignments are preformed for each batch separately. 
-No \code{NA} is permitted. Default: NULL}
-
-\item{altexp}{String or integer scalar specifying an alternative experiment containing the **log-expression** data, which will be used for projection.
-If the projection is already calculated and stored in the \linkS4class{SingleCellExperiment} as a dimred, leave this value to default NULL.}
+\item{...}{For the \code{inferCCStage} generic, the following additional arguments to pass. 
+For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.}
 
 \item{cycleGene.l}{A list contains the marker genes for each stage. The stage names should be included as names of the elements. If user feed custom list,
 they should make sure that the same gene id type for \code{x} and \code{cycleGene.l}. If not custom list is given, \code{\link{RevelioGeneList}} will be used.
@@ -42,6 +45,13 @@ custom \code{ref.m}, this value will have no effect. Default: 'ENSEMBL'}
 \item{species}{The type of species in \code{x}. It can be either 'mouse' or 'human'. If the user uses
 custom \code{ref.m}, this value will have no effect. Default: 'mouse'}
 
+\item{AnnotationDb}{An AnnotationDb objects. It is used to map ENSEMBL IDs to gene SYMBOLs.
+If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} or \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} for human and mouse respetively.}
+
+\item{batch.v}{A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable. 
+Or it can be a vector, of which the number of elements equals to the number of columns of \code{x}. The 5 stage cell cycle assignments are preformed for each batch separately. 
+No \code{NA} is permitted. Default: NULL}
+
 \item{corThres}{For each batch and each stage, correlations between expression of each gene and the mean of all genes belonging to that stage 
 will be calculated to filter the final gene list used for inference. The genes with a correlation between \code{corThres} will not be used for calculating \emph{z}-scores.
 Default: 0.2}
@@ -49,8 +59,11 @@ Default: 0.2}
 \item{tolerance}{For each cell, the function will compare the largest two \emph{z}-scores. If the difference between those two \emph{z}-scores is less than \code{tolerance},
 the cell will be treated un-assignable with \code{NA} value returned for that cell. Default: 0.3}
 
-\item{AnnotationDb}{An AnnotationDb objects. It is used to map ENSEMBL IDs to gene SYMBOLs.
-If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} or \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} for human and mouse respetively.}
+\item{exprs_values}{Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
+If the projection already exists, you can ignore this value. Default: 'logcounts'}
+
+\item{altexp}{String or integer scalar specifying an alternative experiment containing the **log-expression** data, which will be used for projection.
+If the projection is already calculated and stored in the \linkS4class{SingleCellExperiment} as a dimred, leave this value to default NULL.}
 }
 \value{
 If the input is a numeric matrix, the discretized cell cycle stages - a factor vector corresponding to each cell will be returned.
@@ -69,8 +82,8 @@ Without cycleGene.l input, \code{\link{RevelioGeneList}} will be used.
 }
 \examples{
 example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
-example_sce2 <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse', batch.v = 'sample')
-example_sce3 <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse', batch.v = example_sce$sample)
+example_sce2 <- inferCCStage(example_sce, batch.v = 'sample')
+example_sce3 <- inferCCStage(example_sce, batch.v = example_sce$sample)
 example_sce <- projectCC(example_sce)
 plot(reducedDim(example_sce, 'ccProjection'), col = example_sce$CCStage)
 }

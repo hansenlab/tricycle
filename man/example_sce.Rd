@@ -11,7 +11,7 @@ A \linkS4class{SingleCellExperiment} object of 1500 genes and 400 cells.
 data(example_sce)
 }
 \description{
-This a subset of mouse Neurosphere data. 200 cells from sample AX1 and AX2 were randonly 
+This a subset of mouse Neurosphere data. 200 cells from sample AX1 and AX2 were randonly
 sampled from the full data. All genes in the GO cell cycle gene list and \code{\link{RevelioGeneList}}
  as well as other random 573 genes were included.
 }

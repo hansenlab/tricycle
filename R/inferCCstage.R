@@ -4,12 +4,12 @@
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-#' @param ... For the \code{inferCCStage} generic, the following additional arguments to pass. 
+#' @param ... For the \code{inferCCStage} generic, the following additional arguments to pass.
 #' For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.
 #' @param exprs_values Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
 #' If the projection already exists, you can ignore this value. Default: 'logcounts'
-#' @param batch.v A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable. 
-#' Or it can be a vector, of which the number of elements equals to the number of columns of \code{x}. The 5 stage cell cycle assignments are preformed for each batch separately. 
+#' @param batch.v A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable.
+#' Or it can be a vector, of which the number of elements equals to the number of columns of \code{x}. The 5 stage cell cycle assignments are preformed for each batch separately.
 #' No \code{NA} is permitted. Default: NULL
 #' @param cycleGene.l A list contains the marker genes for each stage. The stage names should be included as names of the elements. If user feed custom list,
 #' they should make sure that the same gene id type for \code{x} and \code{cycleGene.l}. If not custom list is given, \code{\link{RevelioGeneList}} will be used.
@@ -20,7 +20,7 @@
 #' custom \code{ref.m}, this value will have no effect. Default: 'ENSEMBL'
 #' @param species The type of species in \code{x}. It can be either 'mouse' or 'human'. If the user uses
 #' custom \code{ref.m}, this value will have no effect. Default: 'mouse'
-#' @param corThres For each batch and each stage, correlations between expression of each gene and the mean of all genes belonging to that stage 
+#' @param corThres For each batch and each stage, correlations between expression of each gene and the mean of all genes belonging to that stage
 #' will be calculated to filter the final gene list used for inference. The genes with a correlation between \code{corThres} will not be used for calculating \emph{z}-scores.
 #' Default: 0.2
 #' @param tolerance For each cell, the function will compare the largest two \emph{z}-scores. If the difference between those two \emph{z}-scores is less than \code{tolerance},
@@ -44,45 +44,48 @@
 #'
 #' @name inferCCStage
 #' @aliases inferCCStage
-#' 
+#'
 #' @seealso
 #' \code{\link{projectCC}}, for projecting new data with a pre-learned reference
 #'
 #' @author Shijie C. Zheng
 #'
-#' @references 
+#' @references
 #' Schwabe D, et al.
-#' \emph{The transcriptome dynamics of single cells during the cell cycle.} 
+#' \emph{The transcriptome dynamics of single cells during the cell cycle.}
 #' Molecular Systems Biology (2020) 16: e9946
 #' doi:\href{https://doi.org/10.15252/msb.20209946}{10.15252/msb.20209946}.
-#' 
+#'
 #' Zheng SC, et al.
-#' \emph{Our preprint.} 
-#' 
+#' \emph{Our preprint.}
+#'
 #' @examples
-#' example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
-#' example_sce2 <- inferCCStage(example_sce, batch.v = 'sample')
+#' example_sce <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse")
+#' example_sce2 <- inferCCStage(example_sce, batch.v = "sample")
 #' example_sce3 <- inferCCStage(example_sce, batch.v = example_sce$sample)
 #' example_sce <- projectCC(example_sce)
-#' plot(reducedDim(example_sce, 'ccProjection'), col = example_sce$CCStage)
+#' plot(reducedDim(example_sce, "ccProjection"), col = example_sce$CCStage)
 NULL
 
 
 #' @importFrom purrr reduce
 #' @importFrom stats cor
 .CCStage <- function(data.m, batch.v = NULL, cycleGene.l = NULL, corThres = 0.2, tolerance = 0.3) {
-    if (is.null(batch.v)) 
-        batch.v <- rep(1, ncol(data.m))
-    if ((ncol(data.m) != length(batch.v)) | any(is.na(batch.v))) 
-        stop("Something is wrong with batch argument. Refer to manual.")
-    
-    
+    if (is.null(batch.v)) {
+          batch.v <- rep(1, ncol(data.m))
+      }
+    if ((ncol(data.m) != length(batch.v)) | any(is.na(batch.v))) {
+          stop("Something is wrong with batch argument. Refer to manual.")
+      }
+
+
     cycleGene.l <- lapply(cycleGene.l, intersect, rownames(data.m))
     allgenes.v <- purrr::reduce(cycleGene.l, union)
-    if (sum(allgenes.v %in% rownames(data.m)) < 30) 
-        stop("Less than 30 cell cycle gene found. Not enough infomation to assgin the 5 stages.")
+    if (sum(allgenes.v %in% rownames(data.m)) < 30) {
+          stop("Less than 30 cell cycle gene found. Not enough infomation to assgin the 5 stages.")
+      }
     data.m <- as.matrix(data.m[allgenes.v, ])
-    
+
     cc.v <- rep(NA_character_, ncol(data.m))
     for (b in unique(batch.v)) {
         idx <- which(batch.v == b)
@@ -97,8 +100,9 @@ NULL
             }
             mean.v <- colMeans(dat[gene, ])
             cor.v <- cor(as.matrix(t(dat[gene, ])), as.vector(mean.v))
-            if (sum(cor.v > corThres) < 3) 
-                warning(paste0("Batch ", b, " phase ", names(cycleGene.l)[i], " too few genes (<3)."))
+            if (sum(cor.v > corThres) < 3) {
+                  warning(paste0("Batch ", b, " phase ", names(cycleGene.l)[i], " too few genes (<3)."))
+              }
             message(paste0("Batch ", b, " phase ", names(cycleGene.l)[i], " gene:", sum(cor.v > corThres), "\n"))
             return(colMeans(dat[gene[cor.v > corThres], ]))
         }))))))
@@ -106,11 +110,11 @@ NULL
             o.v <- order(s, decreasing = TRUE)
             eta <- o.v[1]
             eta_ <- o.v[2]
-            if (((abs(eta - eta_) > 1) & (abs(eta - eta_) < (length(cycleGene.l) - 1))) | ((s[eta] - s[eta_]) < tolerance)) 
-                return(NA_character_)
+            if (((abs(eta - eta_) > 1) & (abs(eta - eta_) < (length(cycleGene.l) - 1))) | ((s[eta] - s[eta_]) < tolerance)) {
+                  return(NA_character_)
+              }
             return(names(cycleGene.l)[eta])
         })
-        
     }
     cc.v <- factor(cc.v, levels = names(cycleGene.l))
     return(cc.v)
@@ -141,8 +145,9 @@ NULL
         message("No gname input. Rownames of x will be used.")
         gname <- rownames(data.m)
     } else {
-        if (nrow(data.m) != length(gname)) 
-            stop("gname does not match nrow x!")
+        if (nrow(data.m) != length(gname)) {
+              stop("gname does not match nrow x!")
+          }
     }
     if (is.null(cycleGene.l)) {
         if (species == "mouse") {
@@ -152,21 +157,24 @@ NULL
                 rownames(data.m) <- .getSYMBOL(gname, species = "mouse", AnnotationDb = AnnotationDb)
             }
         } else {
-            if (gname.type == "ENSEMBL") 
-                rownames(data.m) <- .getSYMBOL(gname, species = "human", AnnotationDb = AnnotationDb)
+            if (gname.type == "ENSEMBL") {
+                  rownames(data.m) <- .getSYMBOL(gname, species = "human", AnnotationDb = AnnotationDb)
+              }
         }
         cycleGene.l <- RevelioGeneList
     }
-    
+
     return(.CCStage(data.m, cycleGene.l = cycleGene.l, ...))
 }
 
 #' @export
 #' @rdname inferCCStage
-setMethod("inferCCStage", "ANY", function(x, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, 
-                                          batch.v = NULL, corThres = 0.2, tolerance = 0.3) {
-    .inferCCStage(x, cycleGene.l = cycleGene.l, gname = gname, gname.type = gname.type,
-                  species = species, AnnotationDb =  AnnotationDb, batch.v  = batch.v, corThres = corThres, tolerance = tolerance)
+setMethod("inferCCStage", "ANY", function(x, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL,
+    batch.v = NULL, corThres = 0.2, tolerance = 0.3) {
+    .inferCCStage(x,
+        cycleGene.l = cycleGene.l, gname = gname, gname.type = gname.type,
+        species = species, AnnotationDb = AnnotationDb, batch.v = batch.v, corThres = corThres, tolerance = tolerance
+    )
 })
 
 #' @export
@@ -174,10 +182,11 @@ setMethod("inferCCStage", "ANY", function(x, cycleGene.l = NULL, gname = NULL, g
 #' @importFrom SummarizedExperiment assay colData
 setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL) {
     if (!is.null(batch.v)) {
-        if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) 
-            batch.v <- colData(x)[, batch.v]
+        if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
+              batch.v <- colData(x)[, batch.v]
+          }
     }
-    
+
     x$CCStage <- .inferCCStage(assay(x, exprs_values), batch.v = batch.v, ...)
     x
 })
@@ -189,8 +198,9 @@ setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values 
 #' @importFrom SummarizedExperiment assay colData
 setMethod("inferCCStage", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL, altexp = NULL) {
     if (!is.null(batch.v)) {
-        if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) 
-            batch.v <- colData(x)[, batch.v]
+        if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
+              batch.v <- colData(x)[, batch.v]
+          }
     }
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
@@ -200,19 +210,3 @@ setMethod("inferCCStage", "SingleCellExperiment", function(x, ..., exprs_values 
     x$CCStage <- .inferCCStage(assay(y, exprs_values), batch.v = batch.v, ...)
     x
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

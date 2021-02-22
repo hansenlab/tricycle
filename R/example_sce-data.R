@@ -1,9 +1,9 @@
 #' Example SingleCellExperiment dataset
 #'
-#' This a subset of mouse Neurosphere data. 200 cells from sample AX1 and AX2 were randonly 
+#' This a subset of mouse Neurosphere data. 200 cells from sample AX1 and AX2 were randonly
 #' sampled from the full data. All genes in the GO cell cycle gene list and \code{\link{RevelioGeneList}}
 #'  as well as other random 573 genes were included.
-#' 
+#'
 #'
 #' @docType data
 #'

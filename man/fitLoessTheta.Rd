@@ -29,14 +29,14 @@ The function will fit a loess line using cell cycle time and other variables, su
 }
 \details{
 This function fit a normal loess line, but take the circularity of cell cycle time into account by making \code{theta.v} 3 periods
-(\code{c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi)}) and repeating y 3 times. Only the fitted values corresponding to original \code{theta.v} 
+(\code{c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi)}) and repeating y 3 times. Only the fitted values corresponding to original \code{theta.v}
 will be returned. User can use \code{pred.df} to visualize the loess line.
 }
 \examples{
 example_sce <- inferCCTime(example_sce)
-top2a.idx <- which(rowData(example_sce)$Gene == 'Top2a')
-fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
-plot(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
+top2a.idx <- which(rowData(example_sce)$Gene == "Top2a")
+fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, "logcounts")[top2a.idx, ])
+plot(example_sce$CCTime, assay(example_sce, "logcounts")[top2a.idx, ])
 lines(fit.l$pred.df)
 }
 \seealso{

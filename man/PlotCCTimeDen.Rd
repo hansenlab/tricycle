@@ -11,7 +11,7 @@
 \item{color_name}{The name of the color_var.v to be used in the legend.}
 
 \item{palette.v}{A string vector to give the color names. It should has the length of the number of levels of \code{color_var.v}. If not given, the 'Set1' palette will be used.
-(See \code{\link[RColorBrewer]{display.brewer.all}}) If the number of levels 
+(See \code{\link[RColorBrewer]{display.brewer.all}}) If the number of levels
 of \code{color_var.v} is greater than 8, only the top 8 levels of most cell
  will be shown. You can show them all by feeding enough colors in \code{palette.v}. Default: NULL}
 
@@ -42,10 +42,10 @@ represents different levels of \code{color_var.v} and the dashed black line is t
 }
 \examples{
 example_sce <- inferCCTime(example_sce)
-plotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample')
+plotCCTimeDen(example_sce$CCTime, example_sce$sample, "sample")
 
-example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
-plotCCTimeDen(example_sce$CCTime, example_sce$CCStage, 'CCStage')
+example_sce <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse")
+plotCCTimeDen(example_sce$CCTime, example_sce$CCStage, "CCStage")
 }
 \seealso{
 \code{\link{inferCCStage}}, for inferring 5 stages of cell cycle

@@ -32,7 +32,7 @@ projectCC(x, ...)
 \item{x}{A numeric matrix of **log-expression** values where rows are features and columns are cells.
 Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
 
-\item{...}{For the \code{inferCCStage} generic, additional arguments to pass to specific methods. 
+\item{...}{For the \code{inferCCStage} generic, additional arguments to pass to specific methods.
 For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.}
 
 \item{ref.m}{A custom reference projection matrix to project the new data, where rows are features and columns are dimensions.
@@ -75,9 +75,9 @@ The projection process is to take sum of weighted mean-centered expression of ch
 \examples{
 example_sce <- projectCC(example_sce)
 reducedDimNames(example_sce)
-head(reducedDim(example_sce, 'ccProjection'))
-plot(reducedDim(example_sce, 'ccProjection'))
-names(attributes(reducedDim(example_sce, 'ccProjection')))
+head(reducedDim(example_sce, "ccProjection"))
+plot(reducedDim(example_sce, "ccProjection"))
+names(attributes(reducedDim(example_sce, "ccProjection")))
 }
 \seealso{
 \code{\link{inferCCTime}}, for inferring cell cycle time.

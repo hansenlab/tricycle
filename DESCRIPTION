@@ -11,7 +11,7 @@ Description: The package contains functions to infer and visualize cell cycle
         which could be used to infer cell cycle time of human and mouse single
         cell samples. In addition, we also offer functions to visualize cell
         cycle time on different embeddings and functions to build new reference.
-Depends: R (>= 4.0.0), SingleCellExperiment, methods
+Depends: R (>= 4.0), SingleCellExperiment, methods
 Imports: circular, ggplot2, AnnotationDbi, org.Hs.eg.db, org.Mm.eg.db, scater, Seurat, forcats, scattermore, purrr, dplyr, RColorBrewer, grDevices, stats, SummarizedExperiment
 Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional, cowplot
 License: GPL-3

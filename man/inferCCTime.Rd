@@ -66,9 +66,9 @@ Refer to \code{\link{projectCC}} to all arguments during the projection.
 \examples{
 example_sce <- inferCCTime(example_sce)
 reducedDimNames(example_sce)
-plot(reducedDim(example_sce, 'ccProjection'))
-plot(example_sce$CCTime, reducedDim(example_sce, 'ccProjection')[, 1])
-plot(example_sce$CCTime, reducedDim(example_sce, 'ccProjection')[, 2])
+plot(reducedDim(example_sce, "ccProjection"))
+plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 1])
+plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 2])
 }
 \references{
 Zheng SC, et al.

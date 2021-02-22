@@ -4,7 +4,7 @@
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-#' @param ... For the \code{inferCCStage} generic, additional arguments to pass to specific methods. 
+#' @param ... For the \code{inferCCStage} generic, additional arguments to pass to specific methods.
 #' For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.
 #' @param exprs_values Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values. Default: 'logcounts'
 #' @param ref.m A custom reference projection matrix to project the new data, where rows are features and columns are dimensions.
@@ -42,9 +42,9 @@
 #' @examples
 #' example_sce <- projectCC(example_sce)
 #' reducedDimNames(example_sce)
-#' head(reducedDim(example_sce, 'ccProjection'))
-#' plot(reducedDim(example_sce, 'ccProjection'))
-#' names(attributes(reducedDim(example_sce, 'ccProjection')))
+#' head(reducedDim(example_sce, "ccProjection"))
+#' plot(reducedDim(example_sce, "ccProjection"))
+#' names(attributes(reducedDim(example_sce, "ccProjection")))
 NULL
 
 
@@ -53,14 +53,14 @@ NULL
 .projectCC <- function(data.m, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
-    
+
     if (!is.null(gname)) {
         rownames(data.m) <- gname
     }
     if (is.null(ref.m)) {
         message("No custom reference projection matrix provided. The ref learned from mouse Neuroshpere data will be used.")
         ref.m <- .getRotation(gname.type = gname.type, species = species)
-        
+
         if (species == "human" & gname.type == "ENSEMBL") {
             message("As the reference data was learned from mouse, we will map the human ENSEMBL id to gene SYMBOL.")
             rownames(data.m) <- .humanSymbol(gname = rownames(data.m), AnnotationDb = AnnotationDb)
@@ -71,18 +71,19 @@ NULL
 
 .calProjection <- function(data.m, rotation.m) {
     genes <- intersect(rownames(data.m), rownames(rotation.m))
-    
-    if (length(genes) == 0) 
-        stop("None genes found in new data. This could be caused by wrong input of rownames type.")
+
+    if (length(genes) == 0) {
+          stop("None genes found in new data. This could be caused by wrong input of rownames type.")
+      }
     message(paste0("The number of projection genes found in the new data is ", length(genes), "."))
-    
+
     rotation.m <- rotation.m[genes, ]
     data.m <- data.m[genes, ]
     projection.m <- scale(t(as.matrix(data.m)), center = TRUE, scale = FALSE) %*% rotation.m
     rownames(projection.m) <- colnames(data.m)
     colnames(projection.m) <- colnames(rotation.m)
     attr(projection.m, "rotation") <- rotation.m
-    
+
     return(projection.m)
 }
 
@@ -136,12 +137,3 @@ setMethod("projectCC", "SingleCellExperiment", function(x, ..., exprs_values = "
     reducedDim(x, name) <- .projectCC(assay(y, exprs_values), ...)
     x
 })
-
-
-
-
-
-
-
-
-

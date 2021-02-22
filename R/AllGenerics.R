@@ -15,8 +15,6 @@ setGeneric("pcaGoCC", function(sce.o, ...) standardGeneric("pcaGoCC"))
 setGeneric("inferCCStage", function(x, ...) standardGeneric("inferCCStage"))
 
 #' @export
-setGeneric("plotEmbScatCyclic", function(sce.o, ...) 
-standardGeneric("plotEmbScatCyclic"))
-
-
-
+setGeneric("plotEmbScatCyclic", function(sce.o, ...) {
+      standardGeneric("plotEmbScatCyclic")
+  })

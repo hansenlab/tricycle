@@ -21,7 +21,7 @@
 \arguments{
 \item{sce.o}{A \linkS4class{SingleCellExperiment} contains library size normalized **log-expression** matrix.}
 
-\item{exprs_values}{Integer scalar or string indicating which assay of \code{sce.o} contains the **log-expression** values, which will be used to run PCA. 
+\item{exprs_values}{Integer scalar or string indicating which assay of \code{sce.o} contains the **log-expression** values, which will be used to run PCA.
 Default: 'logcounts'}
 
 \item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{sce.o}. It can be either 'ENSEMBL' or 'SYMBOL'. Default: 'ENSEMBL'}
@@ -48,29 +48,29 @@ If not provided, the rownames of \code{sce.o} will be used instead. Default: NUL
 }
 \value{
 A subset \linkS4class{SingleCellExperiment} object with only GO cell cycle genes will be return.
-The PCA resulting will be save in reducedDims with chosen name \code{\link[SingleCellExperiment]{reducedDims}(..., name)}. 
+The PCA resulting will be save in reducedDims with chosen name \code{\link[SingleCellExperiment]{reducedDims}(..., name)}.
 If Seurat integration is performed, another reducedDims with name 'matched.'+\code{name} will also be included in the \linkS4class{SingleCellExperiment}.
 }
 \description{
-Run PCA on Gene Ontology cell cycle genes abd get a new \linkS4class{SingleCellExperiment}. 
+Run PCA on Gene Ontology cell cycle genes abd get a new \linkS4class{SingleCellExperiment}.
 User could use this function to learn new reference projection matrix.
 }
 \details{
-The function require an output of a \linkS4class{SingleCellExperiment} object which contains the library size normalized **log-expression** matrix. The full dataset will 
+The function require an output of a \linkS4class{SingleCellExperiment} object which contains the library size normalized **log-expression** matrix. The full dataset will
 be subsetted to genes in the Gene Ontology cell cycle gene list (GO:0007049). The corresponding AnnotationDb object will be
- \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} for mouse and human respectively. If \code{runSeuratBy} is set, the data will be 
+ \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} for mouse and human respectively. If \code{runSeuratBy} is set, the data will be
  integrated to remove batch effect between samples/batches by Seurat.
- 
-User can use this function to make new reference projection matrix by getting the 'rotation' attribute in PCA results. Such as 
+
+User can use this function to make new reference projection matrix by getting the 'rotation' attribute in PCA results. Such as
 \code{attr(reducedDim(sce.o, 'PCA'), 'rotation')[, 1:2]}. See examples for more details.
 }
 \examples{
 gocc_sce.o <- pcaGoCC(example_sce)
-new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, seq_len(2)]
-example_sce <- inferCCTime(example_sce)  ### Use internal NeuroRef to project and infer CC time
+new.ref <- attr(reducedDim(gocc_sce.o, "PCA"), "rotation")[, seq_len(2)]
+example_sce <- inferCCTime(example_sce) ### Use internal NeuroRef to project and infer CC time
 
 ### Use new reference to project and infer CC time
-new_sce <- inferCCTime(example_sce, ref.m  = new.ref, dimred = 'ccProjection2') 
+new_sce <- inferCCTime(example_sce, ref.m = new.ref, dimred = "ccProjection2")
 plot(example_sce$CCTime, new_sce$CCTime)
 }
 \author{

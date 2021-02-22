@@ -29,7 +29,7 @@ inferCCStage(x, ...)
 \item{x}{A numeric matrix of **log-expression** values where rows are features and columns are cells.
 Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
 
-\item{...}{For the \code{inferCCStage} generic, the following additional arguments to pass. 
+\item{...}{For the \code{inferCCStage} generic, the following additional arguments to pass.
 For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.}
 
 \item{cycleGene.l}{A list contains the marker genes for each stage. The stage names should be included as names of the elements. If user feed custom list,
@@ -48,11 +48,11 @@ custom \code{ref.m}, this value will have no effect. Default: 'mouse'}
 \item{AnnotationDb}{An AnnotationDb objects. It is used to map ENSEMBL IDs to gene SYMBOLs.
 If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} or \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} for human and mouse respetively.}
 
-\item{batch.v}{A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable. 
-Or it can be a vector, of which the number of elements equals to the number of columns of \code{x}. The 5 stage cell cycle assignments are preformed for each batch separately. 
+\item{batch.v}{A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable.
+Or it can be a vector, of which the number of elements equals to the number of columns of \code{x}. The 5 stage cell cycle assignments are preformed for each batch separately.
 No \code{NA} is permitted. Default: NULL}
 
-\item{corThres}{For each batch and each stage, correlations between expression of each gene and the mean of all genes belonging to that stage 
+\item{corThres}{For each batch and each stage, correlations between expression of each gene and the mean of all genes belonging to that stage
 will be calculated to filter the final gene list used for inference. The genes with a correlation between \code{corThres} will not be used for calculating \emph{z}-scores.
 Default: 0.2}
 
@@ -81,15 +81,15 @@ This is modified stage assignment method modified from the method in Schwabe et 
 Without cycleGene.l input, \code{\link{RevelioGeneList}} will be used.
 }
 \examples{
-example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
-example_sce2 <- inferCCStage(example_sce, batch.v = 'sample')
+example_sce <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse")
+example_sce2 <- inferCCStage(example_sce, batch.v = "sample")
 example_sce3 <- inferCCStage(example_sce, batch.v = example_sce$sample)
 example_sce <- projectCC(example_sce)
-plot(reducedDim(example_sce, 'ccProjection'), col = example_sce$CCStage)
+plot(reducedDim(example_sce, "ccProjection"), col = example_sce$CCStage)
 }
 \references{
 Schwabe D, et al.
-\emph{The transcriptome dynamics of single cells during the cell cycle.} 
+\emph{The transcriptome dynamics of single cells during the cell cycle.}
 Molecular Systems Biology (2020) 16: e9946
 doi:\href{https://doi.org/10.15252/msb.20209946}{10.15252/msb.20209946}.
 

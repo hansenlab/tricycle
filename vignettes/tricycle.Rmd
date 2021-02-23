@@ -21,13 +21,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, echo=FALSE}	
+htmltools::img(src = knitr::image_uri(file.path("../man/figures", "logo.png")), 	
+               alt = 'logo', 	
+               style = 'position:absolute; top:50px; right:5px; padding:10px;height:200px')	
+```
 
 # Introduction
 Cell cycle is an important and universal biological process in eukaryotes. For single cell RNAseq, the expression levels of cell cycle marker genes could be modeled as a periodic function of cell cycle time. The principal components analysis (PCA) of cell cycle genes could help us recover the cell cycle time in such a single cell RNAseq of which the main variation is driven by cell cycle. However, in a more complicated dataset of which main variation is driven by other phenotypes, PCA could fail due to the unorthogonality of cell cycle effect and other effects. @Stein-OBrien.2019 has shown that the transfer learning works well in single cell data, where one could learn a biological pattern and project the same pattern in other data. **tricycle** is package that projects new data into the pre-learned cell cycle space and estimate the cell cycle time. The package also provide functions for users to learn a new reference projection and visualize the cell cycle time. All functions are built on the Bioconductor *SingleCellExperiment* infrastructure. See @Zheng.2021 for more rationales.
 
 
 # Prerequisites
-<!-- Add installation command later. BiocManager::install("tricycle") -->
 
 ```{r setup, message = FALSE}
 library(tricycle)

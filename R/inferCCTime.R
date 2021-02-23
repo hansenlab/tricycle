@@ -63,6 +63,7 @@ NULL
     as.numeric(coord2rad(pc1pc2.m[, seq_len(2)]))
 }
 
+#' @importClassesFrom methods ANY
 #' @export
 #' @rdname inferCCTime
 setMethod("inferCCTime", "ANY", function(x, ..., center.pc1 = 0, center.pc2 = 0) {
@@ -70,6 +71,7 @@ setMethod("inferCCTime", "ANY", function(x, ..., center.pc1 = 0, center.pc2 = 0)
     .getTheta(projection.m, center.pc1 = center.pc1, center.pc2 = center.pc2)
 })
 
+#' @importClassesFrom SummarizedExperiment SummarizedExperiment
 #' @export
 #' @rdname inferCCTime
 #' @importFrom SummarizedExperiment assay
@@ -79,7 +81,7 @@ setMethod("inferCCTime", "SummarizedExperiment", function(x, ..., exprs_values =
     x
 })
 
-
+#' @importClassesFrom SingleCellExperiment SingleCellExperiment
 #' @export
 #' @rdname inferCCTime
 #' @importFrom SingleCellExperiment reducedDim<- altExp reducedDimNames reducedDim

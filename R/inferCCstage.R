@@ -70,6 +70,7 @@ NULL
 
 #' @importFrom purrr reduce
 #' @importFrom stats cor
+#' @importMethodsFrom S4Vectors  "%in%"  do.call  levels  t
 .CCStage <- function(data.m, batch.v = NULL, cycleGene.l = NULL, corThres = 0.2, tolerance = 0.3) {
     if (is.null(batch.v)) {
           batch.v <- rep(1, ncol(data.m))
@@ -123,6 +124,8 @@ NULL
 #' @importFrom  org.Hs.eg.db org.Hs.eg.db
 #' @importFrom  org.Mm.eg.db org.Mm.eg.db
 #' @importFrom AnnotationDbi mapIds
+#' @importMethodsFrom AnnotationDbi colnames get ncol nrow
+#' @importMethodsFrom GenomicRanges intersect union
 .getSYMBOL <- function(gname, species = c("mouse", "human"), AnnotationDb = NULL) {
     species <- match.arg(species)
     if (is.null(AnnotationDb)) {
@@ -138,6 +141,7 @@ NULL
     return(SYMBOL)
 }
 
+#' @importMethodsFrom IRanges as.matrix "colnames<-"  diff lapply rownames "rownames<-"  table tolower toupperunique which
 .inferCCStage <- function(data.m, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, ...) {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
@@ -179,7 +183,7 @@ setMethod("inferCCStage", "ANY", function(x, cycleGene.l = NULL, gname = NULL, g
 
 #' @export
 #' @rdname inferCCStage
-#' @importFrom SummarizedExperiment assay colData
+#' @importMethodsFrom SummarizedExperiment  assay colData  order sort
 setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL) {
     if (!is.null(batch.v)) {
         if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
@@ -194,8 +198,8 @@ setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values 
 
 #' @export
 #' @rdname inferCCStage
-#' @importFrom SingleCellExperiment reducedDim<- altExp reducedDimNames
-#' @importFrom SummarizedExperiment assay colData
+#' @importMethodsFrom SummarizedExperiment  assay colData  order sort
+#' @importMethodsFrom SingleCellExperiment altExp cbind rbind reducedDim "reducedDim<-"  reducedDimNames
 setMethod("inferCCStage", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL, altexp = NULL) {
     if (!is.null(batch.v)) {
         if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {

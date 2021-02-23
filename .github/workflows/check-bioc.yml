@@ -141,8 +141,6 @@ jobs:
 
           ## For installing usethis's dependency gert
           brew install libgit2
-          
-          brew install pandoc
 
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'

@@ -38,7 +38,8 @@ NULL
 
 
 #' @importFrom scattermore geom_scattermore
-#' @importFrom dplyr filter `%>%`
+#' @importFrom dplyr filter .data
+#' @importFrom magrittr `%>%`
 .plotEmbScatCyclic <- function(emb.m, color.value, color_by, facet_var = NULL, fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL, hue.colors = c(
         "#2E22EA",
         "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"
@@ -152,7 +153,7 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, color_by 
 NULL
 
 
-#' @importFrom grDevices colors colorRampPalette
+#' @importFrom grDevices colorRampPalette
 #' @import ggplot2
 #' @export
 cyclic_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3,

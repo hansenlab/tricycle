@@ -94,7 +94,8 @@ NULL
     return(GO.o)
 }
 
-#' @importFrom Seurat CreateSeuratObject SplitObject NormalizeData FindVariableFeatures FindIntegrationAnchors IntegrateData
+#' @importFrom Seurat SplitObject NormalizeData FindVariableFeatures FindIntegrationAnchors IntegrateData
+#' @importFrom SeuratObject CreateSeuratObject colMeans rowSums
 .seuratIntegrate <- function(count.m, batch, nfeatures, anchor.features) {
     seurat.o <- CreateSeuratObject(counts = count.m)
     seurat.o[["batch"]] <- batch

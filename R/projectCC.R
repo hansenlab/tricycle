@@ -100,6 +100,7 @@ NULL
 
 #' @importFrom  org.Hs.eg.db org.Hs.eg.db
 #' @importFrom AnnotationDbi mapIds
+#' @importMethodsFrom AnnotationDbi colnames get ncol nrow
 .humanSymbol <- function(gname, AnnotationDb = NULL) {
     if (is.null(AnnotationDb)) {
         AnnotationDb <- org.Hs.eg.db::org.Hs.eg.db

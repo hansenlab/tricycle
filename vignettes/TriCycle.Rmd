@@ -1,5 +1,5 @@
 ---
-title: "TriCycle: Transferable Representation and Inference of Cell Cycle"
+title: "tricycle: Transferable Representation and Inference of Cell Cycle"
 author: 
 - name: Shijie C. Zheng
   affiliation: Department of Biostatistics, Johns Hopkins Bloomberg School of Public Health
@@ -7,9 +7,9 @@ author:
 package: tricycle
 output: 
   BiocStyle::html_document
-bibliography: TriCycle.bib
+bibliography: tricycle.bib
 vignette: >
-  %\VignetteIndexEntry{TriCycle: Transferable Representation and Inference of Cell Cycle}
+  %\VignetteIndexEntry{tricycle: Transferable Representation and Inference of Cell Cycle}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,8 +21,14 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, echo=FALSE}
+htmltools::img(src = knitr::image_uri(file.path("../man/figures", "logo.png")), 
+               alt = 'logo', 
+               style = 'position:absolute; top:50px; right:5px; padding:10px;height:200px;')
+```
+
 # Introduction
-Cell cycle is an important and universal biological process in eukaryotes. For single cell RNAseq, the expression levels of cell cycle marker genes could be modeled as a periodic function of cell cycle time. The principal components analysis (PCA) of cell cycle genes could help us recover the cell cycle time in such a single cell RNAseq of which the main variation is driven by cell cycle. However, in a more complicated dataset of which main variation is driven by other phenotypes, PCA could fail due to the unorthogonality of cell cycle effect and other effects. @Stein-OBrien.2019 has shown that the transfer learning works well in single cell data, where one could learn a biological pattern and project the same pattern in other data. **TriCycle** is package that projects new data into the pre-learned cell cycle space and estimate the cell cycle time. The package also provide functions for users to learn a new reference projection and visualize the cell cycle time. All functions are built on the Bioconductor *SingleCellExperiment* infrastructure. See @Zheng.2021 for more rationales.
+Cell cycle is an important and universal biological process in eukaryotes. For single cell RNAseq, the expression levels of cell cycle marker genes could be modeled as a periodic function of cell cycle time. The principal components analysis (PCA) of cell cycle genes could help us recover the cell cycle time in such a single cell RNAseq of which the main variation is driven by cell cycle. However, in a more complicated dataset of which main variation is driven by other phenotypes, PCA could fail due to the unorthogonality of cell cycle effect and other effects. @Stein-OBrien.2019 has shown that the transfer learning works well in single cell data, where one could learn a biological pattern and project the same pattern in other data. **tricycle** is package that projects new data into the pre-learned cell cycle space and estimate the cell cycle time. The package also provide functions for users to learn a new reference projection and visualize the cell cycle time. All functions are built on the Bioconductor *SingleCellExperiment* infrastructure. See @Zheng.2021 for more rationales.
 
 
 # Prerequisites
@@ -55,6 +61,7 @@ example_sce
 The projected cell cycle space will be stored in *reducedDims* with name "ccProjection" (you could set other embedding name.).
 ```{r plot_projection, message = FALSE}
 library(ggplot2)
+library(scattermore)
 qplot(x = reducedDim(example_sce)[, 1],y = reducedDim(example_sce)[, 2]) +
   labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(example_sce), ")")) +
   theme_bw(base_size = 14)
@@ -74,7 +81,7 @@ top2a.idx <- which(rowData(example_sce)$Gene == 'Top2a')
 fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
 names(fit.l)
 ggplot(data = data.frame(theta = example_sce$CCTime, top2a = assay(example_sce, 'logcounts')[top2a.idx, ])) +
-  geom_point(aes(x = theta, y = top2a), size = 1) +
+  geom_scattermore(aes(x = theta, y = top2a), pointsize = 3.5) +
   geom_path(data = fit.l$pred.df, aes(x = x, y = y), size = 0.8, alpha = 0.8) +
   labs(x = "Cell cycle time \u03b8", y = "log2(Top2a)", title = paste0("Expression of Top2a along \u03b8 (n=", ncol(example_sce), ")")) +
   theme_bw(base_size = 14)
@@ -85,7 +92,7 @@ This method was proposed by @Schwabe.2020. We did small modifications to reduce 
 ```{r stage, message = TRUE}
 example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
 ggplot(data = data.frame(x = reducedDim(example_sce)[, 1], y = reducedDim(example_sce)[, 2], color = example_sce$CCStage)) +
-  geom_point(aes(x = x, y = y, color = color), size = 3, alpha = 0.8) +
+  geom_scattermore(aes(x = x, y = y, color = color), pointsize = 3.5, alpha = 0.8) +
   scale_color_manual(values = c('#ac4343', '#466caf', '#df8b3f', '#63b558', '#e8d760'), name = "CCStage") +
   labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(example_sce), ")")) +
   theme_bw(base_size = 14)
@@ -104,7 +111,7 @@ plotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', type = "circular
 To visualize the cell cycle time $\theta$ on any embedding, we need to carefully choose a cyclic color palette. Thus, we include such functions to plot any embedding of *SingleCellExperiment* object with cyclic variables. A companion helper function to create the cyclic legend is also available.
 ```{r cyclic, message = TRUE, fig.width = 10, fig.height = 7}
 library(cowplot)
-p <- plotEmbScatCyclic(example_sce, dimred = 1, point.size = 3.1, point.alpha = 0.9) +
+p <- plotEmbScatCyclic(example_sce, dimred = 1, point.size = 3.5, point.alpha = 0.9) +
   theme_bw(base_size = 14)
 legend <- cyclic_legend(text.size = 5, alpha = 0.9)
 plot_grid(p, legend, ncol = 2, rel_widths = c(1, 0.4))

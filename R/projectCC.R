@@ -40,11 +40,11 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' example_sce <- projectCC(example_sce)
-#' reducedDimNames(example_sce)
-#' head(reducedDim(example_sce, "ccProjection"))
-#' plot(reducedDim(example_sce, "ccProjection"))
-#' names(attributes(reducedDim(example_sce, "ccProjection")))
+#' neurosphere_example <- projectCC(neurosphere_example)
+#' reducedDimNames(neurosphere_example)
+#' head(reducedDim(neurosphere_example, "ccProjection"))
+#' plot(reducedDim(neurosphere_example, "ccProjection"))
+#' names(attributes(reducedDim(neurosphere_example, "ccProjection")))
 NULL
 
 

@@ -46,11 +46,11 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' example_sce <- inferCCTime(example_sce)
-#' reducedDimNames(example_sce)
-#' plot(reducedDim(example_sce, "ccProjection"))
-#' plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 1])
-#' plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 2])
+#' neurosphere_example <- inferCCTime(neurosphere_example)
+#' reducedDimNames(neurosphere_example)
+#' plot(reducedDim(neurosphere_example, "ccProjection"))
+#' plot(neurosphere_example$CCTime, reducedDim(neurosphere_example, "ccProjection")[, 1])
+#' plot(neurosphere_example$CCTime, reducedDim(neurosphere_example, "ccProjection")[, 2])
 NULL
 
 

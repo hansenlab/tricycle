@@ -63,8 +63,8 @@ This function help users plot embedding scater plot colored by cyclic variables,
 It will take a \linkS4class{SingleCellExperiment} object as input, and plot out its \code{dimred} such as PCA, UMAP, and etc with a cyclic color scheme.
 }
 \examples{
-example_sce <- inferCCTime(example_sce)
-plotEmbScatCyclic(example_sce, point.size = 3.1, point.alpha = 0.8)
+neurosphere_example <- inferCCTime(neurosphere_example)
+plotEmbScatCyclic(neurosphere_example, point.size = 3.1, point.alpha = 0.8)
 }
 \author{
 Shijie C. Zheng

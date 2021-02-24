@@ -34,11 +34,11 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' example_sce <- inferCCTime(example_sce)
-#' plotCCTimeDen(example_sce$CCTime, example_sce$sample, "sample")
+#' neurosphere_example <- inferCCTime(neurosphere_example)
+#' plotCCTimeDen(neurosphere_example$CCTime, neurosphere_example$sample, "sample")
 #'
-#' example_sce <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse")
-#' plotCCTimeDen(example_sce$CCTime, example_sce$CCStage, "CCStage")
+#' neurosphere_example <- inferCCStage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
+#' plotCCTimeDen(neurosphere_example$CCTime, neurosphere_example$CCStage, "CCStage")
 NULL
 
 

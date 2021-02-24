@@ -32,8 +32,8 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' example_sce <- inferCCTime(example_sce)
-#' plotEmbScatCyclic(example_sce, point.size = 3.1, point.alpha = 0.8)
+#' neurosphere_example <- inferCCTime(neurosphere_example)
+#' plotEmbScatCyclic(neurosphere_example, point.size = 3.1, point.alpha = 0.8)
 NULL
 
 

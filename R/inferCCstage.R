@@ -60,11 +60,11 @@
 #' \emph{Our preprint.}
 #'
 #' @examples
-#' example_sce <- inferCCStage(example_sce, gname.type = "ENSEMBL", species = "mouse")
-#' example_sce2 <- inferCCStage(example_sce, batch.v = "sample")
-#' example_sce3 <- inferCCStage(example_sce, batch.v = example_sce$sample)
-#' example_sce <- projectCC(example_sce)
-#' plot(reducedDim(example_sce, "ccProjection"), col = example_sce$CCStage)
+#' neurosphere_example <- inferCCStage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
+#' neurosphere_example2 <- inferCCStage(neurosphere_example, batch.v = "sample")
+#' neurosphere_example3 <- inferCCStage(neurosphere_example, batch.v = neurosphere_example$sample)
+#' neurosphere_example <- projectCC(neurosphere_example)
+#' plot(reducedDim(neurosphere_example, "ccProjection"), col = neurosphere_example$CCStage)
 NULL
 
 
@@ -141,7 +141,7 @@ NULL
     return(SYMBOL)
 }
 
-#' @importMethodsFrom IRanges as.matrix "colnames<-"  diff lapply rownames "rownames<-"  table tolower toupperunique which
+#' @importMethodsFrom IRanges as.matrix "colnames<-"  diff lapply rownames "rownames<-"  table tolower toupper unique which
 .inferCCStage <- function(data.m, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, ...) {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)

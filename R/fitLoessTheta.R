@@ -31,10 +31,10 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' example_sce <- inferCCTime(example_sce)
-#' top2a.idx <- which(rowData(example_sce)$Gene == "Top2a")
-#' fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, "logcounts")[top2a.idx, ])
-#' plot(example_sce$CCTime, assay(example_sce, "logcounts")[top2a.idx, ])
+#' neurosphere_example <- inferCCTime(neurosphere_example)
+#' top2a.idx <- which(rowData(neurosphere_example)$Gene == "Top2a")
+#' fit.l <- fitLoessTheta(neurosphere_example$CCTime, assay(neurosphere_example, "logcounts")[top2a.idx, ])
+#' plot(neurosphere_example$CCTime, assay(neurosphere_example, "logcounts")[top2a.idx, ])
 #' lines(fit.l$pred.df)
 NULL
 

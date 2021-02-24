@@ -73,11 +73,11 @@ the expression values must be **log-transformed**. Besides, we would assume the 
 The projection process is to take sum of weighted mean-centered expression of chosen genes, so the mean expression of a given gene could be affected without library size normalization.
 }
 \examples{
-example_sce <- projectCC(example_sce)
-reducedDimNames(example_sce)
-head(reducedDim(example_sce, "ccProjection"))
-plot(reducedDim(example_sce, "ccProjection"))
-names(attributes(reducedDim(example_sce, "ccProjection")))
+neurosphere_example <- projectCC(neurosphere_example)
+reducedDimNames(neurosphere_example)
+head(reducedDim(neurosphere_example, "ccProjection"))
+plot(reducedDim(neurosphere_example, "ccProjection"))
+names(attributes(reducedDim(neurosphere_example, "ccProjection")))
 }
 \seealso{
 \code{\link{inferCCTime}}, for inferring cell cycle time.

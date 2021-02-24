@@ -40,7 +40,7 @@ We recommend users to start with a *SingleCellExperiment* object. The output wil
 
 In the package, we include a example *SingleCellExperiment* dataset, which is a real subset of mouse Neurosphere RNAseq of 2 samples. 200 cells from sample AX1 and AX2 were randonly sampled from the full data. All genes in the Gene Ontology cell cycle gene list and *RevelioGeneList* as well as other random 573 genes were included.
 ```{r example, message = FALSE}
-example_sce
+neurosphere_example
 ```
 
 Please note that the user should **normalize library size** before putting into the tricycle functions. The library size normalization could be done by *normalizeCounts* function in *scater* package or by calculating CPM values. 
@@ -53,16 +53,16 @@ head(neuroRef)
 
 *projectCC* will automatically project the assay with name *logcounts* into the cell cycle space without any other argument input. You could specify species (default as mouse), gene IDs, gene ID type, and *AnnotationDb* object if gene mapping is needed. Refer to "man(projectCC)" for details.
 ```{r project, message = TRUE}
-example_sce <- projectCC(example_sce)
-example_sce
+neurosphere_example <- projectCC(neurosphere_example)
+neurosphere_example
 ```
 
 The projected cell cycle space will be stored in *reducedDims* with name "ccProjection" (you could set other embedding name.).
 ```{r plot_projection, message = FALSE}
 library(ggplot2)
 library(scattermore)
-qplot(x = reducedDim(example_sce)[, 1],y = reducedDim(example_sce)[, 2]) +
-  labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(example_sce), ")")) +
+qplot(x = reducedDim(neurosphere_example)[, 1],y = reducedDim(neurosphere_example)[, 2]) +
+  labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(neurosphere_example), ")")) +
   theme_bw(base_size = 14)
 
 ```
@@ -70,30 +70,30 @@ qplot(x = reducedDim(example_sce)[, 1],y = reducedDim(example_sce)[, 2]) +
 # Infer cell cycle time
 The cell cycle time $\theta$ inference is straight forward once you get the cell cycle space projection. The formula is $\theta = tan^{-1}(PC2/PC1)$. *inferCCTime* is kind of a wrapper function. You could run *inferCCTime* directly without running *projectCC*. *inferCCTime* will search wheterh there is a embedding called "ccProjection" (default), use it to calculate $\theta$, and return a *SingleCellExperiment* with "CCTime" added to *colData*. If the designated embedding does not exist, it will project the data first.
 ```{r cctime, message = TRUE}
-example_sce <- inferCCTime(example_sce)
-names(colData(example_sce))
+neurosphere_example <- inferCCTime(neurosphere_example)
+names(colData(neurosphere_example))
 ```
 
 We also provide a convenient function *fitLoessTheta* to fit *loess* line between the cyclic variable $\theta$ and other response variables. This fitting is done by making `theta.v` 3 periods `(c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi))` and repeating `y` 3 times. Only the fitted values corresponding to original `theta.v` will be returned. In this example, we show how well the expression of the cell cycle marker gene *Top2a* change along $\theta$.
 ```{r loess, message = TRUE}
-top2a.idx <- which(rowData(example_sce)$Gene == 'Top2a')
-fit.l <- fitLoessTheta(example_sce$CCTime, assay(example_sce, 'logcounts')[top2a.idx, ])
+top2a.idx <- which(rowData(neurosphere_example)$Gene == 'Top2a')
+fit.l <- fitLoessTheta(neurosphere_example$CCTime, assay(neurosphere_example, 'logcounts')[top2a.idx, ])
 names(fit.l)
-ggplot(data = data.frame(theta = example_sce$CCTime, top2a = assay(example_sce, 'logcounts')[top2a.idx, ])) +
+ggplot(data = data.frame(theta = neurosphere_example$CCTime, top2a = assay(neurosphere_example, 'logcounts')[top2a.idx, ])) +
   geom_scattermore(aes(x = theta, y = top2a), pointsize = 3.5) +
   geom_path(data = fit.l$pred.df, aes(x = x, y = y), size = 0.8, alpha = 0.8) +
-  labs(x = "Cell cycle time \u03b8", y = "log2(Top2a)", title = paste0("Expression of Top2a along \u03b8 (n=", ncol(example_sce), ")")) +
+  labs(x = "Cell cycle time \u03b8", y = "log2(Top2a)", title = paste0("Expression of Top2a along \u03b8 (n=", ncol(neurosphere_example), ")")) +
   theme_bw(base_size = 14)
 ```
 
 # Infer cell cycle stages
 This method was proposed by @Schwabe.2020. We did small modifications to reduce `NA` assignments. But on average, the performance is quite similar to the original implementation in [Revelio](https://github.com/danielschw188/Revelio/) package. In brief, we calculate the *z*-scores of highly expressed stage specific cell cycle marker genes, and assgin the cell to the stage with the greatest *z*-score. 
 ```{r stage, message = TRUE}
-example_sce <- inferCCStage(example_sce, gname.type = 'ENSEMBL', species = 'mouse')
-ggplot(data = data.frame(x = reducedDim(example_sce)[, 1], y = reducedDim(example_sce)[, 2], color = example_sce$CCStage)) +
+neurosphere_example <- inferCCStage(neurosphere_example, gname.type = 'ENSEMBL', species = 'mouse')
+ggplot(data = data.frame(x = reducedDim(neurosphere_example)[, 1], y = reducedDim(neurosphere_example)[, 2], color = neurosphere_example$CCStage)) +
   geom_scattermore(aes(x = x, y = y, color = color), pointsize = 3.5, alpha = 0.8) +
   scale_color_manual(values = c('#ac4343', '#466caf', '#df8b3f', '#63b558', '#e8d760'), name = "CCStage") +
-  labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(example_sce), ")")) +
+  labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(neurosphere_example), ")")) +
   theme_bw(base_size = 14)
 ```
 
@@ -101,8 +101,8 @@ ggplot(data = data.frame(x = reducedDim(example_sce)[, 1], y = reducedDim(exampl
 # Plot out the kernel density
 Another useful function is *plotCCTimeDen*, which computes kernel density of $\theta$ conditioned on a phenotype using von Mises distribution. The ouput figures are provided in two flavors, polar coordinates and Cartesian coordinates. This could be useful when comparing different cell types, treatments, or just stages. (Because we use a very small dataset here as example, we set the bandwith, i.e. the concentration parameter of the von Mises distribution as 10 to get a smooth line.)
 ```{r density, message = TRUE}
-plotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', bw = 10, fig.title = "Kernel density of \u03b8") + theme_bw(base_size = 14)
-plotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', type = "circular", bw = 10,  fig.title = "Kernel density of \u03b8") + theme_bw(base_size = 14)
+plotCCTimeDen(neurosphere_example$CCTime, neurosphere_example$sample, 'sample', bw = 10, fig.title = "Kernel density of \u03b8") + theme_bw(base_size = 14)
+plotCCTimeDen(neurosphere_example$CCTime, neurosphere_example$sample, 'sample', type = "circular", bw = 10,  fig.title = "Kernel density of \u03b8") + theme_bw(base_size = 14)
 ```
 
 
@@ -110,7 +110,7 @@ plotCCTimeDen(example_sce$CCTime, example_sce$sample, 'sample', type = "circular
 To visualize the cell cycle time $\theta$ on any embedding, we need to carefully choose a cyclic color palette. Thus, we include such functions to plot any embedding of *SingleCellExperiment* object with cyclic variables. A companion helper function to create the cyclic legend is also available.
 ```{r cyclic, message = TRUE, fig.width = 10, fig.height = 7}
 library(cowplot)
-p <- plotEmbScatCyclic(example_sce, dimred = 1, point.size = 3.5, point.alpha = 0.9) +
+p <- plotEmbScatCyclic(neurosphere_example, dimred = 1, point.size = 3.5, point.alpha = 0.9) +
   theme_bw(base_size = 14)
 legend <- cyclic_legend(text.size = 5, alpha = 0.9)
 plot_grid(p, legend, ncol = 2, rel_widths = c(1, 0.4))
@@ -122,19 +122,19 @@ We plot our our projection embedding. In practice, user could use other embeddin
 Users could make their own reference by doing PCA on the cell cycle genes, and use the learned rotation matrix as the reference matrix in other functions. Here is an example, we just use *pcaGoCC* function to extract Gene Ontology cell cycle genes (GO:0007049) and run PCA. By projecting the data itself with the learned reference, the projections are equivalent to direct PCA results. But you could use this newly learned reference to project other datasets.
 ```{r newRef, message = TRUE}
 set.seed(100)
-gocc_sce.o <- pcaGoCC(example_sce, exprs_values = "logcounts", species = "mouse")
+gocc_sce.o <- pcaGoCC(neurosphere_example, exprs_values = "logcounts", species = "mouse")
 new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, seq_len(2)]
 head(new.ref)
-new_sce <- inferCCTime(example_sce, ref.m  = new.ref, dimred = 'ccProjection2')
+new_sce <- inferCCTime(neurosphere_example, ref.m  = new.ref, dimred = 'ccProjection2')
 
 ```
 
 Note: If user wants to calculate correlation between two cyclic variables, such as cell cycle time, traditional pearson's correlation coefficient won't consider the cyclic nature. Users could use (absolute) circular correlation values instead. (The signs of PC1 and PC2 are not deterministic when re-learning the reference by performing PCA. If the PC1 is flipped, there will be a $\pi$ shift. So does PC2. If the user fixes the reference, there won't be any flipping. But considering the variations around $0$ or $2\pi$, circular correlation should still be used instead of pearson's correlation coefficient.)
 ```{r cor, message = TRUE}
-cor(example_sce$CCTime, new_sce$CCTime)
-Directional::circ.cor1(example_sce$CCTime, new_sce$CCTime, rads = TRUE)
-qplot(x = example_sce$CCTime,y = new_sce$CCTime) +
-  labs(x = "Oroginal \u03b8", y = "New \u03b8", title = paste0("Comparison of two \u03b8 (n=", ncol(example_sce), ")")) +
+cor(neurosphere_example$CCTime, new_sce$CCTime)
+Directional::circ.cor1(neurosphere_example$CCTime, new_sce$CCTime, rads = TRUE)
+qplot(x = neurosphere_example$CCTime,y = new_sce$CCTime) +
+  labs(x = "Oroginal \u03b8", y = "New \u03b8", title = paste0("Comparison of two \u03b8 (n=", ncol(neurosphere_example), ")")) +
   theme_bw(base_size = 14)
 
 ```

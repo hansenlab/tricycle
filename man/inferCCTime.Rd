@@ -64,11 +64,11 @@ Therefore, this function is a wrapper function if the input is a \linkS4class{Si
 Refer to \code{\link{projectCC}} to all arguments during the projection.
 }
 \examples{
-example_sce <- inferCCTime(example_sce)
-reducedDimNames(example_sce)
-plot(reducedDim(example_sce, "ccProjection"))
-plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 1])
-plot(example_sce$CCTime, reducedDim(example_sce, "ccProjection")[, 2])
+neurosphere_example <- inferCCTime(neurosphere_example)
+reducedDimNames(neurosphere_example)
+plot(reducedDim(neurosphere_example, "ccProjection"))
+plot(neurosphere_example$CCTime, reducedDim(neurosphere_example, "ccProjection")[, 1])
+plot(neurosphere_example$CCTime, reducedDim(neurosphere_example, "ccProjection")[, 2])
 }
 \references{
 Zheng SC, et al.

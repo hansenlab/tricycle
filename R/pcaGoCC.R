@@ -39,13 +39,13 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' gocc_sce.o <- pcaGoCC(example_sce)
+#' gocc_sce.o <- pcaGoCC(neurosphere_example)
 #' new.ref <- attr(reducedDim(gocc_sce.o, "PCA"), "rotation")[, seq_len(2)]
-#' example_sce <- inferCCTime(example_sce) ### Use internal NeuroRef to project and infer CC time
+#' neurosphere_example <- inferCCTime(neurosphere_example) ### Use internal NeuroRef to project and infer CC time
 #'
 #' ### Use new reference to project and infer CC time
-#' new_sce <- inferCCTime(example_sce, ref.m = new.ref, dimred = "ccProjection2")
-#' plot(example_sce$CCTime, new_sce$CCTime)
+#' new_sce <- inferCCTime(neurosphere_example, ref.m = new.ref, dimred = "ccProjection2")
+#' plot(neurosphere_example$CCTime, new_sce$CCTime)
 NULL
 
 

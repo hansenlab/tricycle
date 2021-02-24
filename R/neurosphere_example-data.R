@@ -7,7 +7,7 @@
 #'
 #' @docType data
 #'
-#' @usage data(example_sce)
+#' @usage data(neurosphere_example)
 #'
 #' @format A \linkS4class{SingleCellExperiment} object of 1500 genes and 400 cells.
 #'
@@ -15,5 +15,5 @@
 #'
 #'
 #' @examples
-#' data(example_sce)
-"example_sce"
+#' data(neurosphere_example)
+"neurosphere_example"

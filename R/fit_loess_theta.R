@@ -76,9 +76,9 @@ fit_loess_theta <- function(theta.v, y, span = 0.3, length.out = 200, plot = FAL
         stopifnot("Length of theta.v does not match color.vars" = length(color.vars) == length(theta.v))
         if (!is.null(hue.colors)) {
           stopifnot("Number of colors does not match nlevels of color.vars" = nlevels(factor(color.vars) == length(hue.color)))
-          color_scale <- scale_color_manual(values = hue.colors, name = color.name, limits = levels(colors.vars))
+          color_scale <- scale_color_manual(values = hue.colors, name = color.name, limits = levels(color.vars))
         } else {
-          color_scale <- scale_color_discrete(name = color.name, limits = levels(colors.vars))
+          color_scale <- scale_color_discrete(name = color.name, limits = levels(color.vars))
         }
         tmp.df <- data.frame(theta = theta.v, y = y, color = color.vars)
         p_aes <- aes_string(x = "theta", y = "y", color = "color")

@@ -47,6 +47,7 @@ NULL
 #' @importFrom  org.Hs.eg.db org.Hs.eg.db
 #' @importFrom  org.Mm.eg.db org.Mm.eg.db
 #' @importFrom AnnotationDbi select
+#' @importFrom methods is
 #' @importMethodsFrom scater runPCA
 #' @importMethodsFrom SummarizedExperiment  assay colData assayNames
 #' @importClassesFrom SingleCellExperiment SingleCellExperiment

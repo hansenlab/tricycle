@@ -33,14 +33,14 @@
 #'
 #' For \linkS4class{SingleCellExperiment}, an updated \linkS4class{SingleCellExperiment} is returned containing projection matrix in \code{\link[SingleCellExperiment]{reducedDims}(..., name)}.
 #'
-#' @name projectCC
+#' @name project_cycle_space
 #' @seealso
-#' \code{\link{inferCCTime}}, for inferring cell cycle time.
+#' \code{\link{estimate_cycle_position}}, for inferring cell cycle position.
 #'
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' neurosphere_example <- projectCC(neurosphere_example)
+#' neurosphere_example <- project_cycle_space(neurosphere_example)
 #' reducedDimNames(neurosphere_example)
 #' head(reducedDim(neurosphere_example, "ccProjection"))
 #' plot(reducedDim(neurosphere_example, "ccProjection"))
@@ -50,7 +50,7 @@ NULL
 
 
 
-.projectCC <- function(data.m, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
+.project_cycle_space <- function(data.m, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
 
@@ -112,29 +112,29 @@ NULL
 
 
 #' @export
-#' @rdname projectCC
-setMethod("projectCC", "ANY", function(x, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
-    .projectCC(x, ref.m = ref.m, gname = gname, gname.type = gname.type, species = species, AnnotationDb = AnnotationDb)
+#' @rdname project_cycle_space
+setMethod("project_cycle_space", "ANY", function(x, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
+    .project_cycle_space(x, ref.m = ref.m, gname = gname, gname.type = gname.type, species = species, AnnotationDb = AnnotationDb)
 })
 
 #' @export
-#' @rdname projectCC
+#' @rdname project_cycle_space
 #' @importFrom SummarizedExperiment assay
-setMethod("projectCC", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts") {
-    .projectCC(assay(x, exprs_values), ...)
+setMethod("project_cycle_space", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts") {
+    .project_cycle_space(assay(x, exprs_values), ...)
 })
 
 
 #' @export
-#' @rdname projectCC
+#' @rdname project_cycle_space
 #' @importFrom SingleCellExperiment reducedDim<- altExp
 #' @importFrom SummarizedExperiment assay
-setMethod("projectCC", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", altexp = NULL, name = "ccProjection") {
+setMethod("project_cycle_space", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", altexp = NULL, name = "ccProjection") {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {
         y <- x
     }
-    reducedDim(x, name) <- .projectCC(assay(y, exprs_values), ...)
+    reducedDim(x, name) <- .project_cycle_space(assay(y, exprs_values), ...)
     x
 })

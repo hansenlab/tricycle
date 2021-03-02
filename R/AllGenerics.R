@@ -1,20 +1,17 @@
 
 #' @export
-#' @rdname projectCC
-setGeneric("projectCC", function(x, ...) standardGeneric("projectCC"))
+#' @rdname project_cycle_space
+setGeneric("project_cycle_space", function(x, ...) standardGeneric("project_cycle_space"))
 
 #' @export
-#' @rdname inferCCTime
-setGeneric("inferCCTime", function(x, ...) standardGeneric("inferCCTime"))
+#' @rdname estimate_cycle_position
+setGeneric("estimate_cycle_position", function(x, ...) standardGeneric("estimate_cycle_position"))
 
 #' @export
-setGeneric("pcaGoCC", function(sce.o, ...) standardGeneric("pcaGoCC"))
+#' @rdname estimate_cycle_stage
+setGeneric("estimate_cycle_stage", function(x, ...) standardGeneric("estimate_cycle_stage"))
 
 #' @export
-#' @rdname inferCCStage
-setGeneric("inferCCStage", function(x, ...) standardGeneric("inferCCStage"))
-
-#' @export
-setGeneric("plotEmbScatCyclic", function(sce.o, ...) {
-      standardGeneric("plotEmbScatCyclic")
+setGeneric("plot_emb_circle_scale", function(sce.o, ...) {
+      standardGeneric("plot_emb_circle_scale")
   })

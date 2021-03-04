@@ -1,10 +1,10 @@
-#' Plot embedding with cyclic cell cycle time
+#' Plot embedding with cyclic cell cycle position
 #'
-#' Generate scat plot of embedding with cyclic cell cycle time or other cyclic variables
+#' Generate scat plot of embedding with cyclic cell cycle position or other cyclic variables
 #'
 #'
 #' @param sce.o A \linkS4class{SingleCellExperiment} contains the embbing to be plotted against.
-#' @param color_by The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "CCTime"
+#' @param color_by The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "CCPosition"
 #' @param facet_by he name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If NULL, no faceted panles will be returned. Default: NULL
 #' @param dimred The name or index of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). Default: 1
 #' @param dim The indices of \code{dimred} to be plotted. At the moment, it has to be two integers.   Default: 1:2
@@ -16,10 +16,10 @@
 #' @param hue.colors The string vector gives the cyclic colors. The first color should look very similar to the last one.
 #' Default: c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")
 #' @param hue.n The number of breaks of color scheme. Default: 500
-#' @param plot.legend Whether the legend should be plotted with the scatter plot. We recommend not to use this legend but use the cyclic legend produced by \code{\link{cyclic_legend}} instead. Default: FALSE
+#' @param plot.legend Whether the legend should be plotted with the scatter plot. We recommend not to use this legend but use the cyclic legend produced by \code{\link{circle_scale_legend}} instead. Default: FALSE
 #'
 #' @details
-#' This function help users plot embedding scater plot colored by cyclic variables, such as cell cycle time, which is bound between 0 - 2pi.
+#' This function help users plot embedding scater plot colored by cyclic variables, such as cell cycle position, which is bound between 0 - 2pi.
 #' It will take a \linkS4class{SingleCellExperiment} object as input, and plot out its \code{dimred} such as PCA, UMAP, and etc with a cyclic color scheme.
 #'
 #' @return
@@ -27,20 +27,20 @@
 #' If \code{facet_by} is not assigned, a single ggplot plot of the scatter plot will be return,
 #' Otherwise, apart from the first scatter plot showing all cells together, other faceted scatter plots will also be given in the list.
 #'
-#' @name plotEmbScatCyclic
+#' @name plot_emb_circle_scale
 #'
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' neurosphere_example <- inferCCTime(neurosphere_example)
-#' plotEmbScatCyclic(neurosphere_example, point.size = 3.1, point.alpha = 0.8)
+#' neurosphere_example <- estimate_cycle_position(neurosphere_example)
+#' plot_emb_circle_scale(neurosphere_example, point.size = 3.1, point.alpha = 0.8)
 NULL
 
 
 #' @importFrom scattermore geom_scattermore
 #' @importFrom dplyr filter .data
 #' @importFrom magrittr `%>%`
-.plotEmbScatCyclic <- function(emb.m, color.value, color_by, facet_var = NULL, fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL, hue.colors = c(
+.plot_emb_circle_scale <- function(emb.m, color.value, color_by, facet_var = NULL, fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL, hue.colors = c(
         "#2E22EA",
         "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"
     ), hue.n = 500, plot.legend = FALSE) {
@@ -89,16 +89,15 @@ NULL
 
 
 #' @export
-#' @rdname plotEmbScatCyclic
+#' @rdname plot_emb_circle_scale
 #' @importFrom SingleCellExperiment reducedDim
 #' @importFrom SummarizedExperiment colData
-setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, color_by = "CCTime", facet_by = NULL, dimred = 1, dim = seq_len(2),
+setMethod("plot_emb_circle_scale", "SingleCellExperiment", function(sce.o, color_by = "CCPosition", facet_by = NULL, dimred = 1, dim = seq_len(2),
     fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL,
     hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
     hue.n = 500, plot.legend = FALSE) {
-    if (length(dim) != 2) {
-          stop("The function can only plot 2 dims at this time. Change dim argument.")
-      }
+    stopifnot("The function can only plot 2 dims at this time. Change dim argument." = length(dim) == 2)
+  
     emb.m <- reducedDim(sce.o, dimred)[, dim]
     color.value <- colData(sce.o)[[color_by]]
     if (!is.null(facet_by)) {
@@ -109,7 +108,7 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, color_by 
     } else {
         facet_var <- NULL
     }
-    .plotEmbScatCyclic(
+    .plot_emb_circle_scale(
         emb.m = emb.m, color.value = color.value, color_by = color_by,
         facet_var = facet_var, fig.title = fig.title, point.size = point.size,
         point.alpha = point.alpha, x_lab = x_lab, y_lab = y_lab,
@@ -125,7 +124,7 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, color_by 
 #'
 #' @description This function is a helper function to create the cyclic ggplot color legend.
 #'
-#' @usage cyclic_legend(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
+#' @usage circle_scale_legend(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
 #'  hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, y.text = 3.8, ymax = 4.5, text.size = 3)
 #'
 #' @param hue.colors The string vector gives the cyclic colors. The first color should look very similar to the last one.
@@ -140,23 +139,23 @@ setMethod("plotEmbScatCyclic", "SingleCellExperiment", function(sce.o, color_by 
 #'
 #' @return A ggplot object
 #'
-#' @details The function will make a donut shape to serve as the cyclic color legend. The arguments should match the argument used in \code{\link{plotEmbScatCyclic}}.
+#' @details The function will make a donut shape to serve as the cyclic color legend. The arguments should match the argument used in \code{\link{plot_emb_circle_scale}}.
 #'
 #' @author Shijie C. Zheng
 #'
-#' @name cyclic_legend
-#' @aliases cyclic_legend
-#' @rdname cyclic_legend
+#' @name circle_scale_legend
+#' @aliases circle_scale_legend
+#' @rdname circle_scale_legend
 #'
 #' @examples
-#' cyclic_legend()
+#' circle_scale_legend()
 NULL
 
 
 #' @importFrom grDevices colorRampPalette
 #' @import ggplot2
 #' @export
-cyclic_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3,
+circle_scale_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3,
     y.text = 3.8, ymax = 4.5, text.size = 3) {
     hues.df <- data.frame(theta = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = colorRampPalette(hue.colors)(hue.n))
     hue_text.df <- data.frame(theta = c(0, 0.5 * pi, pi, 1.5 * pi), label = c("0/2\u03C0", "0.5\u03C0", "\u03C0", "1.5\u03C0"), hjust = c(0.1, 0.5, 0.5, 0.5))

@@ -1,9 +1,9 @@
-#' Plot cell cycle time kernel density stratified by a factor
+#' Plot cell cycle position kernel density stratified by a factor
 #'
-#' @description  The function will compute and plot cell cycle time kernel density.
+#' @description  The function will compute and plot cell cycle position kernel density.
 #'
 #'
-#' @param theta.v The cell cycle time - a numeric vector with range between 0 to 2pi.
+#' @param theta.v The cell cycle position - a numeric vector with range between 0 to 2pi.
 #' @param color_var.v A factor variable to stratify \code{theta.v}, such as samples or 'CCStage'. The length of it should equal to the length of \code{theta.v}.
 #' @param color_name The name of the color_var.v to be used in the legend.
 #' @param palette.v A string vector to give the color names. It should has the length of the number of levels of \code{color_var.v}. If not given, the 'Set1' palette will be used.
@@ -26,19 +26,19 @@
 #'
 #'
 #'
-#' @name plotCCTimeDen
-#' @aliases plotCCTimeDen
+#' @name plot_ccposition_den
+#' @aliases plot_ccposition_den
 #' @seealso
-#' \code{\link{inferCCStage}}, for inferring 5 stages of cell cycle
+#' \code{\link{estimate_cycle_stage}}, for inferring 5 stages of cell cycle
 #'
 #' @author Shijie C. Zheng
 #'
 #' @examples
-#' neurosphere_example <- inferCCTime(neurosphere_example)
-#' plotCCTimeDen(neurosphere_example$CCTime, neurosphere_example$sample, "sample")
+#' neurosphere_example <- estimate_cycle_position(neurosphere_example)
+#' plot_ccposition_den(neurosphere_example$CCPosition, neurosphere_example$sample, "sample")
 #'
-#' neurosphere_example <- inferCCStage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
-#' plotCCTimeDen(neurosphere_example$CCTime, neurosphere_example$CCStage, "CCStage")
+#' neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
+#' plot_ccposition_den(neurosphere_example$CCPosition, neurosphere_example$CCStage, "CCStage")
 NULL
 
 
@@ -51,7 +51,7 @@ NULL
 #' @import ggplot2
 #'
 #' @export
-plotCCTimeDen <- function(theta.v, color_var.v, color_name, palette.v = NULL, fig.title = NULL, type = c("linear", "circular"), bw = 30, weighted = FALSE, line.size = 0.5, line.alpha = 0.5,
+plot_ccposition_den <- function(theta.v, color_var.v, color_name, palette.v = NULL, fig.title = NULL, type = c("linear", "circular"), bw = 30, weighted = FALSE, line.size = 0.5, line.alpha = 0.5,
     ...) {
     if ((min(theta.v) < 0) | (max(theta.v) > 2 * pi)) {
           stop("theta.v need to be between 0 - 2pi.")

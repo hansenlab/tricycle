@@ -4,7 +4,7 @@
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-#' @param ... For the \code{inferCCStage} generic, the following additional arguments to pass.
+#' @param ... For the \code{estimate_cycle_stage} generic, the following additional arguments to pass.
 #' For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.
 #' @param exprs_values Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
 #' If the projection already exists, you can ignore this value. Default: 'logcounts'
@@ -42,11 +42,9 @@
 #'
 #' If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with the discretized cell cycle stages stored in colData with name 'CCStage' will be returned.
 #'
-#' @name inferCCStage
-#' @aliases inferCCStage
+#' @name estimate_cycle_stage
+#' @aliases estimate_cycle_stage
 #'
-#' @seealso
-#' \code{\link{projectCC}}, for projecting new data with a pre-learned reference
 #'
 #' @author Shijie C. Zheng
 #'
@@ -60,10 +58,10 @@
 #' \emph{Our preprint.}
 #'
 #' @examples
-#' neurosphere_example <- inferCCStage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
-#' neurosphere_example2 <- inferCCStage(neurosphere_example, batch.v = "sample")
-#' neurosphere_example3 <- inferCCStage(neurosphere_example, batch.v = neurosphere_example$sample)
-#' neurosphere_example <- projectCC(neurosphere_example)
+#' neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
+#' neurosphere_example2 <- estimate_cycle_stage(neurosphere_example, batch.v = "sample")
+#' neurosphere_example3 <- estimate_cycle_stage(neurosphere_example, batch.v = neurosphere_example$sample)
+#' neurosphere_example <- project_cycle_space(neurosphere_example)
 #' plot(reducedDim(neurosphere_example, "ccProjection"), col = neurosphere_example$CCStage)
 NULL
 
@@ -142,7 +140,7 @@ NULL
 }
 
 #' @importMethodsFrom IRanges as.matrix "colnames<-"  diff lapply rownames "rownames<-"  table tolower toupper unique which
-.inferCCStage <- function(data.m, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, ...) {
+.estimate_cycle_stage <- function(data.m, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, ...) {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
     if (is.null(gname)) {
@@ -172,35 +170,35 @@ NULL
 }
 
 #' @export
-#' @rdname inferCCStage
-setMethod("inferCCStage", "ANY", function(x, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL,
+#' @rdname estimate_cycle_stage
+setMethod("estimate_cycle_stage", "ANY", function(x, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL,
     batch.v = NULL, corThres = 0.2, tolerance = 0.3) {
-    .inferCCStage(x,
+    .estimate_cycle_stage(x,
         cycleGene.l = cycleGene.l, gname = gname, gname.type = gname.type,
         species = species, AnnotationDb = AnnotationDb, batch.v = batch.v, corThres = corThres, tolerance = tolerance
     )
 })
 
 #' @export
-#' @rdname inferCCStage
+#' @rdname estimate_cycle_stage
 #' @importMethodsFrom SummarizedExperiment  assay colData  order sort
-setMethod("inferCCStage", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL) {
+setMethod("estimate_cycle_stage", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL) {
     if (!is.null(batch.v)) {
         if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
               batch.v <- colData(x)[, batch.v]
           }
     }
 
-    x$CCStage <- .inferCCStage(assay(x, exprs_values), batch.v = batch.v, ...)
+    x$CCStage <- .estimate_cycle_stage(assay(x, exprs_values), batch.v = batch.v, ...)
     x
 })
 
 
 #' @export
-#' @rdname inferCCStage
+#' @rdname estimate_cycle_stage
 #' @importMethodsFrom SummarizedExperiment  assay colData  order sort
 #' @importMethodsFrom SingleCellExperiment altExp cbind rbind reducedDim "reducedDim<-"  reducedDimNames
-setMethod("inferCCStage", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL, altexp = NULL) {
+setMethod("estimate_cycle_stage", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL, altexp = NULL) {
     if (!is.null(batch.v)) {
         if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
               batch.v <- colData(x)[, batch.v]
@@ -211,6 +209,6 @@ setMethod("inferCCStage", "SingleCellExperiment", function(x, ..., exprs_values 
     } else {
         y <- x
     }
-    x$CCStage <- .inferCCStage(assay(y, exprs_values), batch.v = batch.v, ...)
+    x$CCStage <- .estimate_cycle_stage(assay(y, exprs_values), batch.v = batch.v, ...)
     x
 })

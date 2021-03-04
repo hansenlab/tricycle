@@ -12,8 +12,8 @@ Description: The package contains functions to infer and visualize cell cycle
         cell samples. In addition, we also offer functions to visualize cell
         cycle time on different embeddings and functions to build new reference.
 Depends: R (>= 4.0), SingleCellExperiment, methods
-Imports: circular, ggplot2, AnnotationDbi, org.Hs.eg.db, org.Mm.eg.db, scater, Seurat, GenomicRanges, IRanges, S4Vectors, SeuratObject, forcats, scattermore, purrr, dplyr, RColorBrewer, grDevices, stats, SummarizedExperiment, magrittr
-Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional, cowplot, htmltools
+Imports: circular, ggplot2, AnnotationDbi, org.Hs.eg.db, org.Mm.eg.db, scater, GenomicRanges, IRanges, S4Vectors, forcats, scattermore, purrr, dplyr, RColorBrewer, grDevices, stats, SummarizedExperiment, magrittr
+Suggests: testthat, BiocStyle, knitr, rmarkdown, Directional, cowplot, htmltools, Seurat
 License: GPL-3
 VignetteBuilder: knitr
 Encoding: UTF-8

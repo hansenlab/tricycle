@@ -13,7 +13,7 @@
 #' already in the reducedDim with name \code{dimred}. The \code{dimred} will be directly used to assign cell cycle position withou new projection.
 #' @param dimred The name of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). If the \code{dimred} already exists,
 #' it will be used to assign cell cycle position. If \code{dimred} does not exist, the projection will be calculated first by \code{\link{project_cycle_space}}
-#' and stored with name \code{dimred} in {x}. Default: 'ccProjection'
+#' and stored with name \code{dimred} in {x}. Default: 'tricycleEmbedding'
 #' @param center.pc1 The center of PC1 when defining the angle. Default: 0
 #' @param center.pc2 The center of PC2 when defining the angle. Default: 0
 #' @param altexp String or integer scalar specifying an alternative experiment containing the **log-expression** data, which will be used for projection.
@@ -30,9 +30,9 @@
 #' @return
 #' If the input is a numeric matrix, the cell cycle position - a numeric vector bound between \eqn{0 \sim 2 \pi} with the same length as the number of input coumlum will be returned.
 #'
-#' If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{SummarizedExperiment} with cell cycle position stored in colData with name 'CCPosition' will be returned.
+#' If the input is \linkS4class{SummarizedExperiment}, the original \linkS4class{SummarizedExperiment} with cell cycle position stored in colData with name 'tricyclePosition' will be returned.
 #'
-#' If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with cell cycle position stored in colData with name 'CCPosition' will be returned
+#' If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with cell cycle position stored in colData with name 'tricyclePosition' will be returned
 #' and the projection will be stored in \code{\link[SingleCellExperiment]{reducedDims}(..., dimred)} if it does not exist before.
 #'
 #' @name estimate_cycle_position
@@ -48,9 +48,9 @@
 #' @examples
 #' neurosphere_example <- estimate_cycle_position(neurosphere_example)
 #' reducedDimNames(neurosphere_example)
-#' plot(reducedDim(neurosphere_example, "ccProjection"))
-#' plot(neurosphere_example$CCPosition, reducedDim(neurosphere_example, "ccProjection")[, 1])
-#' plot(neurosphere_example$CCPosition, reducedDim(neurosphere_example, "ccProjection")[, 2])
+#' plot(reducedDim(neurosphere_example, "tricycleEmbedding"))
+#' plot(neurosphere_example$tricyclePosition, reducedDim(neurosphere_example, "tricycleEmbedding")[, 1])
+#' plot(neurosphere_example$tricyclePosition, reducedDim(neurosphere_example, "tricycleEmbedding")[, 2])
 NULL
 
 
@@ -77,7 +77,7 @@ setMethod("estimate_cycle_position", "ANY", function(x, ..., center.pc1 = 0, cen
 #' @importFrom SummarizedExperiment assay
 setMethod("estimate_cycle_position", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", center.pc1 = 0, center.pc2 = 0) {
     projection.m <- .project_cycle_space(assay(x, exprs_values), ...)
-    x$CCPosition <- .getTheta(projection.m, center.pc1 = center.pc1, center.pc2 = center.pc2)
+    x$tricyclePosition <- .getTheta(projection.m, center.pc1 = center.pc1, center.pc2 = center.pc2)
     x
 })
 
@@ -85,7 +85,7 @@ setMethod("estimate_cycle_position", "SummarizedExperiment", function(x, ..., ex
 #' @export
 #' @rdname estimate_cycle_position
 #' @importFrom SingleCellExperiment reducedDim<- altExp reducedDimNames reducedDim
-setMethod("estimate_cycle_position", "SingleCellExperiment", function(x, ..., dimred = "ccProjection", center.pc1 = 0, center.pc2 = 0, altexp = NULL) {
+setMethod("estimate_cycle_position", "SingleCellExperiment", function(x, ..., dimred = "tricycleEmbedding", center.pc1 = 0, center.pc2 = 0, altexp = NULL) {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
         if ((dimred %in% reducedDimNames(x)) & (!(dimred %in% reducedDimNames(y)))) {
@@ -102,6 +102,6 @@ setMethod("estimate_cycle_position", "SingleCellExperiment", function(x, ..., di
         y <- project_cycle_space(y, name = dimred, ...)
         reducedDim(x, dimred) <- reducedDim(y, dimred)
     }
-    x$CCPosition <- .getTheta(reducedDim(x, dimred), center.pc1 = center.pc1, center.pc2 = center.pc2)
+    x$tricyclePosition <- .getTheta(reducedDim(x, dimred), center.pc1 = center.pc1, center.pc2 = center.pc2)
     x
 })

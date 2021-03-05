@@ -25,7 +25,7 @@ project_cycle_space(x, ...)
   ...,
   exprs_values = "logcounts",
   altexp = NULL,
-  name = "ccProjection"
+  name = "tricycleEmbedding"
 )
 }
 \arguments{
@@ -56,7 +56,7 @@ If no AnnotationDb object being given, the function will use \code{\link[org.Hs.
 
 \item{altexp}{String or integer scalar specifying an alternative experiment containing the input data.}
 
-\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'ccProjection'}
+\item{name}{String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'tricycleEmbedding'}
 }
 \value{
 If the input is a numeric matrix or a \linkS4class{SummarizedExperiment}, a projection matrix with rows cells and column dimensions will be returned.
@@ -75,9 +75,9 @@ The projection process is to take sum of weighted mean-centered expression of ch
 \examples{
 neurosphere_example <- project_cycle_space(neurosphere_example)
 reducedDimNames(neurosphere_example)
-head(reducedDim(neurosphere_example, "ccProjection"))
-plot(reducedDim(neurosphere_example, "ccProjection"))
-names(attributes(reducedDim(neurosphere_example, "ccProjection")))
+head(reducedDim(neurosphere_example, "tricycleEmbedding"))
+plot(reducedDim(neurosphere_example, "tricycleEmbedding"))
+names(attributes(reducedDim(neurosphere_example, "tricycleEmbedding")))
 }
 \seealso{
 \code{\link{estimate_cycle_position}}, for inferring cell cycle position.

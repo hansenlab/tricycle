@@ -3,7 +3,7 @@
 export(circle_scale_legend)
 export(estimate_cycle_position)
 export(estimate_cycle_stage)
-export(fit_loess_theta)
+export(fit_periodic_loess)
 export(plot_ccposition_den)
 export(plot_emb_circle_scale)
 export(project_cycle_space)

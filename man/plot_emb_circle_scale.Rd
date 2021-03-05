@@ -7,7 +7,7 @@
 \usage{
 \S4method{plot_emb_circle_scale}{SingleCellExperiment}(
   sce.o,
-  color_by = "CCPosition",
+  color_by = "tricyclePosition",
   facet_by = NULL,
   dimred = 1,
   dim = seq_len(2),
@@ -25,7 +25,7 @@
 \arguments{
 \item{sce.o}{A \linkS4class{SingleCellExperiment} contains the embbing to be plotted against.}
 
-\item{color_by}{The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "CCPosition"}
+\item{color_by}{The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "tricyclePosition"}
 
 \item{facet_by}{he name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If NULL, no faceted panles will be returned. Default: NULL}
 

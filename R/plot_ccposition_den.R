@@ -35,10 +35,10 @@
 #'
 #' @examples
 #' neurosphere_example <- estimate_cycle_position(neurosphere_example)
-#' plot_ccposition_den(neurosphere_example$CCPosition, neurosphere_example$sample, "sample")
+#' plot_ccposition_den(neurosphere_example$tricyclePosition, neurosphere_example$sample, "sample")
 #'
 #' neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
-#' plot_ccposition_den(neurosphere_example$CCPosition, neurosphere_example$CCStage, "CCStage")
+#' plot_ccposition_den(neurosphere_example$tricyclePosition, neurosphere_example$CCStage, "CCStage")
 NULL
 
 

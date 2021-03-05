@@ -1,4 +1,4 @@
-#' Fit loess line with cell cycle position as predictor
+#' Fit periodic loess line with circular predictor
 #'
 #' @description  The function will fit a loess line using cell cycle position and other variables, such as expression levels of a gene
 #'  or log-transformed totalUMIs numbers. The circular nature of cell cycle position is taken into account by making 3 copies inside the function.
@@ -38,8 +38,8 @@
 #' Or user can use \code{pred.df} to visualize the loess line themselves.
 #'
 #'
-#' @name fit_loess_theta
-#' @aliases fit_loess_theta
+#' @name fit_periodic_loess
+#' @aliases fit_periodic_loess
 #' @seealso
 #' \code{\link{estimate_cycle_position}}, for inferring cell cycle position.
 #'
@@ -48,13 +48,13 @@
 #' @examples
 #' neurosphere_example <- estimate_cycle_position(neurosphere_example)
 #' top2a.idx <- which(rowData(neurosphere_example)$Gene == "Top2a")
-#' fit.l <- fit_loess_theta(neurosphere_example$CCPosition, assay(neurosphere_example, "logcounts")[top2a.idx, ], plot = TRUE)
+#' fit.l <- fit_periodic_loess(neurosphere_example$tricyclePosition, assay(neurosphere_example, "logcounts")[top2a.idx, ], plot = TRUE)
 #' fit.l$fig
 NULL
 
 #' @importFrom stats loess predict
 #' @export
-fit_loess_theta <- function(theta.v, y, span = 0.3, length.out = 200, plot = FALSE,
+fit_periodic_loess <- function(theta.v, y, span = 0.3, length.out = 200, plot = FALSE,
                           fig.title = NULL, point.size = 2.1, point.alpha = 0.6,
                           line.size = 0.8, line.alpha = 0.8,
                           color.vars = NULL, color.name = NULL, x_lab = "\u03b8",
@@ -75,7 +75,7 @@ fit_loess_theta <- function(theta.v, y, span = 0.3, length.out = 200, plot = FAL
         color.vars <- factor(color.vars)
         stopifnot("Length of theta.v does not match color.vars" = length(color.vars) == length(theta.v))
         if (!is.null(hue.colors)) {
-          stopifnot("Number of colors does not match nlevels of color.vars" = nlevels(factor(color.vars) == length(hue.color)))
+          stopifnot("Number of colors does not match nlevels of color.vars" = nlevels(factor(color.vars) == length(hue.colors)))
           color_scale <- scale_color_manual(values = hue.colors, name = color.name, limits = levels(color.vars))
         } else {
           color_scale <- scale_color_discrete(name = color.name, limits = levels(color.vars))

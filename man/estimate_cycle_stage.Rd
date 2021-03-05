@@ -91,7 +91,7 @@ neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = "E
 neurosphere_example2 <- estimate_cycle_stage(neurosphere_example, batch.v = "sample")
 neurosphere_example3 <- estimate_cycle_stage(neurosphere_example, batch.v = neurosphere_example$sample)
 neurosphere_example <- project_cycle_space(neurosphere_example)
-plot(reducedDim(neurosphere_example, "ccProjection"), col = neurosphere_example$CCStage)
+plot(reducedDim(neurosphere_example, "tricycleEmbedding"), col = neurosphere_example$CCStage)
 }
 \references{
 Schwabe D, et al.

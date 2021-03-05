@@ -36,11 +36,11 @@
 #' @examples
 #' gocc_sce.o <- run_pca_cc_genes(neurosphere_example)
 #' new.ref <- attr(reducedDim(gocc_sce.o, "PCA"), "rotation")[, seq_len(2)]
-#' neurosphere_example <- estimate_cycle_position(neurosphere_example) ### Use internal NeuroRef to project and infer CC Position
+#' neurosphere_example <- estimate_cycle_position(neurosphere_example) ### Use internal NeuroRef to project and infer tricyclePosition
 #'
-#' ### Use new reference to project and infer CC Position
-#' new_sce <- estimate_cycle_position(neurosphere_example, ref.m = new.ref, dimred = "ccProjection2")
-#' plot(neurosphere_example$CCPosition, new_sce$CCPosition)
+#' ### Use new reference to project and infer tricyclePosition
+#' new_sce <- estimate_cycle_position(neurosphere_example, ref.m = new.ref, dimred = "tricycleEmbedding2")
+#' plot(neurosphere_example$tricyclePosition, new_sce$tricyclePosition)
 NULL
 
 

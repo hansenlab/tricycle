@@ -20,7 +20,7 @@
 #'  and provide rownames in the format of Ensembl IDs, this object will be used to map Ensembl IDs to gene SYMBOLs.
 #'  If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}.
 #' @param altexp String or integer scalar specifying an alternative experiment containing the input data.
-#' @param name String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'ccProjection'
+#' @param name String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'tricycleEmbedding'
 #'
 #' @details
 #' The function will use pre-learned cell cycle pattern to project new data to show the cell cycle progression. If the user uses internal Neuropshere reference,
@@ -42,9 +42,9 @@
 #' @examples
 #' neurosphere_example <- project_cycle_space(neurosphere_example)
 #' reducedDimNames(neurosphere_example)
-#' head(reducedDim(neurosphere_example, "ccProjection"))
-#' plot(reducedDim(neurosphere_example, "ccProjection"))
-#' names(attributes(reducedDim(neurosphere_example, "ccProjection")))
+#' head(reducedDim(neurosphere_example, "tricycleEmbedding"))
+#' plot(reducedDim(neurosphere_example, "tricycleEmbedding"))
+#' names(attributes(reducedDim(neurosphere_example, "tricycleEmbedding")))
 NULL
 
 
@@ -129,7 +129,7 @@ setMethod("project_cycle_space", "SummarizedExperiment", function(x, ..., exprs_
 #' @rdname project_cycle_space
 #' @importFrom SingleCellExperiment reducedDim<- altExp
 #' @importFrom SummarizedExperiment assay
-setMethod("project_cycle_space", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", altexp = NULL, name = "ccProjection") {
+setMethod("project_cycle_space", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", altexp = NULL, name = "tricycleEmbedding") {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {

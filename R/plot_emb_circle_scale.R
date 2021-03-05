@@ -4,7 +4,7 @@
 #'
 #'
 #' @param sce.o A \linkS4class{SingleCellExperiment} contains the embbing to be plotted against.
-#' @param color_by The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "CCPosition"
+#' @param color_by The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "tricyclePosition"
 #' @param facet_by he name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If NULL, no faceted panles will be returned. Default: NULL
 #' @param dimred The name or index of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). Default: 1
 #' @param dim The indices of \code{dimred} to be plotted. At the moment, it has to be two integers.   Default: 1:2
@@ -92,7 +92,7 @@ NULL
 #' @rdname plot_emb_circle_scale
 #' @importFrom SingleCellExperiment reducedDim
 #' @importFrom SummarizedExperiment colData
-setMethod("plot_emb_circle_scale", "SingleCellExperiment", function(sce.o, color_by = "CCPosition", facet_by = NULL, dimred = 1, dim = seq_len(2),
+setMethod("plot_emb_circle_scale", "SingleCellExperiment", function(sce.o, color_by = "tricyclePosition", facet_by = NULL, dimred = 1, dim = seq_len(2),
     fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL,
     hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
     hue.n = 500, plot.legend = FALSE) {

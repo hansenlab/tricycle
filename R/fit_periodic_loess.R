@@ -29,6 +29,7 @@
 #'   \item residual - The residual values from the fitted loess line, i.e. y - y.fit. A vector of the length of y.
 #'   \item pred.df - The prediction \code{data.frame} by uniformly sampling theta from 0 - 2*pi. Names of variables: \code{x} and \code{y}. The number of rows equals to \code{length.out}.
 #'   \item loess.o - The fitted loess object.
+#'   \item rsquared -  The coefficient of determination R2. Calculated as 1 - residual sum of squares / the total sum of squares.
 #'   \item fig - When \code{plot} is \code{TRUE}, a \code{ggplot} scatter plot object will be returned with other items.
 #' }
 #'
@@ -62,10 +63,13 @@ fit_periodic_loess <- function(theta.v, y, span = 0.3, length.out = 200, plot = 
     stopifnot("theta.v need to be between 0 - 2pi." = (min(theta.v) >= 0) & (max(theta.v) <= 2 * pi), 
               "The length of theta.v and y should be the same." = length(theta.v) == length(y))
     x <- c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi)
+    ss.total <- sum(scale(y, scale = FALSE) ^ 2)
     y <- rep(y, 3)
     loess.o <- loess(y ~ x, span = span, ...)
     fitted.v <- loess.o$fitted[(length(theta.v) + 1):(length(theta.v) * 2)]
     residual.v <- loess.o$residuals[(length(theta.v) + 1):(length(theta.v) * 2)]
+    rsquared <- 1 - sum(residual.v ^ 2) / ss.total
+    
     pred.x <- seq(0, 2 * pi, length.out = length.out)
     pred.y <- predict(loess.o, newdata = data.frame(x = pred.x))
     pred.df <-  data.frame(x = pred.x, y = pred.y)
@@ -93,8 +97,8 @@ fit_periodic_loess <- function(theta.v, y, span = 0.3, length.out = 200, plot = 
         color_scale +
         labs(x = x_lab, y = y_lab, title = fig.title) +
         .gg_theme
-      return(list(fitted = fitted.v, residual = residual.v, pred.df = pred.df, loess.o = loess.o, fig = fig))
+      return(list(fitted = fitted.v, residual = residual.v, pred.df = pred.df, loess.o = loess.o, rsquared = rsquared, fig = fig))
     }
     
-    return(list(fitted = fitted.v, residual = residual.v, pred.df = pred.df, loess.o = loess.o))
+    return(list(fitted = fitted.v, residual = residual.v, pred.df = pred.df, loess.o = loess.o, rsquared = rsquared))
 }

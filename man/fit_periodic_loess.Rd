@@ -44,6 +44,7 @@ A list with the following elements:
   \item residual - The residual values from the fitted loess line, i.e. y - y.fit. A vector of the length of y.
   \item pred.df - The prediction \code{data.frame} by uniformly sampling theta from 0 - 2*pi. Names of variables: \code{x} and \code{y}. The number of rows equals to \code{length.out}.
   \item loess.o - The fitted loess object.
+  \item rsquared -  The coefficient of determination R2. Calculated as 1 - residual sum of squares / the total sum of squares.
   \item fig - When \code{plot} is \code{TRUE}, a \code{ggplot} scatter plot object will be returned with other items.
 }
 }

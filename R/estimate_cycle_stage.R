@@ -208,8 +208,6 @@ setMethod("estimate_cycle_stage", "SingleCellExperiment", function(x, ..., exprs
     } else {
         y <- x
     }
-	  ### something strange with S4Vectors. this is a temporary solution
-	  CCStage.v <- .estimate_cycle_stage(assay(y, exprs_values), batch.v = batch.v, ...)
-	  colData(x) <- DataFrame(colData(x), CCStage = CCStage.v)
+	  x$CCStage <- .estimate_cycle_stage(assay(y, exprs_values), batch.v = batch.v, ...)
     x
 })

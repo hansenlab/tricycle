@@ -115,7 +115,7 @@ NULL
             return(names(cycleGene.l)[eta])
         })
     }
-    cc.v <- factor(cc.v, levels = names(cycleGene.l))
+    cc.v <- factor(cc.v, levels = c(names(cycleGene.l), "NA"))
     return(cc.v)
 }
 
@@ -147,9 +147,8 @@ NULL
         message("No gname input. Rownames of x will be used.")
         gname <- rownames(data.m)
     } else {
-        if (nrow(data.m) != length(gname)) {
-              stop("gname does not match nrow x!")
-          }
+        if (nrow(data.m) != length(gname)) stop("gname does not match nrow x!")
+    	  rownames(data.m) <- gname
     }
     if (is.null(cycleGene.l)) {
         if (species == "mouse") {
@@ -209,6 +208,8 @@ setMethod("estimate_cycle_stage", "SingleCellExperiment", function(x, ..., exprs
     } else {
         y <- x
     }
-    x$CCStage <- .estimate_cycle_stage(assay(y, exprs_values), batch.v = batch.v, ...)
+	  ### something strange with S4Vectors. this is a temporary solution
+	  CCStage.v <- .estimate_cycle_stage(assay(y, exprs_values), batch.v = batch.v, ...)
+	  colData(x) <- DataFrame(colData(x), CCStage = CCStage.v)
     x
 })

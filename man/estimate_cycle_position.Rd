@@ -78,7 +78,7 @@ plot(neurosphere_example$tricyclePosition, reducedDim(neurosphere_example, "tric
 }
 \references{
 Zheng SC, et al.
-\emph{Our preprint.}
+\emph{Universal prediction of cell cycle position using transfer learning.}
 }
 \seealso{
 \code{\link{project_cycle_space}}, for projecting new data with a pre-learned reference

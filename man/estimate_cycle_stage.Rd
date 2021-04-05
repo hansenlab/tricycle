@@ -100,7 +100,7 @@ Molecular Systems Biology (2020) 16: e9946
 doi:\href{https://doi.org/10.15252/msb.20209946}{10.15252/msb.20209946}.
 
 Zheng SC, et al.
-\emph{Our preprint.}
+\emph{Universal prediction of cell cycle position using transfer learning.}
 }
 \author{
 Shijie C. Zheng

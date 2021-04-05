@@ -55,7 +55,7 @@
 #' doi:\href{https://doi.org/10.15252/msb.20209946}{10.15252/msb.20209946}.
 #'
 #' Zheng SC, et al.
-#' \emph{Our preprint.}
+#' \emph{Universal prediction of cell cycle position using transfer learning.}
 #'
 #' @examples
 #' neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")

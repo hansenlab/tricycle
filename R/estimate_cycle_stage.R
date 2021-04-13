@@ -115,7 +115,7 @@ NULL
             return(names(cycleGene.l)[eta])
         })
     }
-    cc.v <- factor(cc.v, levels = c(names(cycleGene.l), "NA"))
+    cc.v <- factor(cc.v, levels = names(cycleGene.l))
     return(cc.v)
 }
 

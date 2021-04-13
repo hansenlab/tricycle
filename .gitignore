@@ -6,7 +6,6 @@ doc
 .Rproject
 .Rproj
 .DS_Store
-.Rbuildignore
 .Ruserdata
 tricycle.Rproj
 inst/doc

@@ -1,0 +1,17 @@
+bibentry("Article",
+         title = "Universal prediction of cell cycle position using transfer learning",
+         author = c(person(c("Shijie", "C."), "Zheng"),
+                    person("Genevieve", "Stein-O'Brien"),
+                    person(c("Jonathan", "J."), "Augustin"),
+                    person("Jared", "Slosberg"),
+                    person(c("Giovanni", "A."), "Carosso"),
+                    person("Briana", "Winer"),
+                    person("Gloria", "Shin"),
+                    person(c("Hans", "T."), "Bjornsson"),
+                    person(c("Loyal", "A."), "Goff"),
+                    person(c("Kasper", "D."), "Hansen")),
+         journal = "bioRxiv",
+         year = "2021",
+	 pages = "2021.04.06.438463",
+         doi = "10.1101/2021.04.06.438463")
+

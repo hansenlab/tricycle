@@ -90,7 +90,9 @@ plot_ccposition_den <- function(theta.v, color_var.v, color_name, palette.v = NU
     if (is.null(fig.title)) {
           fig.title <- paste0("(n=", length(theta.v), ")")
       }
-
+    
+    if (any(is.na(color_var.v))) message("NA found in color_var.v. \nThe cells with NA will be considered for global density but not stratified densities.")
+    
     strati.df <- do.call(rbind, lapply(seq_len(nlevels(color_var.v)), function(idx) {
         d <- density.circular(circular(theta.v[which(color_var.v == levels(color_var.v)[idx])]), bw = bw)
         return(data.frame(x = as.numeric(d$x), y = d$y * weights[idx], color = levels(color_var.v)[idx]))
@@ -98,21 +100,13 @@ plot_ccposition_den <- function(theta.v, color_var.v, color_name, palette.v = NU
     strati.df$color <- factor(strati.df$color, levels = levels(color_var.v))
 
     max.v <- max(all.df$y, strati.df$y)
-    if (any(is.na(strati.df$color))) {
-        strati.df$color <- fct_relevel(fct_explicit_na(strati.df$color, na_level = "NA"), "NA", after = Inf)
-        scale_color <- scale_color_manual(values = c(palette.v, "grey"), name = color_name, labels = paste0(levels(strati.df$color), "\nn=", table(strati.df$color)), limits = c(
-            levels(strati.df$color),
-            "NA"
-        ))
-    } else {
-        scale_color <- scale_color_manual(values = palette.v, name = color_name, labels = paste0(levels(strati.df$color), "\nn=", table(strati.df$color)), limits = levels(strati.df$color))
-    }
+
 
     if (type == "linear") {
         p <- ggplot(strati.df, aes_string(x = "x", y = "y")) +
             geom_path(aes_string(color = "color"), size = line.size, alpha = line.alpha, ...) +
             geom_path(data = all.df, size = line.size, alpha = line.alpha, color = "black", linetype = "dashed", ...) +
-            scale_color +
+            scale_color_manual(values = palette.v, name = color_name, labels = paste0(levels(color_var.v), "\nn=", table(color_var.v)), limits = levels(color_var.v)) +
             scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi / 2, pi, 3 * pi / 2, 2 * pi), labels = paste0(c(0, 0.5, 1, 1.5, 2), "\u03C0"), name = "\u03b8") +
             labs(title = fig.title, y = "Density") +
             .gg_theme
@@ -120,7 +114,7 @@ plot_ccposition_den <- function(theta.v, color_var.v, color_name, palette.v = NU
         p <- ggplot(strati.df, aes(x = get("x"), y = get("y") + max.v)) +
             geom_path(aes_string(color = "color"), size = line.size, alpha = line.alpha, ...) +
             geom_path(data = all.df, size = line.size, alpha = line.alpha, color = "black", linetype = "dashed", ...) +
-            scale_color +
+            scale_color_manual(values = palette.v, name = color_name, labels = paste0(levels(color_var.v), "\nn=", table(color_var.v)), limits = levels(color_var.v)) +
             coord_polar(theta = "x", start = -pi / 2, direction = -1, clip = "on") +
             scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi / 2, pi, 3 * pi / 2), labels = paste0(c(0, 0.5, 1, 1.5), "\u03C0"), name = "") +
             scale_y_continuous(limits = c(0, max.v * 2), breaks = c(max.v, max.v * 1.5, max.v * 2), labels = c("0", format(max.v * c(0.5, 1), digits = 3)), name = "Density") +

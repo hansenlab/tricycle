@@ -1,11 +1,11 @@
-#' Assign cell cycle stages
+#' Assign cell cycle stages using Schwabe method
 #'
-#' Assign cell cycle stages using \code{\link{RevelioGeneList}}(Whitfield 2002 list) or user given gene list.
+#' The function is a re-implementation of cell cycle stage assignment method
+#' proposed in Schwabe et al.(2020), with a little modification. The core
+#'  assignment method is not designed by the authors of this package!
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-#' @param ... For the \code{estimate_cycle_stage} generic, the following additional arguments to pass.
-#' For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.
 #' @param exprs_values Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values, which will be used for projection.
 #' If the projection already exists, you can ignore this value. Default: 'logcounts'
 #' @param batch.v A string specifies which column in colData of \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} to use as the batch variable.
@@ -19,21 +19,26 @@
 #' @param gname.type The type of gene names as in \code{gname} or rownames of \code{x}. It can be either 'ENSEMBL' or 'SYMBOL'. If the user uses
 #' custom \code{ref.m}, this value will have no effect. Default: 'ENSEMBL'
 #' @param species The type of species in \code{x}. It can be either 'mouse' or 'human'. If the user uses
-#' custom \code{ref.m}, this value will have no effect. Default: 'mouse'
+#' custom \code{cycleGene.l}, this value will have no effect. Default: 'mouse'
 #' @param corThres For each batch and each stage, correlations between expression of each gene and the mean of all genes belonging to that stage
 #' will be calculated to filter the final gene list used for inference. The genes with a correlation between \code{corThres} will not be used for calculating \emph{z}-scores.
 #' Default: 0.2
 #' @param tolerance For each cell, the function will compare the largest two \emph{z}-scores. If the difference between those two \emph{z}-scores is less than \code{tolerance},
 #' the cell will be treated un-assignable with \code{NA} value returned for that cell. Default: 0.3
 #' @param AnnotationDb An AnnotationDb objects. It is used to map ENSEMBL IDs to gene SYMBOLs.
-#'  If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} or \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} for human and mouse respetively.
+#'  If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} or \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} for human and mouse respectively.
 #' @param altexp String or integer scalar specifying an alternative experiment containing the **log-expression** data, which will be used for projection.
 #' If the projection is already calculated and stored in the \linkS4class{SingleCellExperiment} as a dimred, leave this value to default NULL.
 #'
 #' @details
-#' The function will assign the cell to a discretized cell cycle stage by comparing the \emph{z}-scores calculated for each stage markers.
-#' This is modified stage assignment method modified from the method in Schwabe et al.(2020).
+#' The function is a re-implementation of cell cycle stage assignment method
+#' proposed in Schwabe et al.(2020), with a little modification. We include 
+#' this function only for the purpose of convenience. The core assignment method
+#' is not designed by the authors of this package!
+#' Breiefly, the function assigns cells to discretized cell cycle stages by
+#'  comparing the \emph{z}-scores calculated for each stage markers.
 #' Without cycleGene.l input, \code{\link{RevelioGeneList}} will be used.
+#' If you use this function, you should cite Schwabe et al.(2020).
 #'
 #' @return
 #' If the input is a numeric matrix, the discretized cell cycle stages - a factor vector corresponding to each cell will be returned.
@@ -42,8 +47,8 @@
 #'
 #' If the input is \linkS4class{SingleCellExperiment}, the original \linkS4class{SingleCellExperiment} with the discretized cell cycle stages stored in colData with name 'CCStage' will be returned.
 #'
-#' @name estimate_cycle_stage
-#' @aliases estimate_cycle_stage
+#' @name estimate_Schwabe_stage
+#' @aliases estimate_Schwabe_stage
 #'
 #'
 #' @author Shijie C. Zheng
@@ -58,15 +63,18 @@
 #' \emph{Universal prediction of cell cycle position using transfer learning.}
 #'
 #' @examples
-#' neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
-#' neurosphere_example2 <- estimate_cycle_stage(neurosphere_example, batch.v = "sample")
-#' neurosphere_example3 <- estimate_cycle_stage(neurosphere_example, batch.v = neurosphere_example$sample)
+#' data(neurosphere_example, package = "tricycle")
+#' neurosphere_example <- estimate_Schwabe_stage(neurosphere_example,
+#'  gname.type = "ENSEMBL", species = "mouse")
+#' neurosphere_example2 <- estimate_Schwabe_stage(neurosphere_example, batch.v = "sample")
+#' neurosphere_example3 <- estimate_Schwabe_stage(neurosphere_example,
+#'  batch.v = neurosphere_example$sample)
 #' neurosphere_example <- project_cycle_space(neurosphere_example)
-#' plot(reducedDim(neurosphere_example, "tricycleEmbedding"), col = neurosphere_example$CCStage)
+#' plot(reducedDim(neurosphere_example, "tricycleEmbedding"),
+#'  col = neurosphere_example$CCStage)
 NULL
 
 
-#' @importFrom purrr reduce
 #' @importFrom stats cor
 #' @importMethodsFrom S4Vectors  "%in%"  do.call  levels  t
 .CCStage <- function(data.m, batch.v = NULL, cycleGene.l = NULL, corThres = 0.2, tolerance = 0.3) {
@@ -74,12 +82,11 @@ NULL
           batch.v <- rep(1, ncol(data.m))
       }
     if ((ncol(data.m) != length(batch.v)) | any(is.na(batch.v))) {
-          stop("Something is wrong with batch argument. Refer to manual.")
+          stop("The length of batch.v does not equal to the number of column in
+               data or there is NA in bathc.v, which is not allowed.")
       }
-
-
     cycleGene.l <- lapply(cycleGene.l, intersect, rownames(data.m))
-    allgenes.v <- purrr::reduce(cycleGene.l, union)
+    allgenes.v <- Reduce(union, cycleGene.l)
     if (sum(allgenes.v %in% rownames(data.m)) < 30) {
           stop("Less than 30 cell cycle gene found. Not enough infomation to assgin the 5 stages.")
       }
@@ -119,28 +126,19 @@ NULL
     return(cc.v)
 }
 
-#' @importFrom  org.Hs.eg.db org.Hs.eg.db
-#' @importFrom  org.Mm.eg.db org.Mm.eg.db
+
 #' @importFrom AnnotationDbi mapIds
 #' @importMethodsFrom AnnotationDbi colnames get ncol nrow
 #' @importMethodsFrom GenomicRanges intersect union
 .getSYMBOL <- function(gname, species = c("mouse", "human"), AnnotationDb = NULL) {
     species <- match.arg(species)
-    if (is.null(AnnotationDb)) {
-        if (species == "mouse") {
-            AnnotationDb <- org.Mm.eg.db::org.Mm.eg.db
-            message("No AnnotationDb desginated. org.Mm.eg.db will be used to map Mouse ENSEMBL id to gene SYMBOL.")
-        } else {
-            AnnotationDb <- org.Hs.eg.db::org.Hs.eg.db
-            message("No AnnotationDb desginated. org.Hs.eg.db will be used to map Human ENSEMBL id to gene SYMBOL.")
-        }
-    }
+    AnnotationDb <- .getAnnotationDB(AnnotationDb, species)
     SYMBOL <- suppressMessages(toupper(AnnotationDbi::mapIds(AnnotationDb, keys = gname, column = "SYMBOL", keytype = "ENSEMBL", multiVals = "first")))
     return(SYMBOL)
 }
 
 #' @importMethodsFrom IRanges as.matrix "colnames<-"  diff lapply rownames "rownames<-"  table tolower toupper unique which
-.estimate_cycle_stage <- function(data.m, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, ...) {
+.estimate_Schwabe_stage <- function(data.m, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL, ...) {
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
     if (is.null(gname)) {
@@ -162,52 +160,60 @@ NULL
                   rownames(data.m) <- .getSYMBOL(gname, species = "human", AnnotationDb = AnnotationDb)
               }
         }
+        data(RevelioGeneList)
         cycleGene.l <- RevelioGeneList
     }
 
     return(.CCStage(data.m, cycleGene.l = cycleGene.l, ...))
 }
 
-#' @export
-#' @rdname estimate_cycle_stage
-setMethod("estimate_cycle_stage", "ANY", function(x, cycleGene.l = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL,
-    batch.v = NULL, corThres = 0.2, tolerance = 0.3) {
-    .estimate_cycle_stage(x,
-        cycleGene.l = cycleGene.l, gname = gname, gname.type = gname.type,
-        species = species, AnnotationDb = AnnotationDb, batch.v = batch.v, corThres = corThres, tolerance = tolerance
-    )
-})
 
 #' @export
-#' @rdname estimate_cycle_stage
-#' @importMethodsFrom SummarizedExperiment  assay colData  order sort
-setMethod("estimate_cycle_stage", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL) {
-    if (!is.null(batch.v)) {
-        if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
-              batch.v <- colData(x)[, batch.v]
-          }
-    }
-
-    x$CCStage <- .estimate_cycle_stage(assay(x, exprs_values), batch.v = batch.v, ...)
-    x
-})
-
-
-#' @export
-#' @rdname estimate_cycle_stage
+#' @rdname estimate_Schwabe_stage
 #' @importMethodsFrom SummarizedExperiment  assay colData  order sort
 #' @importMethodsFrom SingleCellExperiment altExp cbind rbind reducedDim "reducedDim<-"  reducedDimNames
-setMethod("estimate_cycle_stage", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", batch.v = NULL, altexp = NULL) {
+#' 
+estimate_Schwabe_stage <- function(x, exprs_values = "logcounts", batch.v = NULL,
+                                   altexp = NULL, cycleGene.l = NULL, gname = NULL,
+                                   gname.type = c("ENSEMBL", "SYMBOL"),
+                                   species = c("mouse", "human"), AnnotationDb = NULL,
+                                   corThres = 0.2, tolerance = 0.3) {
+  if (is(x, "SingleCellExperiment")) {
     if (!is.null(batch.v)) {
-        if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
-              batch.v <- colData(x)[, batch.v]
-          }
+      if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
+        batch.v <- colData(x)[, batch.v]
+      }
     }
     if (!is.null(altexp)) {
-        y <- altExp(x, altexp)
+      y <- altExp(x, altexp)
     } else {
-        y <- x
+      y <- x
     }
-	  x$CCStage <- .estimate_cycle_stage(assay(y, exprs_values), batch.v = batch.v, ...)
-    x
-})
+    x$CCStage <- .estimate_Schwabe_stage(assay(y, exprs_values), batch.v = batch.v,
+                                         cycleGene.l = cycleGene.l, gname = gname,
+                                         gname.type = gname.type, species = species,
+                                         AnnotationDb = AnnotationDb, corThres = corThres,
+                                         tolerance = tolerance)
+    out <- x
+  } else if (is(x, "SummarizedExperiment")) {
+    if (!is.null(batch.v)) {
+      if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {
+        batch.v <- colData(x)[, batch.v]
+      }
+    }
+    x$CCStage <- .estimate_Schwabe_stage(assay(x, exprs_values), batch.v = batch.v,
+                                         cycleGene.l = cycleGene.l, gname = gname,
+                                         gname.type = gname.type, species = species,
+                                         AnnotationDb = AnnotationDb, corThres = corThres,
+                                         tolerance = tolerance)
+    out <- x
+  } else {
+    out <- .estimate_Schwabe_stage(x, batch.v = batch.v,
+                                   cycleGene.l = cycleGene.l, gname = gname,
+                                   gname.type = gname.type, species = species,
+                                   AnnotationDb = AnnotationDb, corThres = corThres,
+                                   tolerance = tolerance)
+  }
+  return(out)
+}
+

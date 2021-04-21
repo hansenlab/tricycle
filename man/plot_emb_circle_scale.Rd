@@ -2,10 +2,9 @@
 % Please edit documentation in R/plot_emb_circle_scale.R
 \name{plot_emb_circle_scale}
 \alias{plot_emb_circle_scale}
-\alias{plot_emb_circle_scale,SingleCellExperiment-method}
 \title{Plot embedding with cyclic cell cycle position}
 \usage{
-\S4method{plot_emb_circle_scale}{SingleCellExperiment}(
+plot_emb_circle_scale(
   sce.o,
   color_by = "tricyclePosition",
   facet_by = NULL,
@@ -63,6 +62,7 @@ This function help users plot embedding scater plot colored by cyclic variables,
 It will take a \linkS4class{SingleCellExperiment} object as input, and plot out its \code{dimred} such as PCA, UMAP, and etc with a cyclic color scheme.
 }
 \examples{
+data(neurosphere_example, package = "tricycle")
 neurosphere_example <- estimate_cycle_position(neurosphere_example)
 plot_emb_circle_scale(neurosphere_example, point.size = 3.1, point.alpha = 0.8)
 }

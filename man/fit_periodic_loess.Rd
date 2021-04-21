@@ -60,9 +60,11 @@ will be returned. For convenience, the function will also return a scatter plot 
 Or user can use \code{pred.df} to visualize the loess line themselves.
 }
 \examples{
+data(neurosphere_example, package = "tricycle")
 neurosphere_example <- estimate_cycle_position(neurosphere_example)
 top2a.idx <- which(rowData(neurosphere_example)$Gene == "Top2a")
-fit.l <- fit_periodic_loess(neurosphere_example$tricyclePosition, assay(neurosphere_example, "logcounts")[top2a.idx, ], plot = TRUE)
+fit.l <- fit_periodic_loess(neurosphere_example$tricyclePosition,
+ assay(neurosphere_example, "logcounts")[top2a.idx, ], plot = TRUE)
 fit.l$fig
 }
 \seealso{

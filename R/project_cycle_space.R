@@ -4,8 +4,6 @@
 #'
 #' @param x A numeric matrix of **log-expression** values where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-#' @param ... For the \code{inferCCStage} generic, additional arguments to pass to specific methods.
-#' For the \linkS4class{SummarizedExperiment} and  \linkS4class{SingleCellExperiment} methods, additional arguments to pass to the ANY method.
 #' @param exprs_values Integer scalar or string indicating which assay of \code{x} contains the **log-expression** values. Default: 'logcounts'
 #' @param ref.m A custom reference projection matrix to project the new data, where rows are features and columns are dimensions.
 #' Users need to use the same type of \code{gname}(or rownames of \code{x}) as for the \code{ref.m}.
@@ -40,6 +38,7 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
+#' data(neurosphere_example, package = "tricycle")
 #' neurosphere_example <- project_cycle_space(neurosphere_example)
 #' reducedDimNames(neurosphere_example)
 #' head(reducedDim(neurosphere_example, "tricycleEmbedding"))
@@ -88,6 +87,7 @@ NULL
 }
 
 .getRotation <- function(gname.type, species) {
+    data(neuroRef)
     rotation.m <- as.matrix(neuroRef[, seq_len(2)])
     if (species == "human") {
         rownames(rotation.m) <- neuroRef$SYMBOL
@@ -98,14 +98,10 @@ NULL
     return(rotation.m)
 }
 
-#' @importFrom  org.Hs.eg.db org.Hs.eg.db
 #' @importFrom AnnotationDbi mapIds
 #' @importMethodsFrom AnnotationDbi colnames get ncol nrow
 .humanSymbol <- function(gname, AnnotationDb = NULL) {
-    if (is.null(AnnotationDb)) {
-        AnnotationDb <- org.Hs.eg.db::org.Hs.eg.db
-        message("No AnnotationDb desginated. org.Hs.eg.db will be used to map Human ENSEMBL id to gene SYMBOL.")
-    }
+    AnnotationDb <- .getAnnotationDB(AnnotationDb, species = "human")
     SYMBOL <- AnnotationDbi::mapIds(AnnotationDb, keys = gname, columns = "SYMBOL", keytype = "ENSEMBL", multiVals = "first")
     return(SYMBOL)
 }
@@ -113,28 +109,27 @@ NULL
 
 #' @export
 #' @rdname project_cycle_space
-setMethod("project_cycle_space", "ANY", function(x, ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
-    .project_cycle_space(x, ref.m = ref.m, gname = gname, gname.type = gname.type, species = species, AnnotationDb = AnnotationDb)
-})
-
-#' @export
-#' @rdname project_cycle_space
-#' @importFrom SummarizedExperiment assay
-setMethod("project_cycle_space", "SummarizedExperiment", function(x, ..., exprs_values = "logcounts") {
-    .project_cycle_space(assay(x, exprs_values), ...)
-})
-
-
-#' @export
-#' @rdname project_cycle_space
+#' @importFrom methods is
 #' @importFrom SingleCellExperiment reducedDim<- altExp
 #' @importFrom SummarizedExperiment assay
-setMethod("project_cycle_space", "SingleCellExperiment", function(x, ..., exprs_values = "logcounts", altexp = NULL, name = "tricycleEmbedding") {
+#' @importClassesFrom SummarizedExperiment SummarizedExperiment
+#' @importClassesFrom SingleCellExperiment SingleCellExperiment
+#' 
+project_cycle_space <- function(x, exprs_values = "logcounts", altexp = NULL, name = "tricycleEmbedding", 
+                                ref.m = NULL, gname = NULL, gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), AnnotationDb = NULL) {
+  if (is(x, "SingleCellExperiment")) {
     if (!is.null(altexp)) {
-        y <- altExp(x, altexp)
+      y <- altExp(x, altexp)
     } else {
-        y <- x
+      y <- x
     }
-    reducedDim(x, name) <- .project_cycle_space(assay(y, exprs_values), ...)
-    x
-})
+    reducedDim(x, name) <- .project_cycle_space(assay(y, exprs_values), ref.m = ref.m, gname = gname, gname.type = gname.type, species = species, AnnotationDb = AnnotationDb)
+    out <- x
+  } else if (is(x, "SummarizedExperiment")) {
+    out <- .project_cycle_space(assay(x, exprs_values), ref.m = ref.m, gname = gname, gname.type = gname.type, species = species, AnnotationDb = AnnotationDb)
+  } else {
+    out <- .project_cycle_space(x, ref.m = ref.m, gname = gname, gname.type = gname.type, species = species, AnnotationDb = AnnotationDb)
+  }
+  return(out)
+}
+

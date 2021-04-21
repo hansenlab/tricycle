@@ -2,3 +2,5 @@
 auto$
 auto/*$
 
+^.*\.Rproj$
+^\.Rproj\.user$

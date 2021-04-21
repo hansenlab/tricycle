@@ -9,12 +9,15 @@
 #' @param exprs_values Integer scalar or string indicating which assay of \code{sce.o} contains the **log-expression** values, which will be used to run PCA.
 #' Default: 'logcounts'
 #' @param gname.type The type of gene names as in \code{gname} or rownames of \code{sce.o}. It can be either 'ENSEMBL' or 'SYMBOL'. Default: 'ENSEMBL'
-#' @param species The type of species in \code{sce.o}. It can be either 'mouse' or 'human'. The corresponding AnnotationDb object will be
-#'  \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}. Default: 'mouse'
+#' @param species The type of species in \code{sce.o}. It can be either 'mouse' or 'human'. If the user uses
+#' custom \code{cycleGene.l}, this value will have no effect. Default: 'mouse'
+#' @param AnnotationDb An AnnotationDb objects. It is used to map ENSEMBL IDs to gene SYMBOLs.
+#'  If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} or \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} for human and mouse respectively.
 #' @param ntop The number of genes with highest variance to use when calculating PCA, as in \code{\link[scater]{calculatePCA}}. Default: 500
 #' @param ncomponents The number of component components to obtain, as in \code{\link[scater]{calculatePCA}}. Default: 20
 #' @param name String specifying the name to be used to store the result in the \code{\link[SingleCellExperiment]{reducedDims}} of the output. Default: 'PCA'
-#'
+#' 
+#' 
 #' @details
 #' The function require an output of a \linkS4class{SingleCellExperiment} object which contains the library size normalized **log-expression** matrix. The full dataset will
 #' be subsetted to genes in the Gene Ontology cell cycle gene list (GO:0007049). The corresponding AnnotationDb object will be
@@ -34,18 +37,22 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
+#' data(neurosphere_example, package = "tricycle")
+#' ### Use internal NeuroRef to project and infer tricyclePosition
+#' neurosphere_example <- estimate_cycle_position(neurosphere_example) 
+#' 
+#' ### Build new reference
 #' gocc_sce.o <- run_pca_cc_genes(neurosphere_example)
 #' new.ref <- attr(reducedDim(gocc_sce.o, "PCA"), "rotation")[, seq_len(2)]
-#' neurosphere_example <- estimate_cycle_position(neurosphere_example) ### Use internal NeuroRef to project and infer tricyclePosition
-#'
+#' 
 #' ### Use new reference to project and infer tricyclePosition
-#' new_sce <- estimate_cycle_position(neurosphere_example, ref.m = new.ref, dimred = "tricycleEmbedding2")
+#' new_sce <- estimate_cycle_position(neurosphere_example, ref.m = new.ref,
+#'  dimred = "tricycleEmbedding2")
 #' plot(neurosphere_example$tricyclePosition, new_sce$tricyclePosition)
 NULL
 
 
-#' @importFrom  org.Hs.eg.db org.Hs.eg.db
-#' @importFrom  org.Mm.eg.db org.Mm.eg.db
+
 #' @importFrom AnnotationDbi select
 #' @importFrom methods is
 #' @importMethodsFrom scater runPCA
@@ -53,16 +60,13 @@ NULL
 #' @importClassesFrom SingleCellExperiment SingleCellExperiment
 #' @export
 run_pca_cc_genes <- function(sce.o, gname = NULL, exprs_values = "logcounts", gname.type = c("ENSEMBL", "SYMBOL"), species = c("mouse", "human"), ntop = 500, ncomponents = 20,
-      name = "PCA") {
+      name = "PCA", AnnotationDb = NULL) {
     stopifnot("sce.o must be a SingleCellExperiment objet." = is(sce.o, "SingleCellExperiment"),
               "the designated assay does not exist in sce.o" = exprs_values %in% assayNames(sce.o))
     species <- match.arg(species)
     gname.type <- match.arg(gname.type)
-    if (species == "mouse") {
-        AnnotationDb <- org.Mm.eg.db::org.Mm.eg.db
-    } else {
-        AnnotationDb <- org.Hs.eg.db::org.Hs.eg.db
-    }
+    AnnotationDb <- .getAnnotationDB(AnnotationDb, species)
+
     if (is.null(gname)) {
         message("No gname input. Rownames of sce.o will be used.")
         gname <- rownames(sce.o)

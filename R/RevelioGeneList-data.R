@@ -5,6 +5,7 @@
 #' The genes are given as the human gene SYMBOLS.
 #' This gene list is originally from the Whitfield et al.(2020).
 #'
+#' @name RevelioGeneList
 #' @docType data
 #'
 #' @usage data(RevelioGeneList)
@@ -22,4 +23,4 @@
 #'
 #' @examples
 #' data(RevelioGeneList)
-"RevelioGeneList"
+NULL

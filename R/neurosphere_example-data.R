@@ -4,7 +4,7 @@
 #' sampled from the full data. All genes in the GO cell cycle gene list and \code{\link{RevelioGeneList}}
 #'  as well as other random 573 genes were included.
 #'
-#'
+#' @name neurosphere_example
 #' @docType data
 #'
 #' @usage data(neurosphere_example)
@@ -16,4 +16,4 @@
 #'
 #' @examples
 #' data(neurosphere_example)
-"neurosphere_example"
+NULL

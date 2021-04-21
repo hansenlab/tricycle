@@ -29,52 +29,90 @@ htmltools::img(src = knitr::image_uri(file.path("../man/figures", "logo.png")),
 
 # Introduction
 
-Here we describe a package for inferring cell cycle position for a single-cell RNA-seq dataset. The theoretical justification as well as benchmarks are included in [@Zheng.2021]. In our hands, our approach (called TriCycle) works robustly across a variety of data modalities including across species (human and mouse), cell types and assay technology (10X, Fluidigm C1); we have yet to encounter a dataset where this approach does not work. The main output is a continuous estimate of the relative time within the cell cycle, represented as a number between 0 and 2pi (which we refer to as cell cycle position). In addition to the estimation process, we include a number of convenience functions for visualizing cell cycle time and we also provide an implementation of a discrete cell cycle stage predictor.
+Here we describe a package for inferring cell cycle position for a single-cell
+RNA-seq dataset. The theoretical justification as well as benchmarks are
+included in [@Zheng.2021]. In our hands, our approach (called TriCycle) works
+robustly across a variety of data modalities including across species (human
+and mouse), cell types and assay technology (10X, Fluidigm C1); we have yet to
+encounter a dataset where this approach does not work. The main output is a
+continuous estimate of the relative time within the cell cycle, represented as
+a number between 0 and 2pi (which we refer to as cell cycle position). In
+addition to the estimation process, we include a number of convenience functions
+for visualizing cell cycle time and we also provide an implementation of a
+discrete cell cycle stage predictor.
  
 # Prerequisites
 
 ```{r setup, message = FALSE}
 library(tricycle)
 ```
-We recommend users to start with a *SingleCellExperiment* object. The output will usually be the *SingleCellExperiment* with new info added. The functions work on *matrix* or *SummarizedExperiment* objects although the output changes, since these type of objects do not have the capability to store both the input object and the estimates.
+We recommend users to start with a *SingleCellExperiment* object. The output
+will usually be the *SingleCellExperiment* with new info added. The functions
+work on *matrix* or *SummarizedExperiment* objects although the output changes,
+since these type of objects do not have the capability to store both the input
+object and the estimates.
 
-In the package, we include a example *SingleCellExperiment* dataset, which is a real subset of mouse Neurosphere RNAseq of 2 samples. 200 cells from sample AX1 and AX2 were randonly sampled from the full data. This dataset is the same data as we use for constructing our cell cycle embedding.
+In the package, we include a example *SingleCellExperiment* dataset, which is a
+real subset of mouse Neurosphere RNAseq of 2 samples. 200 cells from sample AX1
+and AX2 were randonly sampled from the full data. This dataset is the same data
+as we use for constructing our cell cycle embedding.
 ```{r example, message = FALSE}
-neurosphere_example
+data(neurosphere_example)
 ```
 
-**Important**: Please note that the user should **normalize library size** before putting into the tricycle functions. The library size normalization could be done by *normalizeCounts* function in *scater* package or by calculating CPM values. 
+**Important**: Please note that the user should **normalize library size**
+before putting into the tricycle functions. The library size normalization could
+be done by *normalizeCounts* function in *scater* package or by calculating CPM
+values. 
 
 # Overview of the package functionality
 
-The method is based on taking a new dataset and projecting it into an embedding representing cell cycle. This embedding is constructed using a reference dataset. What is perhaps surprising is our finding that the same embedding is appropriate for all the experiments we have looked at, including across species, cell types and datasets. We are providing this embedding space as part of the package, and we do not expect users to change this embedding (although the functions in the package supports other embeddings).
+The method is based on taking a new dataset and projecting it into an embedding
+representing cell cycle. This embedding is constructed using a reference
+dataset. What is perhaps surprising is our finding that the same embedding is
+appropriate for all the experiments we have looked at, including across species,
+cell types and datasets. We are providing this embedding space as part of the
+package, and we do not expect users to change this embedding (although the
+functions in the package supports other embeddings).
 
-The method is simple: you take a new dataset and project it into the latent space and infer cell cycle time. The key functions here are
+The method is simple: you take a new dataset and project it into the latent
+space and infer cell cycle time. The key functions here are
 
 - `project_cycle_space()`
 - `estimate_cycle_position()`
 
-The next step is to verify that the cell cycle time was successfully predicted. This involves looking at a number of useful plots. This involves a number of useful visualization. Note for example our use of color scheme - because cell cycle time "wraps around" the $[0,2\pi]$ interval, it is very useful to use a color palette which also "wraps around". The relevant functions are
+The next step is to verify that the cell cycle time was successfully predicted.
+This involves looking at a number of useful plots. This involves a number of
+useful visualization. Note for example our use of color scheme - because cell
+cycle time "wraps around" the $[0,2\pi]$ interval, it is very useful to use a
+color palette which also "wraps around". The relevant functions are
 
 - `plot_emb_circle_space()`
 - `circle_space_legend()`
 - `fit_periodic_loess()`
 
-We also provide a separate cell cycle stage predictor, predicting 5 different stages; `estimate_cycle_stage()`. This predictor is a small modification of the method proposed by [@Schwabe.2020].
+We also provide a separate cell cycle stage predictor, predicting 5 different
+stages; `estimate_Schwabe_stage()`. This predictor is a small modification of the
+method proposed by [@Schwabe.2020].
 
 Finally we have a set of functions for creating your own reference latent space.
 
 
 # Project a single cell data set to pre-learned cell cycle space
 
-`project_cycle_space()` will automatically project the assay with name `logcounts` into the cell cycle embedding without any other argument input. You could specify species (default as mouse), gene IDs, gene ID type, and `AnnotationDb` object if gene mapping is needed. Refer to `man(project_cycle_space)` for details.
+`project_cycle_space()` will automatically project the assay with name
+`logcounts` into the cell cycle embedding without any other argument input. You
+could specify species (default as mouse), gene IDs, gene ID type, and
+`AnnotationDb` object if gene mapping is needed. Refer to
+`man(project_cycle_space)` for details.
 
 ```{r project, message = TRUE}
 neurosphere_example <- project_cycle_space(neurosphere_example)
 neurosphere_example
 ```
 
-The projected cell cycle space will be stored in *reducedDims* with name "tricycleEmbedding" (you could set other embedding name.). 
+The projected cell cycle space will be stored in *reducedDims* with name
+"tricycleEmbedding" (you could set other embedding name.). 
 ```{r plot_projection, message = FALSE}
 library(ggplot2)
 library(scattermore)
@@ -88,12 +126,23 @@ scater::plotReducedDim(neurosphere_example, dimred = "tricycleEmbedding") +
 
 # Infer cell cycle position
 
-Once the new data has been projected into the cell cycle embedding, cell cycle position is estimated using `estimate_cycle_position()`. If the data has not been projected, this function will do the projection for you. Assuming a *SingleCellExperiment* as input, the cell cycle position will be addded to the `colData` of the object, with the name `tricyclePosition`.
+Once the new data has been projected into the cell cycle embedding, cell cycle
+position is estimated using `estimate_cycle_position()`. If the data has not
+been projected, this function will do the projection for you. Assuming a
+*SingleCellExperiment* as input, the cell cycle position will be addded to the
+`colData` of the object, with the name `tricyclePosition`.
 
 ```{r tricyclePosition, message = TRUE}
 neurosphere_example <- estimate_cycle_position(neurosphere_example)
 names(colData(neurosphere_example))
 ```
+
+The estimated cell cycle position is bound between 0 and 2pi. Note that we
+strive to get high resolution of cell cycle state, and we think the continuous
+position is more appropriate when describing the cell cycle. However, to help
+users understand the position variable, we also note that users can
+approximately relate 0.5pi to be the start of S stage, pi to be the start of G2M
+stage, 1.5pi to be the middle of M stage, and 1.75pi-0.25pi to be G1/G0 stage.
 
 # Assessing performance
 
@@ -102,14 +151,30 @@ We have two ways of (quickly) assessing whether TriCycle works. They are
 1. Look at the projection of the data into the cell cycle embedding.
 2. Look at the expression of key genes as a function of cell cycle position.
 
-Plotting the projection of the data into the cell cycle embedding is shown above. Our observation is that deeper sequenced data will have a more clearly ellipsoid pattern with an empty interior. As sequencing depth decreases, the radius of the ellipsoid decreases until the empty interior disappears. So the absence of an interior does not mean the method does not work.
+Plotting the projection of the data into the cell cycle embedding is shown
+above. Our observation is that deeper sequenced data will have a more clearly
+ellipsoid pattern with an empty interior. As sequencing depth decreases, the
+radius of the ellipsoid decreases until the empty interior disappears. So the
+absence of an interior does not mean the method does not work.
 
-It is more important to inspect a couple of genes as a function of cell cycle position. We tend to use Top2a which is highly expressed and therefore "plottable" in every dataset. Other candidates are for example Smc2. To plot this data, we provide a convenient function `fit_periodic_loess()` to fit a loess line between the cyclic variable $\theta$ and other response variables. This fitting is done by making `theta.v` 3 periods `(c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi))` and repeating `y` 3 times. Only the fitted values corresponding to original `theta.v` will be returned. In this example, we show how well the expression of the cell cycle marker gene *Top2a* change along $\theta$.
+It is more important to inspect a couple of genes as a function of cell cycle
+position. We tend to use Top2a which is highly expressed and therefore
+"plottable" in every dataset. Other candidates are for example Smc2. To plot
+this data, we provide a convenient function `fit_periodic_loess()` to fit a
+loess line between the cyclic variable $\theta$ and other response variables.
+This fitting is done by making `theta.v` 3 periods 
+`(c(theta.v - 2 * pi, theta.v, theta.v + 2 * pi))` and repeating `y` 3 times.
+Only the fitted values corresponding to original `theta.v` will be returned.
+In this example, we show how well the expression of the cell cycle marker gene
+*Top2a* change along $\theta$.
 ```{r loess, message = TRUE}
 top2a.idx <- which(rowData(neurosphere_example)$Gene == 'Top2a')
-fit.l <- fit_periodic_loess(neurosphere_example$tricyclePosition, assay(neurosphere_example, 'logcounts')[top2a.idx, ], plot = TRUE,
+fit.l <- fit_periodic_loess(neurosphere_example$tricyclePosition,
+                            assay(neurosphere_example, 'logcounts')[top2a.idx,],
+                            plot = TRUE,
                        x_lab = "Cell cycle position \u03b8", y_lab = "log2(Top2a)", 
-                       fig.title = paste0("Expression of Top2a along \u03b8 (n=", ncol(neurosphere_example), ")"))
+                       fig.title = paste0("Expression of Top2a along \u03b8 (n=",
+                                          ncol(neurosphere_example), ")"))
 names(fit.l)
 fit.l$fig + theme_bw(base_size = 14)
 ```
@@ -118,78 +183,127 @@ For Top2a we expect peak expression around $\pi$.
 
 # Alternative: Infer cell cycle stages
 
-This method was proposed by @Schwabe.2020. We did small modifications to reduce `NA` assignments. But on average, the performance is quite similar to the original implementation in [Revelio](https://github.com/danielschw188/Revelio/) package. In brief, we calculate the *z*-scores of highly expressed stage specific cell cycle marker genes, and assgin the cell to the stage with the greatest *z*-score. 
+This method was proposed by @Schwabe.2020. We did small modifications to
+reduce `NA` assignments. But on average, the performance is quite similar to the
+original implementation in [Revelio](https://github.com/danielschw188/Revelio/)
+package. In brief, we calculate the *z*-scores of highly expressed stage
+specific cell cycle marker genes, and assgin the cell to the stage with the
+greatest *z*-score. 
 ```{r stage, message = TRUE}
-neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = 'ENSEMBL', species = 'mouse')
-scater::plotReducedDim(neurosphere_example, dimred = "tricycleEmbedding", colour_by = "CCStage") +
-  labs(x = "Projected PC1", y = "Projected PC2", title = paste0("Projected cell cycle space (n=", ncol(neurosphere_example), ")")) +
+neurosphere_example <- estimate_Schwabe_stage(neurosphere_example, 
+                                            gname.type = 'ENSEMBL',
+                                            species = 'mouse')
+scater::plotReducedDim(neurosphere_example, dimred = "tricycleEmbedding",
+                       colour_by = "CCStage") +
+  labs(x = "Projected PC1", y = "Projected PC2",
+       title = paste0("Projected cell cycle space (n=", ncol(neurosphere_example), ")")) +
   theme_bw(base_size = 14)
 ```
 
 
 # Plot out the kernel density
 
-Another useful function is *plot_ccposition_den*, which computes kernel density of $\theta$ conditioned on a phenotype using von Mises distribution. The ouput figures are provided in two flavors, polar coordinates and Cartesian coordinates. This could be useful when comparing different cell types, treatments, or just stages. (Because we use a very small dataset here as example, we set the bandwith, i.e. the concentration parameter of the von Mises distribution as 10 to get a smooth line.)
+Another useful function is *plot_ccposition_den*, which computes kernel density
+of $\theta$ conditioned on a phenotype using von Mises distribution. The ouput
+figures are provided in two flavors, polar coordinates and Cartesian
+coordinates. This could be useful when comparing different cell types,
+treatments, or just stages. (Because we use a very small dataset here as
+example, we set the bandwith, i.e. the concentration parameter of the von Mises
+distribution as 10 to get a smooth line.)
 
 ```{r density, message = TRUE}
-plot_ccposition_den(neurosphere_example$tricyclePosition, neurosphere_example$sample, 'sample', bw = 10, fig.title = "Kernel density of \u03b8") + theme_bw(base_size = 14)
-plot_ccposition_den(neurosphere_example$tricyclePosition, neurosphere_example$sample, 'sample', type = "circular", bw = 10,  fig.title = "Kernel density of \u03b8") + theme_bw(base_size = 14)
+plot_ccposition_den(neurosphere_example$tricyclePosition, 
+                    neurosphere_example$sample, 'sample', 
+                    bw = 10, fig.title = "Kernel density of \u03b8") +
+  theme_bw(base_size = 14)
+
+plot_ccposition_den(neurosphere_example$tricyclePosition,
+                    neurosphere_example$sample, 'sample', type = "circular",
+                    bw = 10,  fig.title = "Kernel density of \u03b8") +
+  theme_bw(base_size = 14)
 ```
 
 
 # Plot out embedding scater plot colored by cell cycle position
-To visualize the cell cycle position $\theta$ on any embedding, we need to carefully choose a cyclic color palette. Thus, we include such functions to plot any embedding of *SingleCellExperiment* object with cyclic variables. A companion helper function to create the cyclic legend is also available.
+To visualize the cell cycle position $\theta$ on any embedding, we need to
+carefully choose a cyclic color palette. Thus, we include such functions to
+plot any embedding of *SingleCellExperiment* object with cyclic variables. A
+companion helper function to create the cyclic legend is also available.
 
 ```{r cyclic, message = TRUE, fig.width = 10, fig.height = 7}
 library(cowplot)
-p <- plot_emb_circle_scale(neurosphere_example, dimred = 1, point.size = 3.5, point.alpha = 0.9) +
+p <- plot_emb_circle_scale(neurosphere_example, dimred = 1, 
+                           point.size = 3.5, point.alpha = 0.9) +
   theme_bw(base_size = 14)
 legend <- circle_scale_legend(text.size = 5, alpha = 0.9)
 plot_grid(p, legend, ncol = 2, rel_widths = c(1, 0.4))
 ```
 
-We plot our our projection embedding. In practice, user could use other embedding, such as UMAP or t-SNE and get informative representations too.
+We plot our our projection embedding. In practice, user could use other
+embedding, such as UMAP or t-SNE and get informative representations too.
 
 # Make a new reference
 
-Users could make their own reference by doing PCA on the cell cycle genes, and use the learned rotation matrix as the reference matrix in other functions. Here is an example, we just use *run_pca_cc_genes* function to extract Gene Ontology cell cycle genes (GO:0007049) and run PCA. By projecting the data itself with the learned reference, the projections are equivalent to direct PCA results. But you could use this newly learned reference to project other datasets.
+Users could make their own reference by doing PCA on the cell cycle genes, and
+use the learned rotation matrix as the reference matrix in other functions. Here
+is an example, we just use *run_pca_cc_genes* function to extract Gene Ontology
+cell cycle genes (GO:0007049) and run PCA. By projecting the data itself with
+the learned reference, the projections are equivalent to direct PCA results.
+But you could use this newly learned reference to project other datasets.
 
 ```{r newRef, message = TRUE}
 set.seed(100)
-gocc_sce.o <- run_pca_cc_genes(neurosphere_example, exprs_values = "logcounts", species = "mouse")
+gocc_sce.o <- run_pca_cc_genes(neurosphere_example, 
+                               exprs_values = "logcounts", species = "mouse")
 new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, seq_len(2)]
 head(new.ref)
-new_sce <- estimate_cycle_position(neurosphere_example, ref.m  = new.ref, dimred = 'tricycleEmbedding2')
+new_sce <- estimate_cycle_position(neurosphere_example, ref.m  = new.ref,
+                                   dimred = 'tricycleEmbedding2')
 
 ```
 
-Note: If user wants to calculate correlation between two cyclic variables, such as cell cycle position, traditional pearson's correlation coefficient won't consider the cyclic nature. Users could use (absolute) circular correlation values instead. (The signs of PC1 and PC2 are not deterministic when re-learning the reference by performing PCA. If the PC1 is flipped, there will be a $\pi$ shift. So does PC2. If the user fixes the reference, there won't be any flipping. But considering the variations around $0$ or $2\pi$, circular correlation should still be used instead of pearson's correlation coefficient.)
+Note: If user wants to calculate correlation between two cyclic variables, such
+as cell cycle position, traditional pearson's correlation coefficient won't
+consider the cyclic nature. Users could use (absolute) circular correlation
+values instead. (The signs of PC1 and PC2 are not deterministic when
+re-learning the reference by performing PCA. If the PC1 is flipped, there will
+be a $\pi$ shift. So does PC2. If the user fixes the reference, there won't be
+any flipping. But considering the variations around $0$ or $2\pi$, circular
+correlation should still be used instead of pearson's correlation coefficient.)
 ```{r cor, message = TRUE}
 cor(neurosphere_example$tricyclePosition, new_sce$tricyclePosition)
 Directional::circ.cor1(neurosphere_example$tricyclePosition, new_sce$tricyclePosition, rads = TRUE)
 qplot(x = neurosphere_example$tricyclePosition,y = new_sce$tricyclePosition) +
-  labs(x = "Oroginal \u03b8", y = "New \u03b8", title = paste0("Comparison of two \u03b8 (n=", ncol(neurosphere_example), ")")) +
+  labs(x = "Original \u03b8", y = "New \u03b8",
+       title = paste0("Comparison of two \u03b8 (n=", ncol(neurosphere_example), ")")) +
   theme_bw(base_size = 14)
 ```
 
 # Make a new reference using datasets with batch effects
-This section introduce how to make a new reference using dataset with batch effects. It is only recommended for expert users who identifies batch effects in their data and want to use that data to build a custom reference. 
-In theory, the users could use other methods to remove batch effect. Here, we use *Seurat*, which is used to construct our Neurosphere reference (@Zheng.2021), as an example. (The code in this section is not evaluated.)
+This section introduce how to make a new reference using dataset with batch
+effects. It is only recommended for expert users who identifies batch effects in
+their data and want to use that data to build a custom reference. 
+In theory, the users could use other methods to remove batch effect. Here, we
+use *Seurat*, which is used to construct our Neurosphere reference 
+(@Zheng.2021), as an example. (The code in this section is not evaluated.)
 ```{r batch, eval = FALSE, echo = TRUE}
 # suppose we have a count matrix containing all cells across batches; we first subset the matrix to GO cell cycle genes
-require(org.Mm.eg.db)
-require(AnnotationDbi)
-cc.genes <- AnnotationDbi::select(org.Mm.eg.db, keytype = "GOALL", keys = "GO:0007049", columns = "ENSEMBL")[, "ENSEMBL"]
+library(org.Mm.eg.db)
+library(AnnotationDbi)
+cc.genes <- AnnotationDbi::select(org.Mm.eg.db, keytype = "GOALL", 
+                                  keys = "GO:0007049",
+                                  columns = "ENSEMBL")[, "ENSEMBL"]
 count_cc.m <- count.m[ensembl.ids %in% cc.genes, ]  # ensembl.ids is the ensembl.ids for each row of count.m
 
 # we then construct a Seurat object using the subset matrix and set the batch variable
-require(Seurat)
+library(Seurat)
 seurat.o <- CreateSeuratObject(counts = count_cc.m)
 seurat.o[["batch"]] <- batch.v
 
 # make a Seurat list and normalize for each batch separately
 # variable features definition is required for FindIntegrationAnchors function
-seurat.list <- lapply(SplitObject(seurat.o, split.by = "batch"), function(x) FindVariableFeatures(NormalizeData(x))) 
+seurat.list <- lapply(SplitObject(seurat.o, split.by = "batch"),
+                      function(x) FindVariableFeatures(NormalizeData(x))) 
 
 # find anchors and merge data
 seurat.anchors <- FindIntegrationAnchors(object.list = seurat.list)
@@ -215,7 +329,10 @@ sessionInfo()
 
 
 
-In the package, we provide a reference, learned from the full dataset of the mouse Neurosphere RNAseq. The reference gives weights of 500 cell cycle genes and their IDs. Although learned from mouse, it is applicable to human data as well, with the gene mapped by gene symbols.
+In the package, we provide a reference, learned from the full dataset of the
+mouse Neurosphere RNAseq. The reference gives weights of 500 cell cycle genes
+and their IDs. Although learned from mouse, it is applicable to human data as
+well, with the gene mapped by gene symbols.
 ```{r ref, message = FALSE}
 head(neuroRef)
 ```

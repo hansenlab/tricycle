@@ -14,8 +14,11 @@ Default: 'logcounts'}
 
 \item{gname.type}{The type of gene names as in \code{gname} or rownames of \code{sce.o}. It can be either 'ENSEMBL' or 'SYMBOL'. Default: 'ENSEMBL'}
 
-\item{species}{The type of species in \code{sce.o}. It can be either 'mouse' or 'human'. The corresponding AnnotationDb object will be
-\code{\link[org.Mm.eg.db]{org.Mm.eg.db}} and \code{\link[org.Hs.eg.db]{org.Hs.eg.db}}. Default: 'mouse'}
+\item{species}{The type of species in \code{sce.o}. It can be either 'mouse' or 'human'. If the user uses
+custom \code{cycleGene.l}, this value will have no effect. Default: 'mouse'}
+
+\item{AnnotationDb}{An AnnotationDb objects. It is used to map ENSEMBL IDs to gene SYMBOLs.
+If no AnnotationDb object being given, the function will use \code{\link[org.Hs.eg.db]{org.Hs.eg.db}} or \code{\link[org.Mm.eg.db]{org.Mm.eg.db}} for human and mouse respectively.}
 
 \item{ntop}{The number of genes with highest variance to use when calculating PCA, as in \code{\link[scater]{calculatePCA}}. Default: 500}
 
@@ -42,12 +45,17 @@ User can use this function to make new reference projection matrix by getting th
 \code{attr(reducedDim(sce.o, 'PCA'), 'rotation')[, 1:2]}. See examples for more details.
 }
 \examples{
+data(neurosphere_example, package = "tricycle")
+### Use internal NeuroRef to project and infer tricyclePosition
+neurosphere_example <- estimate_cycle_position(neurosphere_example) 
+
+### Build new reference
 gocc_sce.o <- run_pca_cc_genes(neurosphere_example)
 new.ref <- attr(reducedDim(gocc_sce.o, "PCA"), "rotation")[, seq_len(2)]
-neurosphere_example <- estimate_cycle_position(neurosphere_example) ### Use internal NeuroRef to project and infer tricyclePosition
 
 ### Use new reference to project and infer tricyclePosition
-new_sce <- estimate_cycle_position(neurosphere_example, ref.m = new.ref, dimred = "tricycleEmbedding2")
+new_sce <- estimate_cycle_position(neurosphere_example, ref.m = new.ref,
+ dimred = "tricycleEmbedding2")
 plot(neurosphere_example$tricyclePosition, new_sce$tricyclePosition)
 }
 \author{

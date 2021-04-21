@@ -32,14 +32,14 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
+#' data(neurosphere_example, package = "tricycle")
 #' neurosphere_example <- estimate_cycle_position(neurosphere_example)
 #' plot_emb_circle_scale(neurosphere_example, point.size = 3.1, point.alpha = 0.8)
 NULL
 
 
 #' @importFrom scattermore geom_scattermore
-#' @importFrom dplyr filter .data
-#' @importFrom magrittr `%>%`
+#' @importFrom dplyr filter .data `%>%`
 .plot_emb_circle_scale <- function(emb.m, color.value, color_by, facet_var = NULL, fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL, hue.colors = c(
         "#2E22EA",
         "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"
@@ -88,15 +88,24 @@ NULL
 }
 
 
-#' @export
+
 #' @rdname plot_emb_circle_scale
+#' 
+#' @importFrom AnnotationDbi select
+#' @importFrom methods is
 #' @importFrom SingleCellExperiment reducedDim
 #' @importFrom SummarizedExperiment colData
-setMethod("plot_emb_circle_scale", "SingleCellExperiment", function(sce.o, color_by = "tricyclePosition", facet_by = NULL, dimred = 1, dim = seq_len(2),
+#' @importClassesFrom SingleCellExperiment SingleCellExperiment
+#' @export
+#' 
+plot_emb_circle_scale <- function(sce.o, color_by = "tricyclePosition", facet_by = NULL, dimred = 1, dim = seq_len(2),
     fig.title = NULL, point.size = 2.1, point.alpha = 0.6, x_lab = NULL, y_lab = NULL,
     hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
     hue.n = 500, plot.legend = FALSE) {
-    stopifnot("The function can only plot 2 dims at this time. Change dim argument." = length(dim) == 2)
+  stopifnot("sce.o must be a SingleCellExperiment objet." = is(sce.o, "SingleCellExperiment"),
+            "The function can only plot 2 dims at this time. Change dim argument." = length(dim) == 2,
+            "The color_by variable does not exist in colData(sce.o)." = (color_by %in% names(colData(sce.o))))
+  
   
     emb.m <- reducedDim(sce.o, dimred)[, dim]
     color.value <- colData(sce.o)[[color_by]]
@@ -115,7 +124,7 @@ setMethod("plot_emb_circle_scale", "SingleCellExperiment", function(sce.o, color
         hue.colors = hue.colors,
         hue.n = hue.n, plot.legend = plot.legend
     )
-})
+}
 
 
 
@@ -155,7 +164,10 @@ NULL
 #' @importFrom grDevices colorRampPalette
 #' @import ggplot2
 #' @export
-circle_scale_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"), hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3,
+circle_scale_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2",
+                                               "#FCCE7B", "#C4E416", "#4BBA0F",
+                                               "#447D87", "#2C24E9"),
+                                hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3,
     y.text = 3.8, ymax = 4.5, text.size = 3) {
     hues.df <- data.frame(theta = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = colorRampPalette(hue.colors)(hue.n))
     hue_text.df <- data.frame(theta = c(0, 0.5 * pi, pi, 1.5 * pi), label = c("0/2\u03C0", "0.5\u03C0", "\u03C0", "1.5\u03C0"), hjust = c(0.1, 0.5, 0.5, 0.5))

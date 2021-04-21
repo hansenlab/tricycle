@@ -47,9 +47,11 @@
 #' @author Shijie C. Zheng
 #'
 #' @examples
+#' data(neurosphere_example, package = "tricycle")
 #' neurosphere_example <- estimate_cycle_position(neurosphere_example)
 #' top2a.idx <- which(rowData(neurosphere_example)$Gene == "Top2a")
-#' fit.l <- fit_periodic_loess(neurosphere_example$tricyclePosition, assay(neurosphere_example, "logcounts")[top2a.idx, ], plot = TRUE)
+#' fit.l <- fit_periodic_loess(neurosphere_example$tricyclePosition,
+#'  assay(neurosphere_example, "logcounts")[top2a.idx, ], plot = TRUE)
 #' fit.l$fig
 NULL
 

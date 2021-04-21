@@ -41,14 +41,16 @@ it plots out the density in the polar coordinate system or Cartesian coordinate 
 represents different levels of \code{color_var.v} and the dashed black line is the marginal distribution of all cells.
 }
 \examples{
+data(neurosphere_example, package = "tricycle")
 neurosphere_example <- estimate_cycle_position(neurosphere_example)
 plot_ccposition_den(neurosphere_example$tricyclePosition, neurosphere_example$sample, "sample")
 
-neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
+neurosphere_example <- estimate_Schwabe_stage(neurosphere_example,
+ gname.type = "ENSEMBL", species = "mouse")
 plot_ccposition_den(neurosphere_example$tricyclePosition, neurosphere_example$CCStage, "CCStage")
 }
 \seealso{
-\code{\link{estimate_cycle_stage}}, for inferring 5 stages of cell cycle
+\code{\link{estimate_Schwabe_stage}}, for inferring 5 stages of cell cycle
 }
 \author{
 Shijie C. Zheng

@@ -2,6 +2,7 @@
 #'
 #' Default reference projection matrix learned from the Neurosphere dataset.
 #'
+#' @name neuroRef
 #' @docType data
 #'
 #' @usage data(neuroRef)
@@ -19,4 +20,4 @@
 #'
 #' @examples
 #' data(neuroRef)
-"neuroRef"
+NULL

@@ -24,3 +24,25 @@
         strip.text = element_text(color = "white"),
         strip.background = element_rect(fill = "black", color = "black")
     )
+
+
+#' @importFrom methods is
+#' @importClassesFrom AnnotationDbi AnnotationDb
+.getAnnotationDB <- function(AnnotationDB = NULL, species = c("mouse", "human")) {
+    species <- match.arg(species)
+    if (!is.null(AnnotationDB)) {
+        stopifnot("The input AnnotationDB is not an AnnotationDb object.", is(AnnotationDB, "AnnotationDb"))
+    } else {
+        if (species == "mouse") {
+            stopifnot("No AnnotationDB input and org.Mm.eg.db package is not installed. Please install org.Mm.eg.db package." = nzchar(system.file(package = "org.Mm.eg.db")))
+            AnnotationDb <- org.Mm.eg.db::org.Mm.eg.db
+            message("No AnnotationDb desginated. org.Mm.eg.db will be used to map Mouse ENSEMBL id to gene SYMBOL.")
+        } else {
+            stopifnot("No AnnotationDB input and org.Hs.eg.db package is not installed. Please install org.Mm.Hs.db package." = nzchar(system.file(package = "org.Hs.eg.db")))
+            AnnotationDb <- org.Hs.eg.db::org.Hs.eg.db
+            message("No AnnotationDb desginated. org.Hs.eg.db will be used to map Human ENSEMBL id to gene SYMBOL.")
+        }
+    }
+    return(AnnotationDb)
+}
+

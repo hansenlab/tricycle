@@ -29,15 +29,17 @@
 #' @name plot_ccposition_den
 #' @aliases plot_ccposition_den
 #' @seealso
-#' \code{\link{estimate_cycle_stage}}, for inferring 5 stages of cell cycle
+#' \code{\link{estimate_Schwabe_stage}}, for inferring 5 stages of cell cycle
 #'
 #' @author Shijie C. Zheng
 #'
 #' @examples
+#' data(neurosphere_example, package = "tricycle")
 #' neurosphere_example <- estimate_cycle_position(neurosphere_example)
 #' plot_ccposition_den(neurosphere_example$tricyclePosition, neurosphere_example$sample, "sample")
 #'
-#' neurosphere_example <- estimate_cycle_stage(neurosphere_example, gname.type = "ENSEMBL", species = "mouse")
+#' neurosphere_example <- estimate_Schwabe_stage(neurosphere_example,
+#'  gname.type = "ENSEMBL", species = "mouse")
 #' plot_ccposition_den(neurosphere_example$tricyclePosition, neurosphere_example$CCStage, "CCStage")
 NULL
 
@@ -47,7 +49,6 @@ NULL
 
 #' @importFrom circular circular density.circular
 #' @importFrom RColorBrewer brewer.pal
-#' @importFrom forcats fct_relevel fct_explicit_na
 #' @import ggplot2
 #'
 #' @export

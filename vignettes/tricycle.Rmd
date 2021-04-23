@@ -262,22 +262,22 @@ new_sce <- estimate_cycle_position(neurosphere_example, ref.m  = new.ref,
 
 ```
 
-<!-- Note: If user wants to calculate correlation between two cyclic variables, such -->
-<!-- as cell cycle position, traditional pearson's correlation coefficient won't -->
-<!-- consider the cyclic nature. Users could use (absolute) circular correlation -->
-<!-- values instead. (The signs of PC1 and PC2 are not deterministic when -->
-<!-- re-learning the reference by performing PCA. If the PC1 is flipped, there will -->
-<!-- be a $\pi$ shift. So does PC2. If the user fixes the reference, there won't be -->
-<!-- any flipping. But considering the variations around $0$ or $2\pi$, circular -->
-<!-- correlation should still be used instead of pearson's correlation coefficient.) -->
-<!-- ```{r cor, message = TRUE} -->
-<!-- cor(neurosphere_example$tricyclePosition, new_sce$tricyclePosition) -->
-<!-- Directional::circ.cor1(neurosphere_example$tricyclePosition, new_sce$tricyclePosition, rads = TRUE) -->
-<!-- qplot(x = neurosphere_example$tricyclePosition,y = new_sce$tricyclePosition) + -->
-<!--   labs(x = "Original \u03b8", y = "New \u03b8", -->
-<!--        title = paste0("Comparison of two \u03b8 (n=", ncol(neurosphere_example), ")")) + -->
-<!--   theme_bw(base_size = 14) -->
-<!-- ``` -->
+Note: If user wants to calculate correlation between two cyclic variables, such
+as cell cycle position, traditional pearson's correlation coefficient won't
+consider the cyclic nature. Users could use (absolute) circular correlation
+values instead. (The signs of PC1 and PC2 are not deterministic when
+re-learning the reference by performing PCA. If the PC1 is flipped, there will
+be a $\pi$ shift. So does PC2. If the user fixes the reference, there won't be
+any flipping. But considering the variations around $0$ or $2\pi$, circular
+correlation should still be used instead of pearson's correlation coefficient.)
+```{r cor, message = TRUE}
+cor(neurosphere_example$tricyclePosition, new_sce$tricyclePosition)
+# Directional::circ.cor1(neurosphere_example$tricyclePosition, new_sce$tricyclePosition, rads = TRUE)
+qplot(x = neurosphere_example$tricyclePosition,y = new_sce$tricyclePosition) +
+  labs(x = "Original \u03b8", y = "New \u03b8",
+       title = paste0("Comparison of two \u03b8 (n=", ncol(neurosphere_example), ")")) +
+  theme_bw(base_size = 14)
+```
 
 # Make a new reference using datasets with batch effects
 This section introduce how to make a new reference using dataset with batch

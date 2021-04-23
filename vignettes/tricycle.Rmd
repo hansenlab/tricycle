@@ -60,56 +60,56 @@ as we use for constructing our cell cycle embedding.
 data(neurosphere_example)
 ```
 
-<!-- **Important**: Please note that the user should **normalize library size** -->
-<!-- before putting into the tricycle functions. The library size normalization could -->
-<!-- be done by *normalizeCounts* function in *scater* package or by calculating CPM -->
-<!-- values.  -->
+**Important**: Please note that the user should **normalize library size**
+before putting into the tricycle functions. The library size normalization could
+be done by *normalizeCounts* function in *scater* package or by calculating CPM
+values.
 
-<!-- # Overview of the package functionality -->
+# Overview of the package functionality
 
-<!-- The method is based on taking a new dataset and projecting it into an embedding -->
-<!-- representing cell cycle. This embedding is constructed using a reference -->
-<!-- dataset. What is perhaps surprising is our finding that the same embedding is -->
-<!-- appropriate for all the experiments we have looked at, including across species, -->
-<!-- cell types and datasets. We are providing this embedding space as part of the -->
-<!-- package, and we do not expect users to change this embedding (although the -->
-<!-- functions in the package supports other embeddings). -->
+The method is based on taking a new dataset and projecting it into an embedding
+representing cell cycle. This embedding is constructed using a reference
+dataset. What is perhaps surprising is our finding that the same embedding is
+appropriate for all the experiments we have looked at, including across species,
+cell types and datasets. We are providing this embedding space as part of the
+package, and we do not expect users to change this embedding (although the
+functions in the package supports other embeddings).
 
-<!-- The method is simple: you take a new dataset and project it into the latent -->
-<!-- space and infer cell cycle time. The key functions here are -->
+The method is simple: you take a new dataset and project it into the latent
+space and infer cell cycle time. The key functions here are
 
-<!-- - `project_cycle_space()` -->
-<!-- - `estimate_cycle_position()` -->
+- `project_cycle_space()`
+- `estimate_cycle_position()`
 
-<!-- The next step is to verify that the cell cycle time was successfully predicted. -->
-<!-- This involves looking at a number of useful plots. This involves a number of -->
-<!-- useful visualization. Note for example our use of color scheme - because cell -->
-<!-- cycle time "wraps around" the $[0,2\pi]$ interval, it is very useful to use a -->
-<!-- color palette which also "wraps around". The relevant functions are -->
+The next step is to verify that the cell cycle time was successfully predicted.
+This involves looking at a number of useful plots. This involves a number of
+useful visualization. Note for example our use of color scheme - because cell
+cycle time "wraps around" the $[0,2\pi]$ interval, it is very useful to use a
+color palette which also "wraps around". The relevant functions are
 
-<!-- - `plot_emb_circle_space()` -->
-<!-- - `circle_space_legend()` -->
-<!-- - `fit_periodic_loess()` -->
+- `plot_emb_circle_space()`
+- `circle_space_legend()`
+- `fit_periodic_loess()`
 
-<!-- We also provide a separate cell cycle stage predictor, predicting 5 different -->
-<!-- stages; `estimate_Schwabe_stage()`. This predictor is a small modification of the -->
-<!-- method proposed by [@Schwabe.2020]. -->
+We also provide a separate cell cycle stage predictor, predicting 5 different
+stages; `estimate_Schwabe_stage()`. This predictor is a small modification of the
+method proposed by [@Schwabe.2020].
 
-<!-- Finally we have a set of functions for creating your own reference latent space. -->
+Finally we have a set of functions for creating your own reference latent space.
 
 
-<!-- # Project a single cell data set to pre-learned cell cycle space -->
+# Project a single cell data set to pre-learned cell cycle space
 
-<!-- `project_cycle_space()` will automatically project the assay with name -->
-<!-- `logcounts` into the cell cycle embedding without any other argument input. You -->
-<!-- could specify species (default as mouse), gene IDs, gene ID type, and -->
-<!-- `AnnotationDb` object if gene mapping is needed. Refer to -->
-<!-- `man(project_cycle_space)` for details. -->
+`project_cycle_space()` will automatically project the assay with name
+`logcounts` into the cell cycle embedding without any other argument input. You
+could specify species (default as mouse), gene IDs, gene ID type, and
+`AnnotationDb` object if gene mapping is needed. Refer to
+`man(project_cycle_space)` for details.
 
-<!-- ```{r project, message = TRUE} -->
-<!-- neurosphere_example <- project_cycle_space(neurosphere_example) -->
-<!-- neurosphere_example -->
-<!-- ``` -->
+```{r project, message = TRUE}
+neurosphere_example <- project_cycle_space(neurosphere_example)
+neurosphere_example
+```
 
 <!-- The projected cell cycle space will be stored in *reducedDims* with name -->
 <!-- "tricycleEmbedding" (you could set other embedding name.).  -->

@@ -272,7 +272,7 @@ any flipping. But considering the variations around $0$ or $2\pi$, circular
 correlation should still be used instead of pearson's correlation coefficient.)
 ```{r cor, message = TRUE}
 cor(neurosphere_example$tricyclePosition, new_sce$tricyclePosition)
-# Directional::circ.cor1(neurosphere_example$tricyclePosition, new_sce$tricyclePosition, rads = TRUE)
+CircStats::circ.cor(neurosphere_example$tricyclePosition, new_sce$tricyclePosition)
 qplot(x = neurosphere_example$tricyclePosition,y = new_sce$tricyclePosition) +
   labs(x = "Original \u03b8", y = "New \u03b8",
        title = paste0("Comparison of two \u03b8 (n=", ncol(neurosphere_example), ")")) +

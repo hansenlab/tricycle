@@ -262,59 +262,59 @@ new_sce <- estimate_cycle_position(neurosphere_example, ref.m  = new.ref,
 
 ```
 
-Note: If user wants to calculate correlation between two cyclic variables, such
-as cell cycle position, traditional pearson's correlation coefficient won't
-consider the cyclic nature. Users could use (absolute) circular correlation
-values instead. (The signs of PC1 and PC2 are not deterministic when
-re-learning the reference by performing PCA. If the PC1 is flipped, there will
-be a $\pi$ shift. So does PC2. If the user fixes the reference, there won't be
-any flipping. But considering the variations around $0$ or $2\pi$, circular
-correlation should still be used instead of pearson's correlation coefficient.)
-```{r cor, message = TRUE}
-cor(neurosphere_example$tricyclePosition, new_sce$tricyclePosition)
-Directional::circ.cor1(neurosphere_example$tricyclePosition, new_sce$tricyclePosition, rads = TRUE)
-qplot(x = neurosphere_example$tricyclePosition,y = new_sce$tricyclePosition) +
-  labs(x = "Original \u03b8", y = "New \u03b8",
-       title = paste0("Comparison of two \u03b8 (n=", ncol(neurosphere_example), ")")) +
-  theme_bw(base_size = 14)
-```
-
-<!-- # Make a new reference using datasets with batch effects -->
-<!-- This section introduce how to make a new reference using dataset with batch -->
-<!-- effects. It is only recommended for expert users who identifies batch effects in -->
-<!-- their data and want to use that data to build a custom reference.  -->
-<!-- In theory, the users could use other methods to remove batch effect. Here, we -->
-<!-- use *Seurat*, which is used to construct our Neurosphere reference  -->
-<!-- (@Zheng.2021), as an example. (The code in this section is not evaluated.) -->
-<!-- ```{r batch, eval = FALSE, echo = TRUE} -->
-<!-- # suppose we have a count matrix containing all cells across batches; we first subset the matrix to GO cell cycle genes -->
-<!-- library(org.Mm.eg.db) -->
-<!-- library(AnnotationDbi) -->
-<!-- cc.genes <- AnnotationDbi::select(org.Mm.eg.db, keytype = "GOALL",  -->
-<!--                                   keys = "GO:0007049", -->
-<!--                                   columns = "ENSEMBL")[, "ENSEMBL"] -->
-<!-- count_cc.m <- count.m[ensembl.ids %in% cc.genes, ]  # ensembl.ids is the ensembl.ids for each row of count.m -->
-
-<!-- # we then construct a Seurat object using the subset matrix and set the batch variable -->
-<!-- library(Seurat) -->
-<!-- seurat.o <- CreateSeuratObject(counts = count_cc.m) -->
-<!-- seurat.o[["batch"]] <- batch.v -->
-
-<!-- # make a Seurat list and normalize for each batch separately -->
-<!-- # variable features definition is required for FindIntegrationAnchors function -->
-<!-- seurat.list <- lapply(SplitObject(seurat.o, split.by = "batch"), -->
-<!--                       function(x) FindVariableFeatures(NormalizeData(x)))  -->
-
-<!-- # find anchors and merge data -->
-<!-- seurat.anchors <- FindIntegrationAnchors(object.list = seurat.list) -->
-<!-- seurat.integrated <- IntegrateData(anchorset = seurat.anchors) -->
-<!-- corrected.m <- seurat.integrated@assays$integrated@data -->
-
-<!-- # run PCA on the batch effects corrected matrix and get the rotaions scores for the top 2 PCs -->
-<!-- pca.m <- scater::calculatePCA(corrected.m, ntop = 500) -->
-<!-- new.ref <- attr(pca.m, 'rotation')[, seq_len(2)] -->
-
+<!-- Note: If user wants to calculate correlation between two cyclic variables, such -->
+<!-- as cell cycle position, traditional pearson's correlation coefficient won't -->
+<!-- consider the cyclic nature. Users could use (absolute) circular correlation -->
+<!-- values instead. (The signs of PC1 and PC2 are not deterministic when -->
+<!-- re-learning the reference by performing PCA. If the PC1 is flipped, there will -->
+<!-- be a $\pi$ shift. So does PC2. If the user fixes the reference, there won't be -->
+<!-- any flipping. But considering the variations around $0$ or $2\pi$, circular -->
+<!-- correlation should still be used instead of pearson's correlation coefficient.) -->
+<!-- ```{r cor, message = TRUE} -->
+<!-- cor(neurosphere_example$tricyclePosition, new_sce$tricyclePosition) -->
+<!-- Directional::circ.cor1(neurosphere_example$tricyclePosition, new_sce$tricyclePosition, rads = TRUE) -->
+<!-- qplot(x = neurosphere_example$tricyclePosition,y = new_sce$tricyclePosition) + -->
+<!--   labs(x = "Original \u03b8", y = "New \u03b8", -->
+<!--        title = paste0("Comparison of two \u03b8 (n=", ncol(neurosphere_example), ")")) + -->
+<!--   theme_bw(base_size = 14) -->
 <!-- ``` -->
+
+# Make a new reference using datasets with batch effects
+This section introduce how to make a new reference using dataset with batch
+effects. It is only recommended for expert users who identifies batch effects in
+their data and want to use that data to build a custom reference.
+In theory, the users could use other methods to remove batch effect. Here, we
+use *Seurat*, which is used to construct our Neurosphere reference
+(@Zheng.2021), as an example. (The code in this section is not evaluated.)
+```{r batch, eval = FALSE, echo = TRUE}
+# suppose we have a count matrix containing all cells across batches; we first subset the matrix to GO cell cycle genes
+library(org.Mm.eg.db)
+library(AnnotationDbi)
+cc.genes <- AnnotationDbi::select(org.Mm.eg.db, keytype = "GOALL",
+                                  keys = "GO:0007049",
+                                  columns = "ENSEMBL")[, "ENSEMBL"]
+count_cc.m <- count.m[ensembl.ids %in% cc.genes, ]  # ensembl.ids is the ensembl.ids for each row of count.m
+
+# we then construct a Seurat object using the subset matrix and set the batch variable
+library(Seurat)
+seurat.o <- CreateSeuratObject(counts = count_cc.m)
+seurat.o[["batch"]] <- batch.v
+
+# make a Seurat list and normalize for each batch separately
+# variable features definition is required for FindIntegrationAnchors function
+seurat.list <- lapply(SplitObject(seurat.o, split.by = "batch"),
+                      function(x) FindVariableFeatures(NormalizeData(x)))
+
+# find anchors and merge data
+seurat.anchors <- FindIntegrationAnchors(object.list = seurat.list)
+seurat.integrated <- IntegrateData(anchorset = seurat.anchors)
+corrected.m <- seurat.integrated@assays$integrated@data
+
+# run PCA on the batch effects corrected matrix and get the rotaions scores for the top 2 PCs
+pca.m <- scater::calculatePCA(corrected.m, ntop = 500)
+new.ref <- attr(pca.m, 'rotation')[, seq_len(2)]
+
+```
 
 
 # Session info {.unnumbered}

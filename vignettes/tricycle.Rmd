@@ -111,38 +111,38 @@ neurosphere_example <- project_cycle_space(neurosphere_example)
 neurosphere_example
 ```
 
-<!-- The projected cell cycle space will be stored in *reducedDims* with name -->
-<!-- "tricycleEmbedding" (you could set other embedding name.).  -->
-<!-- ```{r plot_projection, message = FALSE} -->
-<!-- library(ggplot2) -->
-<!-- library(scattermore) -->
-<!-- library(scater) -->
-<!-- scater::plotReducedDim(neurosphere_example, dimred = "tricycleEmbedding") + -->
-<!--     labs(x = "Projected PC1", y = "Projected PC2") + -->
-<!--     ggtitle(sprintf("Projected cell cycle space (n=%d)", -->
-<!--                     ncol(neurosphere_example))) +  -->
-<!--     theme_bw(base_size = 14) -->
-<!-- ``` -->
+The projected cell cycle space will be stored in *reducedDims* with name
+"tricycleEmbedding" (you could set other embedding name.).
+```{r plot_projection, message = FALSE}
+library(ggplot2)
+library(scattermore)
+library(scater)
+scater::plotReducedDim(neurosphere_example, dimred = "tricycleEmbedding") +
+    labs(x = "Projected PC1", y = "Projected PC2") +
+    ggtitle(sprintf("Projected cell cycle space (n=%d)",
+                    ncol(neurosphere_example))) +
+    theme_bw(base_size = 14)
+```
 
-<!-- # Infer cell cycle position -->
+# Infer cell cycle position
 
-<!-- Once the new data has been projected into the cell cycle embedding, cell cycle -->
-<!-- position is estimated using `estimate_cycle_position()`. If the data has not -->
-<!-- been projected, this function will do the projection for you. Assuming a -->
-<!-- *SingleCellExperiment* as input, the cell cycle position will be addded to the -->
-<!-- `colData` of the object, with the name `tricyclePosition`. -->
+Once the new data has been projected into the cell cycle embedding, cell cycle
+position is estimated using `estimate_cycle_position()`. If the data has not
+been projected, this function will do the projection for you. Assuming a
+*SingleCellExperiment* as input, the cell cycle position will be addded to the
+`colData` of the object, with the name `tricyclePosition`.
 
-<!-- ```{r tricyclePosition, message = TRUE} -->
-<!-- neurosphere_example <- estimate_cycle_position(neurosphere_example) -->
-<!-- names(colData(neurosphere_example)) -->
-<!-- ``` -->
+```{r tricyclePosition, message = TRUE}
+neurosphere_example <- estimate_cycle_position(neurosphere_example)
+names(colData(neurosphere_example))
+```
 
-<!-- The estimated cell cycle position is bound between 0 and 2pi. Note that we -->
-<!-- strive to get high resolution of cell cycle state, and we think the continuous -->
-<!-- position is more appropriate when describing the cell cycle. However, to help -->
-<!-- users understand the position variable, we also note that users can -->
-<!-- approximately relate 0.5pi to be the start of S stage, pi to be the start of G2M -->
-<!-- stage, 1.5pi to be the middle of M stage, and 1.75pi-0.25pi to be G1/G0 stage. -->
+The estimated cell cycle position is bound between 0 and 2pi. Note that we
+strive to get high resolution of cell cycle state, and we think the continuous
+position is more appropriate when describing the cell cycle. However, to help
+users understand the position variable, we also note that users can
+approximately relate 0.5pi to be the start of S stage, pi to be the start of G2M
+stage, 1.5pi to be the middle of M stage, and 1.75pi-0.25pi to be G1/G0 stage.
 
 <!-- # Assessing performance -->
 

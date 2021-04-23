@@ -22,9 +22,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, echo=FALSE}	
-htmltools::img(src = knitr::image_uri(file.path("../man/figures", "logo.png")), 	
-               alt = 'logo', 	
-               style = 'position:absolute; top:50px; right:5px; padding:10px;height:200px')	
+# htmltools::img(src = knitr::image_uri(file.path("../man/figures", "logo.png")), 	
+#                alt = 'logo', 	
+#                style = 'position:absolute; top:50px; right:5px; padding:10px;height:200px')	
 ```
 
 # Introduction

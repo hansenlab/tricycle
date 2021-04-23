@@ -288,9 +288,6 @@ use *Seurat*, which is used to construct our Neurosphere reference
 (@Zheng.2021), as an example. (The code in this section is not evaluated.)
 ```{r batch, eval = FALSE, echo = TRUE}
 # suppose we have a count matrix containing all cells across batches; we first subset the matrix to GO cell cycle genes
-if(!nzchar(system.file(package = "org.Mm.eg.db"))){
-    BiocManager::install("org.Mm.eg.db")
-}
 library(org.Mm.eg.db)
 library(AnnotationDbi)
 cc.genes <- AnnotationDbi::select(org.Mm.eg.db, keytype = "GOALL", 

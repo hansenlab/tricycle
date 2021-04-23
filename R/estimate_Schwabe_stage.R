@@ -160,7 +160,7 @@ NULL
                   rownames(data.m) <- .getSYMBOL(gname, species = "human", AnnotationDb = AnnotationDb)
               }
         }
-        data(RevelioGeneList)
+        data(RevelioGeneList, package = "tricycle", envir = environment())
         cycleGene.l <- RevelioGeneList
     }
 

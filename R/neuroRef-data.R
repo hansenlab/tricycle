@@ -18,6 +18,7 @@
 #' Zheng SC, et al.
 #' \emph{Universal prediction of cell cycle position using transfer learning.}
 #'
+#' @importFrom utils data
 #' @examples
 #' data(neuroRef)
 NULL

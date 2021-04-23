@@ -21,6 +21,7 @@
 #' Molecular Biology of the Cell (2002) 13: 1977-2000
 #' doi:\href{https://doi.org/10.1091/mbc.02-02-0030}{10.1091/mbc.02-02-0030}.
 #'
+#' @importFrom utils data
 #' @examples
 #' data(RevelioGeneList)
 NULL

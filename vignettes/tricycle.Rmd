@@ -337,6 +337,7 @@ mouse Neurosphere RNAseq. The reference gives weights of 500 cell cycle genes
 and their IDs. Although learned from mouse, it is applicable to human data as
 well, with the gene mapped by gene symbols.
 ```{r ref, message = FALSE}
+data(neuroRef)
 head(neuroRef)
 ```
 

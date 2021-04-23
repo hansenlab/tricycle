@@ -242,25 +242,25 @@ plot_grid(p, legend, ncol = 2, rel_widths = c(1, 0.4))
 We plot our our projection embedding. In practice, user could use other
 embedding, such as UMAP or t-SNE and get informative representations too.
 
-<!-- # Make a new reference -->
+# Make a new reference
 
-<!-- Users could make their own reference by doing PCA on the cell cycle genes, and -->
-<!-- use the learned rotation matrix as the reference matrix in other functions. Here -->
-<!-- is an example, we just use *run_pca_cc_genes* function to extract Gene Ontology -->
-<!-- cell cycle genes (GO:0007049) and run PCA. By projecting the data itself with -->
-<!-- the learned reference, the projections are equivalent to direct PCA results. -->
-<!-- But you could use this newly learned reference to project other datasets. -->
+Users could make their own reference by doing PCA on the cell cycle genes, and
+use the learned rotation matrix as the reference matrix in other functions. Here
+is an example, we just use *run_pca_cc_genes* function to extract Gene Ontology
+cell cycle genes (GO:0007049) and run PCA. By projecting the data itself with
+the learned reference, the projections are equivalent to direct PCA results.
+But you could use this newly learned reference to project other datasets.
 
-<!-- ```{r newRef, message = TRUE} -->
-<!-- set.seed(100) -->
-<!-- gocc_sce.o <- run_pca_cc_genes(neurosphere_example,  -->
-<!--                                exprs_values = "logcounts", species = "mouse") -->
-<!-- new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, seq_len(2)] -->
-<!-- head(new.ref) -->
-<!-- new_sce <- estimate_cycle_position(neurosphere_example, ref.m  = new.ref, -->
-<!--                                    dimred = 'tricycleEmbedding2') -->
+```{r newRef, message = TRUE}
+set.seed(100)
+gocc_sce.o <- run_pca_cc_genes(neurosphere_example,
+                               exprs_values = "logcounts", species = "mouse")
+new.ref <- attr(reducedDim(gocc_sce.o, 'PCA'), 'rotation')[, seq_len(2)]
+head(new.ref)
+new_sce <- estimate_cycle_position(neurosphere_example, ref.m  = new.ref,
+                                   dimred = 'tricycleEmbedding2')
 
-<!-- ``` -->
+```
 
 <!-- Note: If user wants to calculate correlation between two cyclic variables, such -->
 <!-- as cell cycle position, traditional pearson's correlation coefficient won't -->

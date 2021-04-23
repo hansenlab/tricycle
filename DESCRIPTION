@@ -1,7 +1,7 @@
 Package: tricycle
 Type: Package
 Title: tricycle: Transferable Representation and Inference of cell cycle
-Version: 0.99.22
+Version: 0.99.23
 Authors@R: c(
         person("Shijie", "Zheng", role=c("aut", "cre"), email="shijieczheng@gmail.com"))
 Description: The package contains functions to infer and visualize cell cycle 
@@ -11,7 +11,7 @@ Description: The package contains functions to infer and visualize cell cycle
         which could be used to infer cell cycle time of human and mouse single
         cell samples. In addition, we also offer functions to visualize cell
         cycle time on different embeddings and functions to build new reference.
-Depends: R (>= 4.1), SingleCellExperiment
+Depends: R (>= 4.0), SingleCellExperiment
 Imports: 
     methods, 
     circular,

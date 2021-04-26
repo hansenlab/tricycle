@@ -160,8 +160,9 @@ NULL
                   rownames(data.m) <- .getSYMBOL(gname, species = "human", AnnotationDb = AnnotationDb)
               }
         }
-        data(RevelioGeneList, package = "tricycle", envir = environment())
-        cycleGene.l <- RevelioGeneList
+        data_env <- new.env(parent = emptyenv())
+        data("RevelioGeneList", package = "tricycle", envir = data_env)
+        cycleGene.l <- data_env[["RevelioGeneList"]]
     }
 
     return(.CCStage(data.m, cycleGene.l = cycleGene.l, ...))

@@ -87,7 +87,9 @@ NULL
 }
 
 .getRotation <- function(gname.type, species) {
-    data(neuroRef, package = "tricycle", envir = environment())
+    data_env <- new.env(parent = emptyenv())
+    data("neuroRef", package = "tricycle", envir = data_env)
+    neuroRef <- data_env[["neuroRef"]]
     rotation.m <- as.matrix(neuroRef[, seq_len(2)])
     if (species == "human") {
         rownames(rotation.m) <- neuroRef$SYMBOL

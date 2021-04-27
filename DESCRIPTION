@@ -1,7 +1,7 @@
 Package: tricycle
 Type: Package
 Title: tricycle: Transferable Representation and Inference of cell cycle
-Version: 0.99.27
+Version: 0.99.28
 Authors@R: c(
         person("Shijie", "Zheng", role=c("aut", "cre"), email="shijieczheng@gmail.com"))
 Description: The package contains functions to infer and visualize cell cycle 

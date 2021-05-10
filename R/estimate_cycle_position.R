@@ -93,7 +93,7 @@ estimate_cycle_position <- function(x, exprs_values = "logcounts", dimred = "tri
         }
         if (!(dimred %in% reducedDimNames(y))) {
             message(paste0("The designated dimred do not exist in the SingleCellExperiment or in altexp. project_cycle_space will be run to calculate embedding ", dimred))
-            y <- project_cycle_space(y, name = dimred, ...)
+            y <- project_cycle_space(y, name = dimred, exprs_values = exprs_values, ...)
             reducedDim(x, dimred) <- reducedDim(y, dimred)
         }
         x$tricyclePosition <- .getTheta(reducedDim(x, dimred), center.pc1 = center.pc1, center.pc2 = center.pc2)

@@ -18,8 +18,8 @@
 #' @param line.alpha  The alpha value (transparency) of the fitted line, used by \code{\link[ggplot2]{geom_path}}. Default: 0.8
 #' @param color.vars Optional. A vector of categorical variable of the same length of \code{theta.v}, and it will be used to color points in figure. Default: NULL
 #' @param color.name The name of the color variables. Used as the name for legend. Default: NULL
-#' @param x_lab Title of x-axis. If not given, the colname of \code{dimred} will be used. Default: "\eqn{\theta}"
-#' @param y_lab Title of y-axis. If not given, the colname of \code{dimred} will be used. Default: "y"
+#' @param x_lab Title of x-axis. Default: "\eqn{\theta}"
+#' @param y_lab Title of y-axis. Default: "y"
 #' @param hue.colors The string vector gives custom colors. If not given, the default \code{\link[ggplot2]{scale_color_discrete}} will be used. Default: NULL
 #' @param ... Other arguments input to \code{\link[stats]{loess}}.
 #'
@@ -55,7 +55,9 @@
 #' fit.l$fig
 NULL
 
+#' @import ggplot2
 #' @importFrom stats loess predict
+#' @importFrom scattermore geom_scattermore
 #' @export
 fit_periodic_loess <- function(theta.v, y, span = 0.3, length.out = 200, plot = FALSE,
                           fig.title = NULL, point.size = 2.1, point.alpha = 0.6,
@@ -94,10 +96,11 @@ fit_periodic_loess <- function(theta.v, y, span = 0.3, length.out = 200, plot = 
         color_scale <- NULL
       }
       fig <- ggplot(data = tmp.df) +
-        geom_scattermore(mapping = p_aes, pointsize = point.size) +
+        geom_scattermore(mapping = p_aes, pointsize = point.size, alpha = point.alpha) +
         geom_path(data = pred.df, aes_string(x = "x", y = "y"), size = line.size, alpha = line.alpha) +
         color_scale +
         labs(x = x_lab, y = y_lab, title = fig.title) +
+        scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi / 2, pi, 3 * pi / 2, 2 * pi), labels = paste0(c(0, 0.5, 1, 1.5, 2), "\u03C0"), name = "\u03b8") +
         .gg_theme
       return(list(fitted = fitted.v, residual = residual.v, pred.df = pred.df, loess.o = loess.o, rsquared = rsquared, fig = fig))
     }

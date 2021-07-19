@@ -29,9 +29,9 @@ with points and the fitted \code{\link[stats]{loess}} line. Default: FALSE}
 
 \item{color.name}{The name of the color variables. Used as the name for legend. Default: NULL}
 
-\item{x_lab}{Title of x-axis. If not given, the colname of \code{dimred} will be used. Default: "\eqn{\theta}"}
+\item{x_lab}{Title of x-axis. Default: "\eqn{\theta}"}
 
-\item{y_lab}{Title of y-axis. If not given, the colname of \code{dimred} will be used. Default: "y"}
+\item{y_lab}{Title of y-axis. Default: "y"}
 
 \item{hue.colors}{The string vector gives custom colors. If not given, the default \code{\link[ggplot2]{scale_color_discrete}} will be used. Default: NULL}
 

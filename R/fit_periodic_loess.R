@@ -83,7 +83,7 @@ fit_periodic_loess <- function(theta.v, y, span = 0.3, length.out = 200, plot = 
         color.vars <- factor(color.vars)
         stopifnot("Length of theta.v does not match color.vars" = length(color.vars) == length(theta.v))
         if (!is.null(hue.colors)) {
-          stopifnot("Number of colors does not match nlevels of color.vars" = nlevels(factor(color.vars) == length(hue.colors)))
+          stopifnot("Number of colors does not match nlevels of color.vars" = nlevels(factor(color.vars)) == length(hue.colors))
           color_scale <- scale_color_manual(values = hue.colors, name = color.name, limits = levels(color.vars))
         } else {
           color_scale <- scale_color_discrete(name = color.name, limits = levels(color.vars))

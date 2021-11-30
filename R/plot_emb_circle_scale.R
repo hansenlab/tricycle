@@ -165,31 +165,45 @@ NULL
 #' @import ggplot2
 #' @export
 circle_scale_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2",
-                                               "#FCCE7B", "#C4E416", "#4BBA0F",
-                                               "#447D87", "#2C24E9"),
-                                hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3,
-    y.text = 3.8, ymax = 4.5, text.size = 3) {
-    hues.df <- data.frame(theta = seq(from = 0, to = 2 * pi, length.out = hue.n),
-                          colors = colorRampPalette(hue.colors)(hue.n))
-    hue_text.df <- data.frame(theta = c(0, 0.5 * pi, pi, 1.5 * pi),
-                              label = c("0/2\u03C0", "0.5\u03C0", "\u03C0", "1.5\u03C0"),
-                              hjust = c(0.1, 0.5, 0.5, 0.5), 
-                              y.text = rep(y.text, 4))
-    legend.p <- ggplot(hues.df) +
-        geom_rect(aes( xmin = get("theta") - 0.001, xmax = get("theta") + 0.001, color = get("colors"), fill = get("colors")),
-                  ymin = get("y.inner"), ymax = get("y.outer"), alpha = alpha) +
-        coord_polar(theta = "x", start = -pi / 2, direction = -1, clip = "on") +
-        scale_color_identity() +
-        scale_fill_identity() +
-        guides(fill = FALSE, color = FALSE) +
-        theme_void() +
-        ylim(c(0, ymax)) +
-        geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2),
-                   data = data.frame(x1 = 0, x2 = 1.75 * pi, y1 = (y.outer + y.text) / 2, y2 = (y.outer + y.text) / 2),
-                   inherit.aes = FALSE,
-                   alpha = 0.5,
-                   arrow = arrow(length = unit(0.05, "npc"))) +
-        geom_text(data = hue_text.df, aes_string(x = "theta", y = "y.text", label = "label", hjust = "hjust"), size = text.size) +
-        theme(plot.margin = unit(c(0, 0, 0, 0), "pt"))
-    return(legend.p)
+																							 "#FCCE7B", "#C4E416", "#4BBA0F",
+																							 "#447D87", "#2C24E9"),
+																hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3,
+																y.text = 3.8, ymax = 4.5, text.size = 3,
+																addStageLabel = FALSE, G1.pos = 0, S.pos = 2.2,
+																G2M.pos = 3.9) {
+	hues.df <- data.frame(theta = seq(from = 0, to = 2 * pi, length.out = hue.n),
+												colors = colorRampPalette(hue.colors)(hue.n))
+	hue_text.df <- data.frame(theta = c(0, 0.5 * pi, pi, 1.5 * pi),
+														label = c("0/2\u03C0", "0.5\u03C0", "\u03C0", "1.5\u03C0"),
+														hjust = c(0.1, 0.5, 0.5, 0.5), 
+														y.text = rep(y.text, 4))
+	legend.p <- ggplot(hues.df) +
+		geom_rect(aes( xmin = get("theta") - 0.001, xmax = get("theta") + 0.001, color = get("colors"), fill = get("colors")),
+							ymin = get("y.inner"), ymax = get("y.outer"), alpha = alpha) +
+		coord_polar(theta = "x", start = -pi / 2, direction = -1, clip = "on") +
+		scale_color_identity() +
+		scale_fill_identity() +
+		guides(fill = "none", color = "none") +
+		theme_void() +
+		ylim(c(0, ymax)) +
+		geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2),
+								 data = data.frame(x1 = 0, x2 = 1.75 * pi, y1 = (y.outer + y.text) / 2, y2 = (y.outer + y.text) / 2),
+								 inherit.aes = FALSE,
+								 alpha = 0.5,
+								 arrow = arrow(length = unit(0.05, "npc"))) +
+		geom_text(data = hue_text.df, aes_string(x = "theta", y = "y.text", label = "label", hjust = "hjust"), size = text.size) +
+		theme(plot.margin = unit(c(0, 0, 0, 0), "pt"))
+	
+	if (addStageLabel) {
+		legend.p <- legend.p +
+			annotate(geom = "text", x = G1.pos, y = (y.outer + y.inner) / 2, label = "G1/G0", size = text.size, color = "white") +
+			annotate(geom = "text", x = S.pos, y = (y.outer + y.inner) / 2, label = "S", size = text.size, color = "black") +
+			annotate(geom = "text", x = G2M.pos, y = (y.outer + y.inner) / 2, label = "G2M", size = text.size, color = "black") 
+	}
+	
+	
+	
+	return(legend.p)
 }
+
+

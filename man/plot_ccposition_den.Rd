@@ -27,6 +27,10 @@ of \code{color_var.v} is greater than 8, only the top 8 levels of most cell
 
 \item{line.alpha}{The alpha value of the line used by \code{\link[ggplot2]{geom_path}}. Default: 0.5}
 
+\item{addRug}{Whether to add rug on the bottom of the linear density plot or an inner circle on the circular plot to show the continuous scale of theta. Default: TRUE}
+
+\item{RugPalette.v}{The palette used for the rug plot. If not given, it will used the same default palette as in \code{\link{plot_emb_circle_scale}}.}
+
 \item{...}{Other arguments accepted by \code{\link[ggplot2]{geom_path}}.}
 }
 \value{

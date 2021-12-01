@@ -62,7 +62,7 @@ NULL
 
     scat.p <- ggplot(tmp.df, aes_string(x = "x", y = "y", color = "color")) +
         geom_scattermore(pointsize = point.size, alpha = point.alpha) +
-        scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = FALSE) +
+        scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = "none") +
         labs(y = y_lab, x = x_lab, title = fig.title) +
         xlim(x_lim) +
         ylim(y_lim) +

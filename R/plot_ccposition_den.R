@@ -16,6 +16,8 @@
 #' @param weighted Whether the density should be weighted on the percentage of each level of \code{color_var.v}. Default: FALSE
 #' @param line.size The size of the line used by \code{\link[ggplot2]{geom_path}}. Default: 0.5
 #' @param line.alpha The alpha value of the line used by \code{\link[ggplot2]{geom_path}}. Default: 0.5
+#' @param addRug Whether to add rug on the bottom of the linear density plot or an inner circle on the circular plot to show the continuous scale of theta. Default: TRUE
+#' @param RugPalette.v The palette used for the rug plot. If not given, it will used the same default palette as in \code{\link{plot_emb_circle_scale}}.
 #' @param ... Other arguments accepted by \code{\link[ggplot2]{geom_path}}.
 #'
 #' @return A ggplot object
@@ -49,10 +51,15 @@ NULL
 
 #' @importFrom circular circular density.circular
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom ggnewscale new_scale_color
 #' @import ggplot2
 #'
 #' @export
-plot_ccposition_den <- function(theta.v, color_var.v, color_name, palette.v = NULL, fig.title = NULL, type = c("linear", "circular"), bw = 30, weighted = FALSE, line.size = 0.5, line.alpha = 0.5,
+plot_ccposition_den <- function(theta.v, color_var.v, color_name,
+																palette.v = NULL, fig.title = NULL,
+																type = c("linear", "circular"),
+																bw = 30, weighted = FALSE, line.size = 0.5, line.alpha = 0.5,
+																addRug = TRUE, RugPalette.v = NULL, 
     ...) {
     if ((min(theta.v) < 0) | (max(theta.v) > 2 * pi)) {
           stop("theta.v need to be between 0 - 2pi.")
@@ -111,6 +118,15 @@ plot_ccposition_den <- function(theta.v, color_var.v, color_name, palette.v = NU
             scale_x_continuous(limits = c(0, 2 * pi), breaks = c(0, pi / 2, pi, 3 * pi / 2, 2 * pi), labels = paste0(c(0, 0.5, 1, 1.5, 2), "\u03C0"), name = "\u03b8") +
             labs(title = fig.title, y = "Density") +
             .gg_theme
+        if (addRug) {
+        	if (is.null(RugPalette.v)) RugPalette.v <- c("#2E22EA","#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")
+        	rug.df <- data.frame(x = seq(from = 0, to = 2 * pi, length.out = 200), y = 1)
+        	p <- p + 
+        		new_scale_color() +
+        		geom_rug(data = rug.df, aes_string(x = "x", color = "x"), sides = "b", inherit.aes = FALSE) +
+        		scale_color_gradientn(limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = 100), colors = RugPalette.v, guide = "none")
+        	
+        }
     } else {
         p <- ggplot(strati.df, aes(x = get("x"), y = get("y") + max.v)) +
             geom_path(aes_string(color = "color"), size = line.size, alpha = line.alpha, ...) +
@@ -121,6 +137,19 @@ plot_ccposition_den <- function(theta.v, color_var.v, color_name, palette.v = NU
             scale_y_continuous(limits = c(0, max.v * 2), breaks = c(max.v, max.v * 1.5, max.v * 2), labels = c("0", format(max.v * c(0.5, 1), digits = 3)), name = "Density") +
             labs(title = fig.title) +
             .gg_theme
+        if (addRug) {
+        	if (is.null(RugPalette.v)) RugPalette.v <- c("#2E22EA","#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")
+        	rug.df <- data.frame(x = seq(from = 0, to = 2 * pi, length.out = 200), y = 1)[-1, ]
+        	p <- p + 
+        		new_scale_color() +
+        		geom_rect(data = rug.df, inherit.aes = FALSE, 
+        							aes( xmin = x , xmax = x , color = x, fill = x),
+        							ymin = max.v * 0.75, ymax = max.v * 0.95, alpha = 0.6) +
+        		scale_color_gradientn(limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = 100), colors = RugPalette.v, guide = "none") +
+        		scale_fill_gradientn(limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = 100), colors = RugPalette.v, guide = "none")
+        	
+        }
     }
+    
     return(p)
 }

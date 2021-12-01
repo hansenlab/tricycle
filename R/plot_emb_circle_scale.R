@@ -198,7 +198,7 @@ circle_scale_legend <- function(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2",
 		legend.p <- legend.p +
 			annotate(geom = "text", x = G1.pos, y = (y.outer + y.inner) / 2, label = "G1/G0", size = text.size, color = "white") +
 			annotate(geom = "text", x = S.pos, y = (y.outer + y.inner) / 2, label = "S", size = text.size, color = "black") +
-			annotate(geom = "text", x = G2M.pos, y = (y.outer + y.inner) / 2, label = "G2M", size = text.size, color = "black") 
+			annotate(geom = "text", x = G2M.pos, y = (y.outer + y.inner) / 2, label = "G2|M", size = text.size, color = "black") 
 	}
 	
 	

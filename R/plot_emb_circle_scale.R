@@ -134,7 +134,8 @@ plot_emb_circle_scale <- function(sce.o, color_by = "tricyclePosition", facet_by
 #' @description This function is a helper function to create the cyclic ggplot color legend.
 #'
 #' @usage circle_scale_legend(hue.colors = c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9"),
-#'  hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, y.text = 3.8, ymax = 4.5, text.size = 3)
+#'  hue.n = 500, alpha = 0.6, y.inner = 1.5, y.outer = 3, y.text = 3.8, ymax = 4.5, text.size = 3, addStageLabel = FALSE, 
+#'  G1.pos = 0, S.pos = 2.2, G2M.pos = 3.9)
 #'
 #' @param hue.colors The string vector gives the cyclic colors. The first color should look very similar to the last one.
 #' Default: c("#2E22EA", "#9E3DFB", "#F86BE2", "#FCCE7B", "#C4E416", "#4BBA0F", "#447D87", "#2C24E9")
@@ -145,6 +146,10 @@ plot_emb_circle_scale <- function(sce.o, color_by = "tricyclePosition", facet_by
 #' @param y.text The radius of text position. Default: 3.8
 #' @param ymax The value control the border of the legend. Default: 4.5
 #' @param text.size The size of the text Default: 3
+#' @param addStageLabel Whether to add approximate discrete stage labels. Default: FALSE
+#' @param G1.pos Approximate radius value of G1 label position. Default: 0
+#' @param S.pos Approximate radius value of S label position. Default: 2.2
+#' @param G2M.pos Approximate radius value of G2M label position. Default: 3.9
 #'
 #' @return A ggplot object
 #'

@@ -179,6 +179,7 @@ estimate_Schwabe_stage <- function(x, exprs_values = "logcounts", batch.v = NULL
                                    gname.type = c("ENSEMBL", "SYMBOL"),
                                    species = c("mouse", "human"), AnnotationDb = NULL,
                                    corThres = 0.2, tolerance = 0.3) {
+	message("This function is a re-implementation of Schwabe et al. 2020. If you want to use tricycle method, please run estimate_cycle_position!")
   if (is(x, "SingleCellExperiment")) {
     if (!is.null(batch.v)) {
       if ((length(batch.v) == 1) & all(batch.v %in% names(colData(x)))) {

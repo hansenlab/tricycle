@@ -31,7 +31,7 @@ htmltools::img(src = knitr::image_uri(file.path("../man/figures", "logo.png")),
 
 Here we describe a package for inferring cell cycle position for a single-cell
 RNA-seq dataset. The theoretical justification as well as benchmarks are
-included in [@Zheng.2021]. In our hands, our approach (called TriCycle) works
+included in [@Zheng.2022]. In our hands, our approach (called TriCycle) works
 robustly across a variety of data modalities including across species (human
 and mouse), cell types and assay technology (10X, Fluidigm C1); we have yet to
 encounter a dataset where this approach does not work. The main output is a
@@ -93,7 +93,8 @@ color palette which also "wraps around". The relevant functions are
 
 We also provide a separate cell cycle stage predictor, predicting 5 different
 stages; `estimate_Schwabe_stage()`. This predictor is a small modification of the
-method proposed by [@Schwabe.2020].
+method proposed by [@Schwabe.2020]. __We include this function only for the purpose of convenience.__  
+__This is not part of tricycle method!__
 
 Finally we have a set of functions for creating your own reference latent space.
 
@@ -285,7 +286,7 @@ effects. It is only recommended for expert users who identifies batch effects in
 their data and want to use that data to build a custom reference.
 In theory, the users could use other methods to remove batch effect. Here, we
 use *Seurat*, which is used to construct our Neurosphere reference
-(@Zheng.2021), as an example. (The code in this section is not evaluated.)
+(@Zheng.2022), as an example. (The code in this section is not evaluated.)
 ```{r batch, eval = FALSE, echo = TRUE}
 # suppose we have a count matrix containing all cells across batches; we first subset the matrix to GO cell cycle genes
 library(org.Mm.eg.db)

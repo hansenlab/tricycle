@@ -10,8 +10,9 @@ bibentry("Article",
                     person(c("Hans", "T."), "Bjornsson"),
                     person(c("Loyal", "A."), "Goff"),
                     person(c("Kasper", "D."), "Hansen")),
-         journal = "bioRxiv",
-         year = "2021",
-	 pages = "2021.04.06.438463",
-         doi = "10.1101/2021.04.06.438463")
+         journal = "Genome Biology",
+         volume = "23",
+         year = "2022",
+	       pages = "41",
+         doi = "10.1186/s13059-021-02581-y")
 

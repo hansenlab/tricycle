@@ -76,6 +76,8 @@ plot(neurosphere_example$tricyclePosition,
 \references{
 Zheng SC, et al.
 \emph{Universal prediction of cell cycle position using transfer learning.}
+Genome Biology (2022) 23: 41
+doi:\href{https://doi.org/10.1186/s13059-021-02581-y}{10.1186/s13059-021-02581-y}.
 }
 \seealso{
 \code{\link{project_cycle_space}}, for projecting new data with a pre-learned reference

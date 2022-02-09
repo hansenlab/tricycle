@@ -48,6 +48,8 @@
 #' @references
 #' Zheng SC, et al.
 #' \emph{Universal prediction of cell cycle position using transfer learning.}
+#' Genome Biology (2022) 23: 41
+#' doi:\href{https://doi.org/10.1186/s13059-021-02581-y}{10.1186/s13059-021-02581-y}.
 #'
 #' @author Shijie C. Zheng
 #'

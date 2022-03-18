@@ -110,7 +110,7 @@ NULL
 #' @importMethodsFrom AnnotationDbi colnames get ncol nrow
 .humanSymbol <- function(gname, AnnotationDb = NULL) {
     AnnotationDb <- .getAnnotationDB(AnnotationDb, species = "human")
-    SYMBOL <- AnnotationDbi::mapIds(AnnotationDb, keys = gname, columns = "SYMBOL", keytype = "ENSEMBL", multiVals = "first")
+    SYMBOL <- AnnotationDbi::mapIds(AnnotationDb, keys = gname, column = "SYMBOL", keytype = "ENSEMBL", multiVals = "first")
     return(SYMBOL)
 }
 

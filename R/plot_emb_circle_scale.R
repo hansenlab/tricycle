@@ -5,7 +5,7 @@
 #'
 #' @param sce.o A \linkS4class{SingleCellExperiment} contains the embbing to be plotted against.
 #' @param color_by The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "tricyclePosition"
-#' @param facet_by he name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If NULL, no faceted panles will be returned. Default: NULL
+#' @param facet_by The name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If used, the function will return a list of ggplot objects. If NULL, no faceted panels will be returned. Default: NULL
 #' @param dimred The name or index of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). Default: 1
 #' @param dim The indices of \code{dimred} to be plotted. At the moment, it has to be two integers.   Default: 1:2
 #' @param fig.title The title of the figure. Default: NULL
@@ -75,7 +75,7 @@ NULL
             p <- ggplot(tmp.df, aes_string(x = "x", y = "y", color = "color")) +
                 geom_scattermore(data = tmp.df %>% dplyr::filter(.data[["facet"]] != levels(factor(tmp.df$facet))[idx]), pointsize = point.size, alpha = 0.4, color = "gray90", show.legend = FALSE) +
                 geom_scattermore(data = tmp.df %>% dplyr::filter(.data[["facet"]] == levels(factor(tmp.df$facet))[idx]), pointsize = point.size, alpha = point.alpha) +
-                scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = FALSE) +
+                scale_color_gradientn(name = color_by, limits = range(0, 2 * pi), breaks = seq(from = 0, to = 2 * pi, length.out = hue.n), colors = hue.colors, guide = "none") +
                 labs(y = y_lab, x = x_lab, title = facet_labels[idx]) +
                 xlim(x_lim) +
                 ylim(y_lim) +

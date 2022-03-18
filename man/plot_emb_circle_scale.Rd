@@ -26,7 +26,7 @@ plot_emb_circle_scale(
 
 \item{color_by}{The name of variable in \code{colData(sce.o)} to be used to show colors. Default: "tricyclePosition"}
 
-\item{facet_by}{he name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If NULL, no faceted panles will be returned. Default: NULL}
+\item{facet_by}{The name of variable in \code{colData(sce.o)} to be used to facet scatter plots. If used, the function will return a list of ggplot objects. If NULL, no faceted panels will be returned. Default: NULL}
 
 \item{dimred}{The name or index of reducedDims in  \linkS4class{SingleCellExperiment} (\code{\link[SingleCellExperiment]{reducedDims}}). Default: 1}
 
